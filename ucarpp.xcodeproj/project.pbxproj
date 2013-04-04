@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C27D9D3017008834006211DE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27D9D2F17008834006211DE /* main.cpp */; };
 		C27D9D3217008834006211DE /* ucarpp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C27D9D3117008834006211DE /* ucarpp.1 */; };
+		C27D9D4417009912006211DE /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27D9D4217009912006211DE /* graph.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,9 @@
 		C27D9D2C17008834006211DE /* ucarpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ucarpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		C27D9D2F17008834006211DE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C27D9D3117008834006211DE /* ucarpp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ucarpp.1; sourceTree = "<group>"; };
+		C27D9D38170089D4006211DE /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		C27D9D4217009912006211DE /* graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = graph.cpp; sourceTree = "<group>"; };
+		C27D9D4317009912006211DE /* graph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graph.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +65,9 @@
 			isa = PBXGroup;
 			children = (
 				C27D9D2F17008834006211DE /* main.cpp */,
+				C27D9D38170089D4006211DE /* main.h */,
+				C27D9D4217009912006211DE /* graph.cpp */,
+				C27D9D4317009912006211DE /* graph.h */,
 				C27D9D3117008834006211DE /* ucarpp.1 */,
 			);
 			path = ucarpp;
@@ -118,6 +125,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C27D9D3017008834006211DE /* main.cpp in Sources */,
+				C27D9D4417009912006211DE /* graph.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
