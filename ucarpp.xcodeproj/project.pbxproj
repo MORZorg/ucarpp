@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C2332693170E297700A22DF8 /* edge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2332691170E297700A22DF8 /* edge.cpp */; };
 		C27D9D3017008834006211DE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27D9D2F17008834006211DE /* main.cpp */; };
 		C27D9D3217008834006211DE /* ucarpp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C27D9D3117008834006211DE /* ucarpp.1 */; };
 		C27D9D4417009912006211DE /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C27D9D4217009912006211DE /* graph.cpp */; };
@@ -26,6 +27,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C2332691170E297700A22DF8 /* edge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = edge.cpp; sourceTree = "<group>"; };
+		C2332692170E297700A22DF8 /* edge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = edge.h; sourceTree = "<group>"; };
 		C27D9D2C17008834006211DE /* ucarpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ucarpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		C27D9D2F17008834006211DE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C27D9D3117008834006211DE /* ucarpp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ucarpp.1; sourceTree = "<group>"; };
@@ -45,6 +48,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C233268F170E292400A22DF8 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C27D9D4217009912006211DE /* graph.cpp */,
+				C27D9D2F17008834006211DE /* main.cpp */,
+				C2332691170E297700A22DF8 /* edge.cpp */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		C2332690170E293400A22DF8 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				C27D9D4317009912006211DE /* graph.h */,
+				C27D9D38170089D4006211DE /* main.h */,
+				C2332692170E297700A22DF8 /* edge.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
 		C27D9D2317008834006211DE = {
 			isa = PBXGroup;
 			children = (
@@ -64,10 +87,8 @@
 		C27D9D2E17008834006211DE /* ucarpp */ = {
 			isa = PBXGroup;
 			children = (
-				C27D9D2F17008834006211DE /* main.cpp */,
-				C27D9D38170089D4006211DE /* main.h */,
-				C27D9D4217009912006211DE /* graph.cpp */,
-				C27D9D4317009912006211DE /* graph.h */,
+				C2332690170E293400A22DF8 /* Headers */,
+				C233268F170E292400A22DF8 /* Sources */,
 				C27D9D3117008834006211DE /* ucarpp.1 */,
 			);
 			path = ucarpp;
@@ -126,6 +147,7 @@
 			files = (
 				C27D9D3017008834006211DE /* main.cpp in Sources */,
 				C27D9D4417009912006211DE /* graph.cpp in Sources */,
+				C2332693170E297700A22DF8 /* edge.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +246,7 @@
 				C27D9D3717008834006211DE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

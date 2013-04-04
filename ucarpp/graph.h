@@ -9,16 +9,28 @@
 #ifndef __ucarpp__graph__
 #define __ucarpp__graph__
 
-#include <iostream>
+#include <stdlib.h>
+#include <vector>
+#include <queue>
 
-class graph
+#include "edge.h"
+
+using namespace std;
+typedef unsigned int uint;
+
+class Graph
 {
+	// Numero di Vertici
 	int V;
-	int[][] costs;
+	// Matrice dei Costi
+	int** costs;
+	// Lista di Adiacenza
+	vector<Edge>* edges;
 	
 public:
-	graph( int );
-	void addEdge( int, int, int, int, float );
+	Graph( int );
+	void addEdge( uint, uint, uint, uint, float );
+	void completeCosts();
 };
 
 #endif /* defined(__ucarpp__graph__) */

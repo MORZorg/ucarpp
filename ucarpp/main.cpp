@@ -90,7 +90,7 @@ int main( int argc, const char * argv[] )
 		cerr << "Errore. " << line;
 	
 	// Lati
-	graph grafo( V );
+	Graph grafo( V );
 	
 	re = *new regex( "LIST OF EDGES:" );
 	getline( in, line );
@@ -108,8 +108,8 @@ int main( int argc, const char * argv[] )
 			cerr << "Errore. " << line << endl;
 		else
 		{
-			src = stoi( sm[ 1 ] );
-			dst = stoi( sm[ 2 ] );
+			src = stoi( sm[ 1 ] ) -1;
+			dst = stoi( sm[ 2 ] ) -1;
 			t = stoi( sm[ 3 ] );
 			d = stoi( sm[ 4 ] );
 			p = stoi( sm[ 5 ] );
@@ -123,14 +123,13 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		depot = stoi( sm[ 1 ] );
+		depot = stoi( sm[ 1 ] ) -1;
 		cerr << "Deposito: " << depot << endl;
 	}
 	else
 		cerr << "Errore. " << line << endl;
 	
 	in.close();
-	
 	
     return 0;
 }
