@@ -59,8 +59,12 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/mauzuc90/Dropbox/Appunti/Universita`/Algoritmi\ di\ Ottimizzazione/instances&amp;Results/instances/val1A.dat"
+            argument = "/Users/mauzuc90/Dropbox/Appunti/Universita`/Algoritmi\ di\ Ottimizzazione/instances&amp;Results/instances/test1A.dat"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "2"
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

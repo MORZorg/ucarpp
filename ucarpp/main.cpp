@@ -115,7 +115,7 @@ int main( int argc, const char * argv[] )
 			p = stoi( sm[ 5 ] );
 			grafo.addEdge( src, dst, t, d, p );
 			
-			fprintf( stderr, "(%d, %d): %d, %d, %f.\n", src, dst, t, d, p );
+			fprintf( stderr, "(%d, %d): %d, %d, %.2f.\n", src, dst, t, d, p );
 		}
 	}
 	
@@ -137,7 +137,7 @@ int main( int argc, const char * argv[] )
 	for ( int i = 0; i < V; i++ )
 	{
 		for ( int j = 0; j < V; j++ )
-			cerr << grafo.getCosts()[ i ][ j ] << "\t";
+			cerr << grafo.getCost( i, j ) << "\t";
 		cerr << endl;
 	}
 	

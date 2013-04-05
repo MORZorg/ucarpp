@@ -12,6 +12,10 @@
 #include <stdlib.h>
 #include <vector>
 
+#ifdef DEBUG
+#include <iostream>
+#endif
+
 #include "edge.h"
 
 using namespace std;
@@ -32,7 +36,7 @@ public:
 	void addEdge( uint, uint, uint, uint, float );
 	void completeCosts();
 	
-	uint** getCosts();
+	uint getCost( uint, uint );
 };
 
 #endif /* defined(__ucarpp__graph__) */

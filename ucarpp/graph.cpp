@@ -39,7 +39,7 @@ Graph::Graph( int V )
 void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 {
 	// Creo un nuovo lato e lo aggiungo alla lista in entrambe le direzioni.
-	Edge newEdge( src, dst, demand, profit );
+	ProfitEdge newEdge( src, dst, demand, profit );
 	this->edges[ src ].push_back( newEdge );
 	this->edges[ dst ].push_back( newEdge );
 	
@@ -47,13 +47,12 @@ void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 	costs[ src ][ dst ] = costs[ dst ][ src ] = cost;
 }
 
-// Funzione per il confronto tra nodi in base al loro costo
+// Funzione per il confronto tra nodi in base al loro costo.
 class dijkyNodeComparison
 {
 	uint* d;
 public:
-	dijkyNodeComparison( uint* distances )
-    { d = distances; }
+	dijkyNodeComparison( uint* distances ): d( distances ) {}
 	bool operator() ( const uint& lhs, const uint& rhs ) const
 	{
 		return ( d[ lhs ] > d[ rhs ] );
@@ -72,21 +71,21 @@ void Graph::completeCosts()
 	vector<int> Q;
 	for ( uint source = 0; source < V; source++ )
 	{
-		// Lavoro direttamente sulla matrice dei costi
+		// Lavoro direttamente sulla matrice dei costi.
 		dijkyNodeComparison comp( d = costs[ source ] );
 		for ( uint u = 0; u < V; u++ )
 			if ( d[ u ] == 0 )
 				d[ u ] = INT_MAX;
 		d[ source ] = 0;
 		
-		// Costruisco un min-heap dei nodi
+		// Costruisco un min-heap dei nodi.
 		for ( uint u = 0; u < V; u++ )
 			Q.push_back( u );
 		make_heap( Q.begin(), Q.end(), comp );
 		
 		while ( Q.size() > 0 )
 		{
-			// Prendo il primo elemento e lo rimuovo dallo heap
+			// Prendo il primo elemento e lo rimuovo dallo heap.
 			uint u = Q.front();
 			pop_heap( Q.begin(), Q.end(), comp );
 			Q.pop_back();
@@ -95,12 +94,14 @@ void Graph::completeCosts()
 			if ( d[ u ] == INT_MAX )
 				break;
 			
+			bool found = false;
 			uint v, alt;
 			for ( vector<Edge>::iterator it = edges[ u ].begin(); it != edges[ u ].end(); it++ )
 			{
 				v = it->getDst( u );
 				
-				alt = d[ u ] + this->costs[ u ][ v ];
+				// Uso i getter per essere sicuro che il costo sia già definito ( src < dst )
+				alt = d[ u ] + this->costs[ it->getSrc() ][ it->getDst() ];
 				if ( alt < d[ v ] )
 				{
 					d[ v ] = alt;
@@ -109,13 +110,25 @@ void Graph::completeCosts()
 					// TODO: Teoricamente da fare in modo più efficiente.
 					make_heap( Q.begin(), Q.end(), comp );
 				}
+				
+				// Flag per indicare se esiste già un lato tra source ed u.
+				if ( v == source )
+					found = true;
+			}
+			
+			// Se necessario, creo il lato associato a ( source, u ) e lo aggiungo alla lista
+			if ( !found )
+			{
+				Edge newEdge( source, u );
+				this->edges[ source ].push_back( newEdge );
+				this->edges[ u ].push_back( newEdge );
 			}
 		}
 	}
 }
 
 // Getter della matrice dei costi
-uint** Graph::getCosts()
+uint Graph::getCost( uint src, uint dst )
 {
-	return this->costs;
+	return this->costs[ src ][ dst ];
 }

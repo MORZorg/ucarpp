@@ -14,14 +14,29 @@ typedef unsigned int uint;
 class Edge
 {
 	uint src,
-		 dst,
-		 demand;
-	float profit;
+		 dst;
 	uint taken;
 	
 public:
-	Edge( uint, uint, uint, float );
+	Edge( uint, uint );
+	
+	uint getSrc();
+	uint getDst();
 	uint getDst( uint );
+	uint getDemand();
+	float getProfit();
+};
+
+class ProfitEdge: public Edge
+{
+	uint demand;
+	float profit;
+	
+public:
+	ProfitEdge( uint, uint, uint, float );
+	
+	uint getDemand();
+	float getProfit();
 };
 
 #endif /* defined(__ucarpp__node__) */
