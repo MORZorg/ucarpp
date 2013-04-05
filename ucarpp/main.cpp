@@ -131,6 +131,16 @@ int main( int argc, const char * argv[] )
 	
 	in.close();
 	
+	// Completo la magliatura del grafo
+	cerr << "Matrice dei costi: " << endl;
+	grafo.completeCosts();
+	for ( int i = 0; i < V; i++ )
+	{
+		for ( int j = 0; j < V; j++ )
+			cerr << grafo.getCosts()[ i ][ j ] << "\t";
+		cerr << endl;
+	}
+	
     return 0;
 }
 

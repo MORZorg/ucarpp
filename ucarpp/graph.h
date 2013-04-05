@@ -11,7 +11,6 @@
 
 #include <stdlib.h>
 #include <vector>
-#include <queue>
 
 #include "edge.h"
 
@@ -21,16 +20,19 @@ typedef unsigned int uint;
 class Graph
 {
 	// Numero di Vertici
-	int V;
+	uint V;
 	// Matrice dei Costi
-	int** costs;
+	uint** costs;
 	// Lista di Adiacenza
 	vector<Edge>* edges;
 	
 public:
 	Graph( int );
+	
 	void addEdge( uint, uint, uint, uint, float );
 	void completeCosts();
+	
+	uint** getCosts();
 };
 
 #endif /* defined(__ucarpp__graph__) */

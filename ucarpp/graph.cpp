@@ -18,9 +18,9 @@ Graph::Graph( int V )
 {
 	this->V = V;
 	
-	this->costs = (int**)calloc( V, sizeof( int* ) );
+	this->costs = (uint**)calloc( V, sizeof( uint* ) );
 	for ( int i = 0; i < V; i++ )
-		this->costs[ i ] = (int*)calloc( V, sizeof( int ) );
+		this->costs[ i ] = (uint*)calloc( V, sizeof( uint ) );
 	
 	this->edges = (vector<Edge>*)calloc( V, sizeof( vector<Edge> ) );
 	for ( int i = 0; i< V; i++ )
@@ -47,15 +47,16 @@ void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 	costs[ src ][ dst ] = costs[ dst ][ src ] = cost;
 }
 
-class nodeComparison
+// Funzione per il confronto tra nodi in base al loro costo
+class dijkyNodeComparison
 {
 	uint* d;
 public:
-	nodeComparison( uint* distances )
+	dijkyNodeComparison( uint* distances )
     { d = distances; }
 	bool operator() ( const uint& lhs, const uint& rhs ) const
 	{
-		return ( d[ lhs ] < d[ rhs ] );
+		return ( d[ lhs ] > d[ rhs ] );
 	}
 };
 
@@ -67,24 +68,30 @@ void Graph::completeCosts()
 {
 	// Uso Dijkstra applicato ad ogni nodo del grafo.
 	// Essendo il nostro grafo sparso, non esiste algoritmo migliore.
-	uint d[ V ], p[ V ];
-	priority_queue<uint, vector<uint>, nodeComparison> Q;
+	uint* d;
+	vector<int> Q;
 	for ( uint source = 0; source < V; source++ )
 	{
+		// Lavoro direttamente sulla matrice dei costi
+		dijkyNodeComparison comp( d = costs[ source ] );
 		for ( uint u = 0; u < V; u++ )
-		{
-			d[ u ] = INT_MAX;
-			p[ u ] = u;
-		}
-		
+			if ( d[ u ] == 0 )
+				d[ u ] = INT_MAX;
 		d[ source ] = 0;
+		
+		// Costruisco un min-heap dei nodi
 		for ( uint u = 0; u < V; u++ )
-			Q.push( u );
+			Q.push_back( u );
+		make_heap( Q.begin(), Q.end(), comp );
 		
 		while ( Q.size() > 0 )
 		{
-			uint u = Q.top();
-			Q.pop();
+			// Prendo il primo elemento e lo rimuovo dallo heap
+			uint u = Q.front();
+			pop_heap( Q.begin(), Q.end(), comp );
+			Q.pop_back();
+			
+			// Se l'elemento migliore ha distanza infinita, non c'è più niente da fare...
 			if ( d[ u ] == INT_MAX )
 				break;
 			
@@ -97,10 +104,18 @@ void Graph::completeCosts()
 				if ( alt < d[ v ] )
 				{
 					d[ v ] = alt;
-					p[ v ] = u;
-					//Q.decrease-key( v );
+					
+					// Aggiorno la posizione di v.
+					// TODO: Teoricamente da fare in modo più efficiente.
+					make_heap( Q.begin(), Q.end(), comp );
 				}
 			}
 		}
 	}
+}
+
+// Getter della matrice dei costi
+uint** Graph::getCosts()
+{
+	return this->costs;
 }
