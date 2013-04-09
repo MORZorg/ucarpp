@@ -11,6 +11,9 @@
 
 #include <stdlib.h>
 #include <vector>
+// DA COMMITTARE A GITHUB
+#include <algorithm>
+#include <climits>
 
 #ifdef DEBUG
 #include <iostream>

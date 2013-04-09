@@ -36,26 +36,33 @@ int main( int argc, const char * argv[] )
 	smatch sm;
 	regex re;
 	
-	// Intestazione
-	re = *new regex( "NUMBER:\\s(.*).dat" );
-	getline( in, line );
-	if ( regex_search( line, sm, re ) )
-		cerr << "File: " << sm[ 1 ] << endl;
-	else
-		cerr << "Errore. " << line;
-	
-	// Dati
-	re = *new regex( "NUMBER OF VERTICES:\\s(\\d+)" );
-	getline( in, line );
-	if ( regex_search( line, sm, re ) )
+	try
 	{
-		V = stoi( sm[ 1 ] );
+		// Intestazione
+		//regex re1( "NUMBER:\\s(.*)\\.dat" );
+		re = *new regex( "NUMBER: (.*).dat" );
+		getline( in, line );
+		if ( regex_search( line, sm, re ) )
+			cerr << "File: " << sm[ 1 ] << endl;
+		else
+			cerr << "Errore. " << line;
 		
-		cerr << "Vertici: " << V << endl;
+		// Dati
+		re = *new regex( "NUMBER OF VERTICES:\\s(\\d+)" );
+		getline( in, line );
+		if ( regex_search( line, sm, re ) )
+		{
+			V = stoi( sm[ 1 ] );
+			
+			cerr << "Vertici: " << V << endl;
+		}
+		else
+			cerr << "Errore. " << line;
 	}
-	else
-		cerr << "Errore. " << line;
-	
+	catch (exception& e)
+	{
+		cerr << "_" << endl;
+	}
 	re = *new regex( "NUMBER OF EDGES:\\s(\\d+)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
