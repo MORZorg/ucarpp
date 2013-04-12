@@ -11,10 +11,12 @@
 
 #include <iostream>
 #include <fstream>
-#include <regex>
+
+#include <boost/regex.hpp>
 
 #include "graph.h"
 
 using namespace std;
+using namespace boost;
 
 #endif /* defined(__ucarpp__main__) */

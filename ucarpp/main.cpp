@@ -36,38 +36,32 @@ int main( int argc, const char * argv[] )
 	smatch sm;
 	regex re;
 	
-	try
+	re = *new regex( "NUMBER:\\s(.*)\\.dat" );
+	getline( in, line );
+	if ( regex_search( line, sm, re ) )
+		cerr << "File: " << sm[ 1 ] << endl;
+	else
+		cerr << "Errore. " << line;
+	
+	// Dati
+	re = *new regex( "NUMBER OF VERTICES:\\s(\\d+)" );
+	getline( in, line );
+	if ( regex_search( line, sm, re ) )
 	{
-		// Intestazione
-		//regex re1( "NUMBER:\\s(.*)\\.dat" );
-		re = *new regex( "NUMBER: (.*).dat" );
-		getline( in, line );
-		if ( regex_search( line, sm, re ) )
-			cerr << "File: " << sm[ 1 ] << endl;
-		else
-			cerr << "Errore. " << line;
+		stringstream ss( sm[ 1 ] );
+		ss >> V;
 		
-		// Dati
-		re = *new regex( "NUMBER OF VERTICES:\\s(\\d+)" );
-		getline( in, line );
-		if ( regex_search( line, sm, re ) )
-		{
-			V = stoi( sm[ 1 ] );
-			
-			cerr << "Vertici: " << V << endl;
-		}
-		else
-			cerr << "Errore. " << line;
+		cerr << "Vertici: " << V << endl;
 	}
-	catch (exception& e)
-	{
-		cerr << "_" << endl;
-	}
+	else
+		cerr << "Errore. " << line;
+	
 	re = *new regex( "NUMBER OF EDGES:\\s(\\d+)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		L = stoi( sm[ 1 ] );
+		stringstream ss( sm[ 1 ] );
+		ss >> L;
 		
 		cerr << "Lati: " << L << endl;
 	}
@@ -78,7 +72,8 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		Q = stoi( sm[ 1 ] );
+		stringstream ss( sm[ 1 ] );
+		ss >> Q;
 		
 		cerr << "Capacita`: " << Q << endl;
 	}
@@ -89,7 +84,8 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		tMax = stoi( sm[ 1 ] );
+		stringstream ss( sm[ 1 ] );
+		ss >> tMax;
 		
 		cerr << "Tempo disponibile: " << tMax << endl;
 	}
@@ -115,11 +111,20 @@ int main( int argc, const char * argv[] )
 			cerr << "Errore. " << line << endl;
 		else
 		{
-			src = stoi( sm[ 1 ] ) -1;
-			dst = stoi( sm[ 2 ] ) -1;
-			t = stoi( sm[ 3 ] );
-			d = stoi( sm[ 4 ] );
-			p = stoi( sm[ 5 ] );
+			// Pessimo...
+			stringstream ss1( sm[ 1 ] );
+			ss1 >> src;
+			src--;
+			stringstream ss2( sm[ 2 ] );
+			ss2 >> dst;
+			dst--;
+			stringstream ss3( sm[ 3 ] );
+			ss3 >> t;
+			stringstream ss4( sm[ 4 ] );
+			ss4 >> d;
+			stringstream ss5( sm[ 5 ] );
+			ss5 >> p;
+			
 			grafo.addEdge( src, dst, t, d, p );
 			
 			fprintf( stderr, "(%d, %d): %d, %d, %.2f.\n", src, dst, t, d, p );
@@ -130,7 +135,10 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		depot = stoi( sm[ 1 ] ) -1;
+		stringstream ss( sm[ 1 ] );
+		ss >> depot;
+		depot--;
+		
 		cerr << "Deposito: " << depot << endl;
 	}
 	else
@@ -150,4 +158,3 @@ int main( int argc, const char * argv[] )
 	
     return 0;
 }
-

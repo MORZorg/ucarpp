@@ -11,9 +11,10 @@
 
 #include <stdlib.h>
 #include <vector>
-// DA COMMITTARE A GITHUB
 #include <algorithm>
 #include <climits>
+
+#include <boost/heap/fibonacci_heap.hpp>
 
 #ifdef DEBUG
 #include <iostream>
@@ -22,6 +23,8 @@
 #include "edge.h"
 
 using namespace std;
+using namespace boost;
+
 typedef unsigned int uint;
 
 class Graph
