@@ -13,6 +13,7 @@ typedef unsigned int uint;
 
 class Edge
 {
+private:
 	uint src,
 		 dst;
 	uint taken;
@@ -20,23 +21,26 @@ class Edge
 public:
 	Edge( uint, uint );
 	
-	uint getSrc();
-	uint getDst();
-	uint getDst( uint );
-	uint getDemand();
-	float getProfit();
+	uint getSrc() const;
+	uint getDst() const;
+	uint getDst( uint ) const;
+	uint getDemand() const;
+	float getProfit() const;
+	
+	float getProfitDemandRatio() const;
 };
 
-class ProfitEdge: public Edge
+class ProfitableEdge: public Edge
 {
+private:
 	uint demand;
 	float profit;
 	
 public:
-	ProfitEdge( uint, uint, uint, float );
+	ProfitableEdge( uint, uint, uint, float );
 	
-	uint getDemand();
-	float getProfit();
+	uint getDemand() const;
+	float getProfit() const;
 };
 
 #endif /* defined(__ucarpp__node__) */

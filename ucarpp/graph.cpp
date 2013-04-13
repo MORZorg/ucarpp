@@ -14,17 +14,18 @@
  * @param V	numero di vertici
  *
  */
-Graph::Graph( int V )
+Graph::Graph( int V ):
+	V( V )
 {
-	this->V = V;
-	
 	this->costs = (uint**)calloc( V, sizeof( uint* ) );
 	for ( int i = 0; i < V; i++ )
 		this->costs[ i ] = (uint*)calloc( V, sizeof( uint ) );
 	
-	this->edges = (vector<Edge>*)calloc( V, sizeof( vector<Edge> ) );
-	for ( int i = 0; i< V; i++ )
-		this->edges[ i ] = *new vector<Edge>();
+	this->edges = *new vector<Edge>();
+	
+	this->adjList = (vector<Edge>*)calloc( V, sizeof( vector<Edge> ) );
+	for ( int i = 0; i < V; i++ )
+		this->adjList[ i ] = *new vector<Edge>();
 }
 
 /**
@@ -39,9 +40,10 @@ Graph::Graph( int V )
 void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 {
 	// Creo un nuovo lato e lo aggiungo alla lista in entrambe le direzioni.
-	ProfitEdge newEdge( src, dst, demand, profit );
-	this->edges[ src ].push_back( newEdge );
-	this->edges[ dst ].push_back( newEdge );
+	ProfitableEdge newEdge( src, dst, demand, profit );
+	edges.push_back( newEdge );
+	adjList[ src ].push_back( newEdge );
+	adjList[ dst ].push_back( newEdge );
 	
 	// Aggiungo il costo del lato alla matrice dei costi.
 	costs[ src ][ dst ] = costs[ dst ][ src ] = cost;
@@ -50,6 +52,7 @@ void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 // Funzione per il confronto tra nodi in base al loro costo.
 class dijkyNodeComparison
 {
+private:
 	uint* d;
 public:
 	dijkyNodeComparison( uint* distances ): d( distances ) {}
@@ -96,7 +99,7 @@ void Graph::completeCosts()
 			
 			bool found = false;
 			uint v, alt;
-			for ( vector<Edge>::iterator it = edges[ u ].begin(); it != edges[ u ].end(); it++ )
+			for ( vector<Edge>::iterator it = adjList[ u ].begin(); it != adjList[ u ].end(); it++ )
 			{
 				v = it->getDst( u );
 				
@@ -120,15 +123,36 @@ void Graph::completeCosts()
 			if ( !found )
 			{
 				Edge newEdge( source, u );
-				this->edges[ source ].push_back( newEdge );
-				this->edges[ u ].push_back( newEdge );
+				edges.push_back( newEdge );
+				adjList[ source ].push_back( newEdge );
+				adjList[ u ].push_back( newEdge );
 			}
 		}
 	}
 }
 
 // Getter della matrice dei costi
-uint Graph::getCost( uint src, uint dst )
+uint Graph::getCost( uint src, uint dst ) const
 {
-	return this->costs[ src ][ dst ];
+	return costs[ src ][ dst ];
+}
+
+// Getter della matrice dei costi
+uint Graph::getCost( Edge edge ) const
+{
+	return getCost( edge.getSrc(), edge.getDst() );
+}
+
+// Getter della lista di adiacenza
+vector<Edge> Graph::getEdges() const
+{
+	return edges;
+}
+
+bool Graph::compareEdges( const Edge& lhs, const Edge& rhs ) const
+{
+	if ( lhs.getProfitDemandRatio() == rhs.getProfitDemandRatio() )
+		return ( this->getCost( lhs ) > this->getCost( rhs ) );
+	else
+		return ( lhs.getProfitDemandRatio() > lhs.getProfitDemandRatio() );
 }

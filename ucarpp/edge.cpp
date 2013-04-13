@@ -31,7 +31,7 @@ Edge::Edge( uint src, uint dst ):
  * @return	il nodo di destinazione. Se il nodo di partenza non è appartenente all'arco, viene
  *			ritornato il nodo salvato come "dst".
  */
-uint Edge::getSrc()
+uint Edge::getSrc() const
 {
 	return src;
 }
@@ -43,7 +43,7 @@ uint Edge::getSrc()
  * @return	il nodo di destinazione. Se il nodo di partenza non è appartenente all'arco, viene
  *			ritornato il nodo salvato come "dst".
  */
-uint Edge::getDst()
+uint Edge::getDst() const
 {
 	return dst;
 }
@@ -55,7 +55,7 @@ uint Edge::getDst()
  * @return	il nodo di destinazione. Se il nodo di partenza non è appartenente all'arco, viene
  *			ritornato il nodo salvato come "dst".
  */
-uint Edge::getDst( uint src )
+uint Edge::getDst( uint src ) const
 {
 	return src == this->dst ? this->src : this->dst;
 }
@@ -65,18 +65,31 @@ uint Edge::getDst( uint src )
  *
  * @return	0, essendo l'arco prido di domanda.
  */
-uint Edge::getDemand() { return 0; }
+uint Edge::getDemand() const { return 0; }
 
 /**
  * Getter per il profitto associato all'arco.
  *
  * @return	0, essendo l'arco prido di profitto.
  */
-float Edge::getProfit() { return 0; }
+float Edge::getProfit() const { return 0; }
+
+/**
+ * Calcola il rapporto tra profitto e domanda, utile per l'ordinamento.
+ *
+ * @return profitto/domanda se domanda != 0, -1 altrimenti
+ */
+float Edge::getProfitDemandRatio() const
+{
+	if ( getDemand() != 0 )
+		return getProfit() / getDemand();
+	else
+		return -1;
+}
 
 /*** ProfitEdge ***/
 
-ProfitEdge::ProfitEdge( uint src, uint dst, uint demand, float profit ):
+ProfitableEdge::ProfitableEdge( uint src, uint dst, uint demand, float profit ):
 	Edge( src, dst ),
 	demand( demand ),
 	profit( profit ) {}
@@ -86,7 +99,7 @@ ProfitEdge::ProfitEdge( uint src, uint dst, uint demand, float profit ):
  *
  * @return	la domanda associata all'arco.
  */
-uint ProfitEdge::getDemand()
+uint ProfitableEdge::getDemand() const
 {
 	return demand;
 }
@@ -96,7 +109,7 @@ uint ProfitEdge::getDemand()
  *
  * @return	il profitto associato all'arco.
  */
-float ProfitEdge::getProfit()
+float ProfitableEdge::getProfit() const
 {
 	return profit;
 }
