@@ -1,0 +1,57 @@
+NUMBER: val6A.dat
+NUMBER OF VERTICES: 31
+NUMBER OF EDGES: 50
+CAPACITY: 170
+TIME LIMIT: 71
+LIST OF EDGES: 
+(1,2) cost 2 demand 5 profit 4.00
+(1,7) cost 10 demand 13 profit 51.00
+(1,30) cost 4 demand 12 profit 26.00
+(1,31) cost 3 demand 4 profit 11.00
+(2,3) cost 1 demand 14 profit 22.00
+(2,8) cost 6 demand 14 profit 31.00
+(3,4) cost 5 demand 12 profit 22.00
+(3,9) cost 2 demand 5 profit 12.00
+(4,9) cost 9 demand 3 profit 20.00
+(4,13) cost 3 demand 8 profit 16.00
+(5,6) cost 3 demand 8 profit 10.00
+(5,10) cost 4 demand 10 profit 26.00
+(5,31) cost 1 demand 4 profit 5.00
+(6,7) cost 3 demand 9 profit 8.00
+(6,11) cost 2 demand 12 profit 24.00
+(6,31) cost 3 demand 9 profit 16.00
+(7,8) cost 3 demand 14 profit 29.00
+(8,9) cost 7 demand 12 profit 41.00
+(8,12) cost 8 demand 14 profit 23.00
+(9,13) cost 6 demand 9 profit 32.00
+(10,11) cost 4 demand 10 profit 16.00
+(10,14) cost 1 demand 4 profit 9.00
+(10,16) cost 2 demand 8 profit 13.00
+(11,12) cost 5 demand 9 profit 15.00
+(11,17) cost 4 demand 10 profit 18.00
+(12,13) cost 4 demand 7 profit 20.00
+(12,18) cost 5 demand 12 profit 16.00
+(13,19) cost 6 demand 14 profit 16.00
+(14,15) cost 5 demand 7 profit 26.00
+(15,16) cost 3 demand 8 profit 11.00
+(16,17) cost 2 demand 9 profit 10.00
+(18,19) cost 5 demand 9 profit 16.00
+(18,21) cost 3 demand 7 profit 19.00
+(19,20) cost 4 demand 12 profit 13.00
+(19,21) cost 3 demand 8 profit 16.00
+(19,22) cost 2 demand 9 profit 14.00
+(20,22) cost 5 demand 11 profit 30.00
+(21,22) cost 4 demand 14 profit 16.00
+(23,24) cost 3 demand 10 profit 19.00
+(23,25) cost 3 demand 7 profit 15.00
+(23,26) cost 2 demand 6 profit 14.00
+(24,27) cost 2 demand 5 profit 7.00
+(25,28) cost 5 demand 12 profit 13.00
+(26,27) cost 1 demand 3 profit 4.00
+(26,28) cost 5 demand 13 profit 15.00
+(27,29) cost 2 demand 8 profit 14.00
+(28,29) cost 3 demand 9 profit 17.00
+(28,31) cost 3 demand 4 profit 11.00
+(29,30) cost 7 demand 10 profit 26.00
+(29,31) cost 2 demand 5 profit 13.00
+DEPOT: 1

@@ -1,0 +1,58 @@
+Solution of Problem val4D.dat - Number of Vehicles: 4
+
+Total Profit: 235
+
+Total Cost: 144
+
+
+Route 0 Details:
+
+Services Sequence:
+1-1 9-14 23-24 14-13 1-1 
+
+Vertex Sequence:
+1 2 3 (9 14) (23 24) (14 13) 7 1 
+
+Profit: 57
+Cost  : 38
+Load  : 30
+
+
+Route 1 Details:
+
+Services Sequence:
+1-1 11-16 8-7 7-1 1-1 
+
+Vertex Sequence:
+1 2 3 9 10 (11 16) 15 10 9 (8 7) (7 1) 1 
+
+Profit: 57
+Cost  : 32
+Load  : 30
+
+
+Route 2 Details:
+
+Services Sequence:
+1-1 3-4 17-16 1-1 
+
+Vertex Sequence:
+1 2 (3 4) 5 11 (17 16) 15 10 9 3 2 1 
+
+Profit: 62
+Cost  : 35
+Load  : 30
+
+
+Route 3 Details:
+
+Services Sequence:
+1-1 10-11 21-27 27-20 15-10 10-9 9-3 3-2 1-1 
+
+Vertex Sequence:
+1 2 3 9 (10 11) 17 20 (21 27) (27 20) 19 16 (15 10) (10 9) (9 3) (3 2) 1 
+
+Profit: 59
+Cost  : 39
+Load  : 30
+

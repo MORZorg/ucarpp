@@ -1,0 +1,32 @@
+Solution of Problem val9B.dat - Number of Vehicles: 2
+
+Total Profit: 175
+
+Total Cost: 77
+
+
+Route 0 Details:
+
+Services Sequence:
+1-1 24-30 36-44 29-23 16-1 1-1 
+
+Vertex Sequence:
+1 15 (24 30) 38 (36 44) 37 (29 23) 15 (16 1) 1 
+
+Profit: 86
+Cost  : 37
+Load  : 30
+
+
+Route 1 Details:
+
+Services Sequence:
+1-1 16-17 25-20 13-8 9-1 1-1 
+
+Vertex Sequence:
+1 (16 17) 24 23 28 27 26 (25 20) 21 (13 8) (9 1) 1 
+
+Profit: 89
+Cost  : 40
+Load  : 30
+

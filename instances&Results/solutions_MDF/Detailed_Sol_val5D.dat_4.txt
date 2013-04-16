@@ -1,0 +1,58 @@
+Solution of Problem val5D.dat - Number of Vehicles: 4
+
+Total Profit: 229
+
+Total Cost: 150
+
+
+Route 0 Details:
+
+Services Sequence:
+1-1 12-13 20-19 12-6 1-1 
+
+Vertex Sequence:
+1 6 (12 13) 14 (20 19) (12 6) 1 
+
+Profit: 62
+Cost  : 37
+Load  : 30
+
+
+Route 1 Details:
+
+Services Sequence:
+1-1 6-1 2-13 7-1 1-1 
+
+Vertex Sequence:
+1 (6 1) (2 13) (7 1) 1 
+
+Profit: 57
+Cost  : 36
+Load  : 30
+
+
+Route 2 Details:
+
+Services Sequence:
+1-1 7-13 8-2 2-1 1-1 
+
+Vertex Sequence:
+1 (7 13) 14 (8 2) (2 1) 1 
+
+Profit: 54
+Cost  : 37
+Load  : 30
+
+
+Route 3 Details:
+
+Services Sequence:
+1-1 2-3 10-16 16-15 14-13 1-1 
+
+Vertex Sequence:
+1 (2 3) (10 16) (16 15) (14 13) 12 6 1 
+
+Profit: 56
+Cost  : 40
+Load  : 30
+

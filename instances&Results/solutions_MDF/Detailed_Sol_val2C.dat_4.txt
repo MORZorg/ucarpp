@@ -1,0 +1,58 @@
+Solution of Problem val2C.dat - Number of Vehicles: 4
+
+Total Profit: 125
+
+Total Cost: 127
+
+
+Route 0 Details:
+
+Services Sequence:
+1-1 2-4 4-5 11-5 2-1 1-1 
+
+Vertex Sequence:
+1 (2 4) (4 5) (11 5) 4 (2 1) 1 
+
+Profit: 42
+Cost  : 38
+Load  : 30
+
+
+Route 1 Details:
+
+Services Sequence:
+1-1 5-10 10-9 1-1 
+
+Vertex Sequence:
+1 2 4 (5 10) (10 9) 3 1 
+
+Profit: 32
+Cost  : 39
+Load  : 27
+
+
+Route 2 Details:
+
+Services Sequence:
+1-1 9-19 9-3 1-1 
+
+Vertex Sequence:
+1 3 (9 19) (9 3) 1 
+
+Profit: 28
+Cost  : 36
+Load  : 26
+
+
+Route 3 Details:
+
+Services Sequence:
+1-1 1-3 3-4 1-1 
+
+Vertex Sequence:
+1 (1 3) (3 4) 2 1 
+
+Profit: 23
+Cost  : 14
+Load  : 14
+

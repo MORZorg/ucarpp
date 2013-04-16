@@ -1,0 +1,76 @@
+NUMBER: val4B.dat
+NUMBER OF VERTICES: 41
+NUMBER OF EDGES: 69
+CAPACITY: 170
+TIME LIMIT: 92
+LIST OF EDGES: 
+(1,2) cost 1 demand 2 profit 1.00
+(1,7) cost 5 demand 15 profit 33.00
+(2,3) cost 1 demand 2 profit 4.00
+(2,8) cost 10 demand 20 profit 40.00
+(3,4) cost 7 demand 15 profit 39.00
+(3,9) cost 1 demand 1 profit 3.00
+(4,5) cost 1 demand 2 profit 3.00
+(4,10) cost 3 demand 7 profit 16.00
+(5,6) cost 6 demand 13 profit 19.00
+(5,11) cost 4 demand 8 profit 16.00
+(6,12) cost 3 demand 8 profit 9.00
+(7,8) cost 2 demand 3 profit 9.00
+(7,13) cost 7 demand 14 profit 23.00
+(8,9) cost 2 demand 3 profit 3.00
+(9,10) cost 3 demand 6 profit 17.00
+(9,14) cost 5 demand 10 profit 20.00
+(10,11) cost 4 demand 7 profit 20.00
+(10,15) cost 1 demand 3 profit 6.00
+(11,12) cost 5 demand 9 profit 12.00
+(11,16) cost 6 demand 12 profit 31.00
+(11,17) cost 2 demand 4 profit 6.00
+(13,14) cost 8 demand 16 profit 43.00
+(13,23) cost 7 demand 14 profit 29.00
+(14,15) cost 3 demand 8 profit 9.00
+(14,23) cost 3 demand 7 profit 11.00
+(14,24) cost 4 demand 13 profit 24.00
+(15,16) cost 3 demand 6 profit 7.00
+(15,25) cost 9 demand 19 profit 20.00
+(16,17) cost 9 demand 15 profit 44.00
+(16,19) cost 1 demand 2 profit 2.00
+(17,18) cost 4 demand 7 profit 10.00
+(17,20) cost 2 demand 4 profit 6.00
+(18,22) cost 6 demand 14 profit 34.00
+(19,20) cost 3 demand 4 profit 6.00
+(19,26) cost 8 demand 10 profit 27.00
+(20,21) cost 5 demand 10 profit 20.00
+(20,27) cost 5 demand 8 profit 23.00
+(21,22) cost 4 demand 9 profit 11.00
+(21,27) cost 1 demand 3 profit 5.00
+(22,28) cost 5 demand 12 profit 22.00
+(23,24) cost 3 demand 4 profit 12.00
+(23,29) cost 5 demand 14 profit 17.00
+(24,25) cost 4 demand 7 profit 7.00
+(24,30) cost 8 demand 12 profit 21.00
+(25,26) cost 6 demand 9 profit 12.00
+(25,31) cost 7 demand 11 profit 27.00
+(26,27) cost 7 demand 11 profit 25.00
+(26,32) cost 7 demand 13 profit 26.00
+(27,28) cost 7 demand 13 profit 25.00
+(27,32) cost 3 demand 8 profit 18.00
+(27,33) cost 5 demand 9 profit 15.00
+(29,30) cost 3 demand 6 profit 14.00
+(29,34) cost 14 demand 17 profit 47.00
+(30,31) cost 12 demand 19 profit 44.00
+(31,32) cost 5 demand 9 profit 17.00
+(31,35) cost 4 demand 7 profit 13.00
+(32,36) cost 10 demand 13 profit 20.00
+(33,37) cost 2 demand 4 profit 6.00
+(34,35) cost 2 demand 4 profit 8.00
+(34,38) cost 7 demand 12 profit 23.00
+(35,36) cost 8 demand 12 profit 15.00
+(35,39) cost 10 demand 14 profit 40.00
+(36,37) cost 8 demand 12 profit 27.00
+(36,39) cost 3 demand 9 profit 8.00
+(36,40) cost 4 demand 7 profit 12.00
+(37,41) cost 5 demand 9 profit 19.00
+(38,39) cost 9 demand 10 profit 34.00
+(39,40) cost 2 demand 3 profit 8.00
+(40,41) cost 4 demand 4 profit 5.00
+DEPOT: 1

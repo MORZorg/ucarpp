@@ -1,0 +1,13 @@
+NUMBER: test1A.dat
+NUMBER OF VERTICES: 6
+NUMBER OF EDGES: 6
+CAPACITY: 10
+TIME LIMIT: 25
+LIST OF EDGES: 
+(1,4) cost 7 demand 3 profit 2.00
+(2,4) cost 3 demand 3 profit 4.00
+(3,4) cost 5 demand 2 profit 3.00
+(3,5) cost 4 demand 2 profit 3.00
+(5,6) cost 8 demand 2 profit 5.00
+(6,1) cost 2 demand 1 profit 3.00
+DEPOT: 1
