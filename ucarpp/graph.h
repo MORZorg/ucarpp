@@ -34,9 +34,10 @@ private:
 	uint V;
 	// Matrice dei Costi
 	uint** costs;
+	// Vettore dei Lati
+	vector<Edge*> edges;
 	// Lista di Adiacenza
-	vector<Edge>* adjList;
-	vector<Edge> edges;
+	vector<Edge*>* adjList;
 	
 public:
 	Graph( int );
@@ -45,10 +46,11 @@ public:
 	void completeCosts();
 	
 	uint getCost( uint, uint ) const;
-	uint getCost( Edge ) const;
-	vector<Edge> getEdges() const;
+	uint getCost( const Edge* ) const;
 	
-	bool compareEdges( const Edge&, const Edge& ) const;
+	Edge* getEdge( uint, uint ) const;
+	vector<Edge*> getEdges() const;
+	vector<Edge*> getAdjList( uint ) const;
 };
 
 #endif /* defined(__ucarpp__graph__) */

@@ -15,6 +15,7 @@
 #include <boost/regex.hpp>
 
 #include "graph.h"
+#include "solver.h"
 
 using namespace std;
 using namespace boost;

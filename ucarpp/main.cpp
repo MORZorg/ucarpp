@@ -152,9 +152,16 @@ int main( int argc, const char * argv[] )
 	for ( int i = 0; i < V; i++ )
 	{
 		for ( int j = 0; j < V; j++ )
-			cerr << grafo.getCost( i, j ) << "\t";
+		{
+			Edge* edge = grafo.getEdge( i, j );
+			cerr << grafo.getCost( i, j ) << " (" << edge->getProfit() << ", " << edge->getDemand() << ") \t";
+		}
 		cerr << endl;
 	}
+	
+	// Creo il risolutore
+	Solver solver( grafo, depot, M );
+	solver.solve();
 	
     return 0;
 }

@@ -15,6 +15,7 @@
 #include <iostream>
 #endif
 
+typedef unsigned int uint;
 
 class Solution
 {
@@ -28,24 +29,29 @@ class Solver
 {
 private:
 	Graph graph;
-	int M;
+	uint M,
+		 depot;
 	Solution* currentSolution;
 	
-	void createBaseSolution();
+	Solution createBaseSolution();
 	
 	
 	struct compareRatioDescending
 	{
-		bool operator()( const Edge& lhs, const Edge& rhs ) const
+		const Graph* graph;
+		bool operator()( const Edge* lhs, const Edge* rhs ) const
 		{
-			if ( lhs.getProfitDemandRatio() == rhs.getProfitDemandRatio() )
-				return graph.getCost( lhs ) > graph.getCost( rhs );
+			if ( lhs->getProfitDemandRatio() == rhs->getProfitDemandRatio() )
+				return graph->getCost( lhs ) > graph->getCost( rhs );
 			
-			return lhs.getProfit() > rhs.getProfit();
+			return lhs->getProfitDemandRatio() > rhs->getProfitDemandRatio();
 		}
-	} compareEdges;
+	};
+	compareRatioDescending greedyCompare = { &graph };
 public:
-	Solver( Graph, int );
+	Solver( Graph, uint, uint );
+	
+	Solution solve();
 };
 
 #endif /* defined(__ucarpp__solver__) */

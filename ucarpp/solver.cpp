@@ -10,21 +10,33 @@
 
 /*** Solver ***/
 
-Solver::Solver( Graph graph, int M ):
-	graph( graph ), M( M )
+Solver::Solver( Graph graph, uint depot, uint M ):
+	graph( graph ), M( M ), depot( depot )
 {
 	currentSolution = (Solution*)calloc( M, sizeof( Solution ) );
 	for ( int i = 0; i < M; i++ )
 		currentSolution[ i ] = *new Solution();
 }
 
-void Solver::createBaseSolution()
+Solution Solver::createBaseSolution()
 {
-	// Ordino i lati
-	vector<Edge> edges = graph.getEdges();
-	sort( edges.begin(), edges.end(), compareEdges );
+	uint currentNode = depot;
 	
-	// 
+	// Ordino i lati uscenti dal nodo corrente
+	vector<Edge*> edges = graph.getAdjList( currentNode );
+	sort( edges.begin(), edges.end(), greedyCompare );
+	
+	//
+	for ( Edge* edge : edges )
+		cout << edge->getSrc() + 1 << " " << edge->getDst() + 1 << ": "
+			 << edge->getProfitDemandRatio() << endl;
+	
+	return *new Solution();
+}
+
+Solution Solver::solve()
+{
+	return createBaseSolution();
 }
 
 

@@ -21,11 +21,11 @@ Graph::Graph( int V ):
 	for ( int i = 0; i < V; i++ )
 		this->costs[ i ] = (uint*)calloc( V, sizeof( uint ) );
 	
-	this->edges = *new vector<Edge>();
+	this->edges = *new vector<Edge*>();
 	
-	this->adjList = (vector<Edge>*)calloc( V, sizeof( vector<Edge> ) );
+	this->adjList = (vector<Edge*>*)calloc( V, sizeof( vector<Edge*> ) );
 	for ( int i = 0; i < V; i++ )
-		this->adjList[ i ] = *new vector<Edge>();
+		this->adjList[ i ] = *new vector<Edge*>();
 }
 
 /**
@@ -40,10 +40,9 @@ Graph::Graph( int V ):
 void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 {
 	// Creo un nuovo lato e lo aggiungo alla lista in entrambe le direzioni.
-	ProfitableEdge newEdge( src, dst, demand, profit );
-	edges.push_back( newEdge );
-	adjList[ src ].push_back( newEdge );
-	adjList[ dst ].push_back( newEdge );
+	edges.push_back( new ProfitableEdge( src, dst, demand, profit ) );
+	adjList[ src ].push_back( edges.back() );
+	adjList[ dst ].push_back( edges.back() );
 	
 	// Aggiungo il costo del lato alla matrice dei costi.
 	costs[ src ][ dst ] = costs[ dst ][ src ] = cost;
@@ -99,12 +98,12 @@ void Graph::completeCosts()
 			
 			bool found = false;
 			uint v, alt;
-			for ( vector<Edge>::iterator it = adjList[ u ].begin(); it != adjList[ u ].end(); it++ )
+			for ( vector<Edge*>::iterator it = adjList[ u ].begin(); it != adjList[ u ].end(); it++ )
 			{
-				v = it->getDst( u );
+				v = (*it)->getDst( u );
 				
 				// Uso i getter per essere sicuro che il costo sia già definito ( src < dst )
-				alt = d[ u ] + this->costs[ it->getSrc() ][ it->getDst() ];
+				alt = d[ u ] + this->costs[ (*it)->getSrc() ][ (*it)->getDst() ];
 				if ( alt < d[ v ] )
 				{
 					d[ v ] = alt;
@@ -122,10 +121,9 @@ void Graph::completeCosts()
 			// Se necessario, creo il lato associato a ( source, u ) e lo aggiungo alla lista
 			if ( !found )
 			{
-				Edge newEdge( source, u );
-				edges.push_back( newEdge );
-				adjList[ source ].push_back( newEdge );
-				adjList[ u ].push_back( newEdge );
+				edges.push_back( new Edge( source, u ) );
+				adjList[ source ].push_back( edges.back() );
+				adjList[ u ].push_back( edges.back() );
 			}
 		}
 	}
@@ -138,21 +136,29 @@ uint Graph::getCost( uint src, uint dst ) const
 }
 
 // Getter della matrice dei costi
-uint Graph::getCost( Edge edge ) const
+uint Graph::getCost( const Edge* edge ) const
 {
-	return getCost( edge.getSrc(), edge.getDst() );
+	return getCost( edge->getSrc(), edge->getDst() );
 }
 
-// Getter della lista di adiacenza
-vector<Edge> Graph::getEdges() const
+// Getter della matrice dei costi
+Edge* Graph::getEdge( uint src, uint dst ) const
+{
+	for ( int i = 0; i < adjList[ src ].size(); i++ )
+		if ( adjList[ src ][ i ]->getDst( src ) == dst )
+			return adjList[ src ][ i ];
+	
+	throw;
+}
+
+// Getter della lista di nodi
+vector<Edge*> Graph::getEdges() const
 {
 	return edges;
 }
 
-bool Graph::compareEdges( const Edge& lhs, const Edge& rhs ) const
+// Getter della lista di adiacenza di un nodo
+vector<Edge*> Graph::getAdjList( uint src ) const
 {
-	if ( lhs.getProfitDemandRatio() == rhs.getProfitDemandRatio() )
-		return ( this->getCost( lhs ) > this->getCost( rhs ) );
-	else
-		return ( lhs.getProfitDemandRatio() > lhs.getProfitDemandRatio() );
+	return adjList[ src ];
 }

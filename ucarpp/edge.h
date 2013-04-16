@@ -24,8 +24,9 @@ public:
 	uint getSrc() const;
 	uint getDst() const;
 	uint getDst( uint ) const;
-	uint getDemand() const;
-	float getProfit() const;
+	
+	virtual uint getDemand() const;
+	virtual float getProfit() const;
 	
 	float getProfitDemandRatio() const;
 };
