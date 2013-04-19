@@ -119,7 +119,8 @@ void Graph::completeCosts()
 			}
 			
 			// Se necessario, creo il lato associato a ( source, u ) e lo aggiungo alla lista
-			if ( !found )
+			// Evito di creare autoarchi
+			if ( !found && source != u )
 			{
 				edges.push_back( new Edge( source, u ) );
 				adjList[ source ].push_back( edges.back() );

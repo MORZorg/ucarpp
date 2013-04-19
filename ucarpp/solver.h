@@ -20,9 +20,11 @@ typedef unsigned int uint;
 class Solution
 {
 public:
-	vector<Edge> path;
+	vector<Edge*> path;
 	
 	Solution();
+	
+	void addEdge( Edge* );
 };
 
 class Solver

@@ -26,10 +26,10 @@ Solution Solver::createBaseSolution()
 	vector<Edge*> edges = graph.getAdjList( currentNode );
 	sort( edges.begin(), edges.end(), greedyCompare );
 	
-	//
-	for ( Edge* edge : edges )
-		cout << edge->getSrc() + 1 << " " << edge->getDst() + 1 << ": "
-			 << edge->getProfitDemandRatio() << endl;
+	//for ( Edge* edge : edges )
+	for ( int i = 0; i < edges.size(); i++ )
+		cout << edges[ i ]->getSrc() + 1 << " " << edges[ i ]->getDst() + 1 << ": "
+			 << edges[ i ]->getProfitDemandRatio() << endl;
 	
 	return *new Solution();
 }
@@ -43,5 +43,10 @@ Solution Solver::solve()
 /*** Solution ***/
 Solution::Solution()
 {
-	path = *new vector<Edge>();
+	path = *new vector<Edge*>();
+}
+
+void Solution::addEdge( Edge* edge )
+{
+	path.push_back( edge );
 }

@@ -19,15 +19,16 @@ int main( int argc, const char * argv[] )
 	}
 	
 	int V = 0,
-		M = 0,
+		M = 1,
 		L = 0,
 		Q = 0,
 		tMax = 0,
 		depot = 0;
 	if ( argc > 2 )
-		M = stoi( argv[ 2 ] );
-	else
-		M = 1;
+	{
+		stringstream ss( argv[ 2 ] );
+		ss >> M;
+	}
 	
 	/** Lettura dei dati in ingresso */
 	ifstream in;
@@ -153,6 +154,8 @@ int main( int argc, const char * argv[] )
 	{
 		for ( int j = 0; j < V; j++ )
 		{
+			if ( i == j )
+				continue;
 			Edge* edge = grafo.getEdge( i, j );
 			cerr << grafo.getCost( i, j ) << " (" << edge->getProfit() << ", " << edge->getDemand() << ") \t";
 		}
