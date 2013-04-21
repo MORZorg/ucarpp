@@ -9,7 +9,7 @@
 #ifndef __ucarpp__edge__
 #define __ucarpp__edge__
 
-typedef unsigned int uint;
+#include "headings.h"
 
 class Edge
 {
@@ -20,6 +20,10 @@ private:
 	
 public:
 	Edge( uint, uint );
+	
+	uint setTaken();
+	uint unsetTaken();
+	uint getTaken() const;
 	
 	uint getSrc() const;
 	uint getDst() const;

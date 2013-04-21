@@ -14,10 +14,10 @@
 
 #include <boost/regex.hpp>
 
+#include "headings.h"
 #include "graph.h"
 #include "solver.h"
 
-using namespace std;
 using namespace boost;
 
 #endif /* defined(__ucarpp__main__) */

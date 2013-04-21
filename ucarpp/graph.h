@@ -16,16 +16,10 @@
 
 #include <boost/heap/fibonacci_heap.hpp>
 
-#ifdef DEBUG
-#include <iostream>
-#endif
-
+#include "headings.h"
 #include "edge.h"
 
-using namespace std;
 using namespace boost;
-
-typedef unsigned int uint;
 
 class Graph
 {

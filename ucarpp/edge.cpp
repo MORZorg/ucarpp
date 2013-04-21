@@ -25,6 +25,36 @@ Edge::Edge( uint src, uint dst ):
 	taken( 0 ) {}
 
 /**
+ * Segna il nodo come preso, incrementando il contatore del numero di volte per cui il nodo è stato preso.
+ */
+uint Edge::setTaken()
+{
+	return ++taken;
+}
+
+/**
+ * Decrementa il contatore del numero di volte per cui il nodo è stato preso fino a renderlo non preso (valore 0);
+ */
+uint Edge::unsetTaken()
+{
+	if ( taken > 0 )
+		return --taken;
+	
+	return 0;
+}
+
+/**
+ * Getter del numero di volte per cui il lato è stato preso.
+ *
+ * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
+ */
+uint Edge::getTaken() const
+{
+	return taken;
+}
+
+
+/**
  * Ritorna il nodo destinazione a partire da un dato nodo di partenza.
  *
  * @param src	il nodo di partenza di cui si vuole sapere la destinazione

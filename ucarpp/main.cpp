@@ -163,7 +163,7 @@ int main( int argc, const char * argv[] )
 	}
 	
 	// Creo il risolutore
-	Solver solver( grafo, depot, M );
+	Solver solver( grafo, depot, M, Q, tMax );
 	solver.solve();
 	
     return 0;

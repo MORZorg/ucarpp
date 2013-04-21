@@ -9,30 +9,36 @@
 #ifndef __ucarpp__solver__
 #define __ucarpp__solver__
 
+#include <unordered_set>
+#include <sstream>
+
+#include "headings.h"
 #include "graph.h"
-
-#ifdef DEBUG
-#include <iostream>
-#endif
-
-typedef unsigned int uint;
 
 class Solution
 {
 public:
-	vector<Edge*> path;
+	unordered_set<Edge*> path;
 	
 	Solution();
 	
 	void addEdge( Edge* );
+	void removeEdge( Edge* );
+	
+	uint getCost( Graph );
+	uint getDemand();
+
+	string toString();
 };
 
 class Solver
 {
 private:
 	Graph graph;
-	uint M,
-		 depot;
+	uint depot,
+		 M,
+		 Q,
+		 tMax;
 	Solution* currentSolution;
 	
 	Solution createBaseSolution();
@@ -43,17 +49,22 @@ private:
 		const Graph* graph;
 		bool operator()( const Edge* lhs, const Edge* rhs ) const
 		{
-			if ( lhs->getProfitDemandRatio() == rhs->getProfitDemandRatio() )
+			// Ratio se lato non preso, -1 altrimenti
+			float lhsRatio = ( lhs->getProfitDemandRatio() + 1 ) * ( lhs->getTaken() == 0 ) - 1,
+				  rhsRatio = ( rhs->getProfitDemandRatio() + 1 ) * ( rhs->getTaken() == 0 ) - 1;
+			if ( lhsRatio == rhsRatio )
 				return graph->getCost( lhs ) > graph->getCost( rhs );
 			
-			return lhs->getProfitDemandRatio() > rhs->getProfitDemandRatio();
+			return lhsRatio > rhsRatio;
 		}
 	};
 	compareRatioDescending greedyCompare = { &graph };
 public:
-	Solver( Graph, uint, uint );
+	Solver( Graph, uint, uint, uint, uint );
 	
 	Solution solve();
+	
+	bool isFeasible( Solution );
 };
 
 #endif /* defined(__ucarpp__solver__) */

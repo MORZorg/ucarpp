@@ -33,6 +33,7 @@
 		C20DCAAF17196C02005F00AD /* solver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = solver.h; sourceTree = "<group>"; };
 		C2332691170E297700A22DF8 /* edge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = edge.cpp; sourceTree = "<group>"; };
 		C2332692170E297700A22DF8 /* edge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = edge.h; sourceTree = "<group>"; };
+		C24563F81724179F00CC7B49 /* headings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = headings.h; sourceTree = "<group>"; };
 		C27D9D2C17008834006211DE /* ucarpp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ucarpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		C27D9D2F17008834006211DE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C27D9D3117008834006211DE /* ucarpp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ucarpp.1; sourceTree = "<group>"; };
@@ -73,6 +74,7 @@
 				C27D9D4317009912006211DE /* graph.h */,
 				C27D9D38170089D4006211DE /* main.h */,
 				C20DCAAF17196C02005F00AD /* solver.h */,
+				C24563F81724179F00CC7B49 /* headings.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
