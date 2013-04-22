@@ -9,16 +9,19 @@
 #ifndef __ucarpp__solver__
 #define __ucarpp__solver__
 
+#define DEBUG
+
 #include <unordered_set>
 #include <sstream>
 
 #include "headings.h"
+#include "edge.h"
 #include "graph.h"
 
 class Solution
 {
 public:
-	unordered_set<Edge*> path;
+	std::unordered_set<Edge*> path;
 	
 	Solution();
 	
@@ -58,7 +61,7 @@ private:
 			return lhsRatio > rhsRatio;
 		}
 	};
-	compareRatioDescending greedyCompare = { &graph };
+	compareRatioDescending greedyCompare;
 public:
 	Solver( Graph, uint, uint, uint, uint );
 	

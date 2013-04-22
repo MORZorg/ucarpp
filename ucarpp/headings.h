@@ -15,6 +15,7 @@
 
 typedef unsigned int uint;
 
+// Da spostare in ogni file .cpp
 using namespace std;
 
 #endif

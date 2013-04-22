@@ -14,12 +14,12 @@
 #include <algorithm>
 #include <climits>
 
-#include <boost/heap/fibonacci_heap.hpp>
+//#include <boost/heap/fibonacci_heap.hpp>
 
 #include "headings.h"
 #include "edge.h"
 
-using namespace boost;
+//using namespace boost;
 
 class Graph
 {

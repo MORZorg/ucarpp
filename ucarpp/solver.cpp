@@ -8,11 +8,15 @@
 
 #include "solver.h"
 
+using namespace std;
+
 /*** Solver ***/
 
 Solver::Solver( Graph graph, uint depot, uint M, uint Q, uint tMax ):
 	graph( graph ), depot( depot ), M( M ), Q( Q ), tMax( tMax )
 {
+	greedyCompare = { &graph };
+
 	currentSolution = (Solution*)calloc( M, sizeof( Solution ) );
 	for ( int i = 0; i < M; i++ )
 		currentSolution[ i ] = *new Solution();
