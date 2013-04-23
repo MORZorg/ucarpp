@@ -10,6 +10,8 @@
 
 #include "main.h"
 
+using namespace std;
+
 int main( int argc, const char * argv[] )
 {
 	if ( argc == 0 )
@@ -26,8 +28,9 @@ int main( int argc, const char * argv[] )
 		depot = 0;
 	if ( argc > 2 )
 	{
-		stringstream ss( argv[ 2 ] );
-		ss >> M;
+		//stringstream ss( argv[ 2 ] );
+		//ss >> M;
+		M = stoi( argv[ 2 ] );
 	}
 	
 	/** Lettura dei dati in ingresso */
@@ -49,8 +52,9 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		stringstream ss( sm[ 1 ] );
-		ss >> V;
+		//stringstream ss( sm[ 1 ] );
+		//ss >> V;
+		V = stoi( sm[ 1 ] );
 		
 		cerr << "Vertici: " << V << endl;
 	}
@@ -61,8 +65,9 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		stringstream ss( sm[ 1 ] );
-		ss >> L;
+		//stringstream ss( sm[ 1 ] );
+		//ss >> L;
+		L = stoi( sm[ 1 ] );
 		
 		cerr << "Lati: " << L << endl;
 	}
@@ -73,8 +78,9 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		stringstream ss( sm[ 1 ] );
-		ss >> Q;
+		//stringstream ss( sm[ 1 ] );
+		//ss >> Q;
+		Q = stoi( sm[ 1 ] );
 		
 		cerr << "Capacita`: " << Q << endl;
 	}
@@ -85,8 +91,9 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		stringstream ss( sm[ 1 ] );
-		ss >> tMax;
+		//stringstream ss( sm[ 1 ] );
+		//ss >> tMax;
+		tMax = stoi( sm[ 1 ] );
 		
 		cerr << "Tempo disponibile: " << tMax << endl;
 	}
@@ -113,18 +120,27 @@ int main( int argc, const char * argv[] )
 		else
 		{
 			// Pessimo...
-			stringstream ss1( sm[ 1 ] );
-			ss1 >> src;
-			src--;
-			stringstream ss2( sm[ 2 ] );
-			ss2 >> dst;
-			dst--;
-			stringstream ss3( sm[ 3 ] );
-			ss3 >> t;
-			stringstream ss4( sm[ 4 ] );
-			ss4 >> d;
-			stringstream ss5( sm[ 5 ] );
-			ss5 >> p;
+			//stringstream ss1( sm[ 1 ] );
+			//ss1 >> src;
+			//src--;
+			src = stoi( sm [ 1 ] ) - 1;
+
+			//stringstream ss2( sm[ 2 ] );
+			//ss2 >> dst;
+			//dst--;
+			dst = stoi( sm[ 2 ] ) - 1;
+
+			//stringstream ss3( sm[ 3 ] );
+			//ss3 >> t;
+			t = stoi( sm[ 3 ] );
+
+			//stringstream ss4( sm[ 4 ] );
+			//ss4 >> d;
+			d = stoi( sm[ 4 ] );
+
+			//stringstream ss5( sm[ 5 ] );
+			//ss5 >> p;
+			p = stoi( sm[ 5 ] );
 			
 			grafo.addEdge( src, dst, t, d, p );
 			
@@ -136,10 +152,11 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		stringstream ss( sm[ 1 ] );
-		ss >> depot;
-		depot--;
-		
+		//stringstream ss( sm[ 1 ] );
+		//ss >> depot;
+		//depot--;
+		depot = stoi( sm[ 1 ] ) - 1;
+
 		cerr << "Deposito: " << depot << endl;
 	}
 	else
@@ -148,14 +165,17 @@ int main( int argc, const char * argv[] )
 	in.close();
 	
 	// Completo la magliatura del grafo
-	cerr << "Matrice dei costi: " << endl;
 	grafo.completeCosts();
+	cerr << "Matrice dei costi: C ( P, D ) " << endl;
 	for ( int i = 0; i < V; i++ )
 	{
 		for ( int j = 0; j < V; j++ )
 		{
 			if ( i == j )
+			{
+				cerr << "auto\t\t";
 				continue;
+			}
 			Edge* edge = grafo.getEdge( i, j );
 			cerr << grafo.getCost( i, j ) << " (" << edge->getProfit() << ", " << edge->getDemand() << ") \t";
 		}

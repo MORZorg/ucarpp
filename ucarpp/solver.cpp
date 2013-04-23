@@ -24,6 +24,7 @@ Solver::Solver( Graph graph, uint depot, uint M, uint Q, uint tMax ):
 
 Solution Solver::createBaseSolution()
 {
+	cerr << endl << "Stampo la soluzione di base:" << endl;
 	Solution baseSolution;
 	uint currentNode = depot;
 	
@@ -36,33 +37,35 @@ Solution Solver::createBaseSolution()
 		edges = graph.getAdjList( currentNode );
 		sort( edges.begin(), edges.end(), greedyCompare );
 		
-		//for ( Edge* edge : edges )
-		for ( int i = 0; i < edges.size(); i++ )
-			cout << edges[ i ]->getSrc() + 1 << " " << edges[ i ]->getDst() + 1 << ": "
-				 << edges[ i ]->getProfitDemandRatio() << endl;
-		
+		/*
+		for ( Edge* edge : edges )
+			cerr << edge->getSrc() + 1 << " " << edge->getDst() + 1 << ": "
+				 << edge->getProfitDemandRatio() << endl;
+		*/
+
 		// Prendo il lato ammissibile migliore, se esiste
 		full = true;
-		for ( int i = 0; i < edges.size(); i++ )
+		//for ( int i = 0; i < edges.size(); i++ )
+		for( Edge* edge : edges )
 		{
-			baseSolution.addEdge( edges[ i ] );
+			baseSolution.addEdge( edge );
 			if ( baseSolution.getDemand() < Q &&
 		         ( baseSolution.getCost( graph ) + graph.getCost( currentNode, depot ) ) < tMax )
 			{
-				currentNode = edges[ i ]->getDst( currentNode );
+				currentNode = edge->getDst( currentNode );
 				full = false;
-				cerr << "Preso " << currentNode + 1 << endl;
+				fprintf( stderr, "Preso %d (%.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
 				break;
 			}
 			else
-				baseSolution.removeEdge( edges[ i ] );
+				baseSolution.removeEdge( edge );
 		}
 	}
 	baseSolution.addEdge( graph.getEdge( currentNode, depot ) );
 	
 	cerr << "Soluzione finale: " << baseSolution.toString() << endl;
 	
-	return *new Solution();
+	return baseSolution;
 }
 
 Solution Solver::solve()

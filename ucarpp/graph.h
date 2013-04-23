@@ -14,12 +14,8 @@
 #include <algorithm>
 #include <climits>
 
-//#include <boost/heap/fibonacci_heap.hpp>
-
 #include "headings.h"
 #include "edge.h"
-
-//using namespace boost;
 
 class Graph
 {
@@ -29,9 +25,9 @@ private:
 	// Matrice dei Costi
 	uint** costs;
 	// Vettore dei Lati
-	vector<Edge*> edges;
+	std::vector<Edge*> edges;
 	// Lista di Adiacenza
-	vector<Edge*>* adjList;
+	std::vector<Edge*>* adjList;
 	
 public:
 	Graph( int );
@@ -43,8 +39,8 @@ public:
 	uint getCost( const Edge* ) const;
 	
 	Edge* getEdge( uint, uint ) const;
-	vector<Edge*> getEdges() const;
-	vector<Edge*> getAdjList( uint ) const;
+	std::vector<Edge*> getEdges() const;
+	std::vector<Edge*> getAdjList( uint ) const;
 };
 
 #endif /* defined(__ucarpp__graph__) */

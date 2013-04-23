@@ -53,14 +53,16 @@ private:
 		bool operator()( const Edge* lhs, const Edge* rhs ) const
 		{
 			// Ratio se lato non preso, -1 altrimenti
-			float lhsRatio = ( lhs->getProfitDemandRatio() + 1 ) * ( lhs->getTaken() == 0 ) - 1,
-				  rhsRatio = ( rhs->getProfitDemandRatio() + 1 ) * ( rhs->getTaken() == 0 ) - 1;
+			float lhsRatio = ( lhs->getTaken() == 0 ? lhs->getProfitDemandRatio() : -1 ),
+				  rhsRatio = ( rhs->getTaken() == 0 ? rhs->getProfitDemandRatio() : -1 );
+
 			if ( lhsRatio == rhsRatio )
 				return graph->getCost( lhs ) > graph->getCost( rhs );
 			
 			return lhsRatio > rhsRatio;
 		}
 	};
+
 	compareRatioDescending greedyCompare;
 public:
 	Solver( Graph, uint, uint, uint, uint );
