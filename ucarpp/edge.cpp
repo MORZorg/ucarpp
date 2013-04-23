@@ -28,6 +28,8 @@ Edge::Edge( uint src, uint dst ):
 
 /**
  * Segna il nodo come preso, incrementando il contatore del numero di volte per cui il nodo è stato preso.
+ *
+ * @return	il numero di volte per cui il lato è stato preso.
  */
 uint Edge::setTaken()
 {
@@ -36,6 +38,8 @@ uint Edge::setTaken()
 
 /**
  * Decrementa il contatore del numero di volte per cui il nodo è stato preso fino a renderlo non preso (valore 0);
+ *
+ * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
  */
 uint Edge::unsetTaken()
 {

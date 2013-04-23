@@ -9,7 +9,9 @@
 #ifndef __ucarpp__solver__
 #define __ucarpp__solver__
 
+#ifndef DEBUG
 #define DEBUG
+#endif
 
 #include <unordered_set>
 #include <sstream>
@@ -50,6 +52,9 @@ private:
 	struct compareRatioDescending
 	{
 		const Graph* graph;
+		
+		compareRatioDescending( Graph* g ): graph( g ) {};
+		
 		bool operator()( const Edge* lhs, const Edge* rhs ) const
 		{
 			// Ratio se lato non preso, -1 altrimenti
@@ -67,7 +72,7 @@ private:
 public:
 	Solver( Graph, uint, uint, uint, uint );
 	
-	Solution solve();
+	Solution* solve();
 	
 	bool isFeasible( Solution );
 };

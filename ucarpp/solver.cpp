@@ -13,10 +13,9 @@ using namespace std;
 /*** Solver ***/
 
 Solver::Solver( Graph graph, uint depot, uint M, uint Q, uint tMax ):
-	graph( graph ), depot( depot ), M( M ), Q( Q ), tMax( tMax )
+	graph( graph ), depot( depot ), M( M ), Q( Q ), tMax( tMax ),
+	greedyCompare( &graph )
 {
-	greedyCompare = { &graph };
-
 	currentSolution = (Solution*)calloc( M, sizeof( Solution ) );
 	for ( int i = 0; i < M; i++ )
 		currentSolution[ i ] = *new Solution();
@@ -68,9 +67,12 @@ Solution Solver::createBaseSolution()
 	return baseSolution;
 }
 
-Solution Solver::solve()
+Solution* Solver::solve()
 {
-	return createBaseSolution();
+	for ( int i = 0; i < M; i++ )
+		currentSolution[ i ] = createBaseSolution();
+	
+	return currentSolution;
 }
 
 bool Solver::isFeasible( Solution s )
