@@ -18,6 +18,4 @@
 #include "graph.h"
 #include "solver.h"
 
-using namespace boost;
-
 #endif /* defined(__ucarpp__main__) */

@@ -11,6 +11,7 @@
 #include "main.h"
 
 using namespace std;
+using namespace boost;
 
 int main( int argc, const char * argv[] )
 {

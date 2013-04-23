@@ -31,7 +31,7 @@ public:
 	uint getCost( Graph );
 	uint getDemand();
 
-	string toString();
+	std::string toString();
 };
 
 class Solver
