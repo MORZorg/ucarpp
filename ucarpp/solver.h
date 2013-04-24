@@ -13,28 +13,13 @@
 #define DEBUG
 #endif
 
-#include <unordered_set>
+//#include <unordered_set>
+#include <list>
 #include <sstream>
 
 #include "headings.h"
 #include "edge.h"
 #include "graph.h"
-
-class Solution
-{
-public:
-	std::unordered_set<Edge*> path;
-	
-	Solution();
-	
-	void addEdge( Edge* );
-	void removeEdge( Edge* );
-	
-	uint getCost( Graph );
-	uint getDemand();
-
-	std::string toString();
-};
 
 class Solver
 {
@@ -47,7 +32,6 @@ private:
 	Solution* currentSolution;
 	
 	Solution createBaseSolution();
-	
 	
 	struct compareRatioDescending
 	{
@@ -75,6 +59,25 @@ public:
 	Solution* solve();
 	
 	bool isFeasible( Solution );
+};
+
+class Solution
+{
+public:
+//	std::unordered_set<Edge*> path;
+	std::list<Edge*> path;
+	
+	Solution();
+	
+	void addEdge( Edge* );
+	void removeEdge( Edge* );
+
+	int size();
+	
+	uint getCost( Graph );
+	uint getDemand();
+
+	std::string toString();
 };
 
 #endif /* defined(__ucarpp__solver__) */

@@ -99,14 +99,14 @@ uint Edge::getDst( uint src ) const
 /**
  * Getter per la domanda associata all'arco.
  *
- * @return	0, essendo l'arco prido di domanda.
+ * @return	0, essendo l'arco privo di domanda.
  */
  uint Edge::getDemand() const { return 0; }
 
 /**
  * Getter per il profitto associato all'arco.
  *
- * @return	0, essendo l'arco prido di profitto.
+ * @return	0, essendo l'arco privo di profitto.
  */
 float Edge::getProfit() const { return 0; }
 

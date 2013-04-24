@@ -18,7 +18,7 @@ Solver::Solver( Graph graph, uint depot, uint M, uint Q, uint tMax ):
 {
 	currentSolution = (Solution*)calloc( M, sizeof( Solution ) );
 	for ( int i = 0; i < M; i++ )
-		currentSolution[ i ] = *new Solution();
+		currentSolution[ i ] = createBaseSolution();
 }
 
 Solution Solver::createBaseSolution()
@@ -67,13 +67,17 @@ Solution Solver::createBaseSolution()
 	return baseSolution;
 }
 
+
 Solution* Solver::solve()
 {
+	/*
 	for ( int i = 0; i < M; i++ )
 		currentSolution[ i ] = createBaseSolution();
+	*/
 	
 	return currentSolution;
 }
+
 
 bool Solver::isFeasible( Solution s )
 {
@@ -84,29 +88,45 @@ bool Solver::isFeasible( Solution s )
 /*** Solution ***/
 Solution::Solution()
 {
-	path = *new unordered_set<Edge*>();
+	/*
+	 * TODO: Rendere profitto e domanda variabili associate ad ogni soluzione,
+	 * da calcolare ogni volta che la soluzione viene modificata.
+	 */
+	path = *new list<Edge*>();
 }
 
-void Solution::addEdge( Edge* edge )
+void Solution::addEdge( Edge* edge, int index = path.size() )
 {
 	edge->setTaken();
-	path.insert( edge );
+	// Creo l'iteratore alla posizione richiesta
+	list<Edge*>::iterator it = path.begin() + index;
+	path.insert( it, edge );
 }
 
-void Solution::removeEdge( Edge* edge )
+void Solution::removeEdge( int index )
 {
-	unordered_set<Edge*>::iterator it = path.find( edge );
+	list<Edge*>::iterator it = path.begin() + index;
 	
+	(*it)->unsetTaken();
+	path.erase( it );
+
+	/*
 	if ( it != path.end() )
 		if ( (*it)->unsetTaken() == 0 )
 			path.erase( it );
+	*/
+}
+
+int Solution::size()
+{
+	return path.size();
 }
 
 uint Solution::getCost( Graph g )
 {
 	uint result = 0;
-	for ( unordered_set<Edge*>::iterator it = path.begin(); it != path.end(); it++ )
-		result += g.getCost( *it ) * (*it)->getTaken();
+	for ( list<Edge*>::iterator it = path.begin(); it != path.end(); it++ )
+		result += g.getCost( *it );
 	
 	return result;
 }
@@ -114,7 +134,7 @@ uint Solution::getCost( Graph g )
 uint Solution::getDemand()
 {
 	uint result = 0;
-	for ( unordered_set<Edge*>::iterator it = path.begin(); it != path.end(); it++ )
+	for ( list<Edge*>::iterator it = path.begin(); it != path.end(); it++ )
 		result += (*it)->getDemand();
 	
 	return result;
