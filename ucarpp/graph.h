@@ -17,30 +17,33 @@
 #include "headings.h"
 #include "edge.h"
 
-class Graph
+namespace model
 {
-private:
-	// Numero di Vertici
-	uint V;
-	// Matrice dei Costi
-	uint** costs;
-	// Vettore dei Lati
-	std::vector<Edge*> edges;
-	// Lista di Adiacenza
-	std::vector<Edge*>* adjList;
-	
-public:
-	Graph( int );
-	
-	void addEdge( uint, uint, uint, uint, float );
-	void completeCosts();
-	
-	uint getCost( uint, uint ) const;
-	uint getCost( const Edge* ) const;
-	
-	Edge* getEdge( uint, uint ) const;
-	std::vector<Edge*> getEdges() const;
-	std::vector<Edge*> getAdjList( uint ) const;
-};
+	class Graph
+	{
+	private:
+		// Numero di Vertici
+		uint V;
+		// Matrice dei Costi
+		uint** costs;
+		// Vettore dei Lati
+		std::vector<Edge*> edges;
+		// Lista di Adiacenza
+		std::vector<Edge*>* adjList;
+		
+	public:
+		Graph( int );
+		
+		void addEdge( uint, uint, uint, uint, float );
+		void completeCosts();
+		
+		uint getCost( uint, uint ) const;
+		uint getCost( const Edge* ) const;
+		
+		Edge* getEdge( uint, uint ) const;
+		std::vector<Edge*> getEdges() const;
+		std::vector<Edge*> getAdjList( uint ) const;
+	};
+}
 
 #endif /* defined(__ucarpp__graph__) */

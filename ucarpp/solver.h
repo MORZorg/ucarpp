@@ -21,63 +21,66 @@
 #include "edge.h"
 #include "graph.h"
 
-class Solver
+namespace solver
 {
-private:
-	Graph graph;
-	uint depot,
-		 M,
-		 Q,
-		 tMax;
-	Solution* currentSolution;
-	
-	Solution createBaseSolution();
-	
-	struct compareRatioDescending
+	class Solution
 	{
-		const Graph* graph;
+	public:
+	//	std::unordered_set<Edge*> path;
+		std::list<model::Edge*> path;
 		
-		compareRatioDescending( Graph* g ): graph( g ) {};
+		Solution();
 		
-		bool operator()( const Edge* lhs, const Edge* rhs ) const
-		{
-			// Ratio se lato non preso, -1 altrimenti
-			float lhsRatio = ( lhs->getTaken() == 0 ? lhs->getProfitDemandRatio() : -1 ),
-				  rhsRatio = ( rhs->getTaken() == 0 ? rhs->getProfitDemandRatio() : -1 );
+		void addEdge( model::Edge*, int = -1 );
+		void removeEdge( int = -1 );
 
-			if ( lhsRatio == rhsRatio )
-				return graph->getCost( lhs ) > graph->getCost( rhs );
-			
-			return lhsRatio > rhsRatio;
-		}
+		unsigned long size();
+		
+		uint getCost( model::Graph );
+		uint getDemand();
+
+		std::string toString();
 	};
 
-	compareRatioDescending greedyCompare;
-public:
-	Solver( Graph, uint, uint, uint, uint );
-	
-	Solution* solve();
-	
-	bool isFeasible( Solution );
-};
-
-class Solution
-{
-public:
-//	std::unordered_set<Edge*> path;
-	std::list<Edge*> path;
-	
-	Solution();
-	
-	void addEdge( Edge* );
-	void removeEdge( Edge* );
-
-	int size();
-	
-	uint getCost( Graph );
-	uint getDemand();
-
-	std::string toString();
-};
+	class Solver
+	{
+	private:
+		model::Graph graph;
+		uint depot,
+		M,
+		Q,
+		tMax;
+		Solution* currentSolution;
+		
+		Solution createBaseSolution();
+		
+		struct compareRatioDescending
+		{
+			const model::Graph* graph;
+			
+			compareRatioDescending( model::Graph* g ): graph( g ) {};
+			
+			bool operator()( const model::Edge* lhs, const model::Edge* rhs ) const
+			{
+				// Ratio se lato non preso, -1 altrimenti
+				float lhsRatio = ( lhs->getTaken() == 0 ? lhs->getProfitDemandRatio() : -1 ),
+				rhsRatio = ( rhs->getTaken() == 0 ? rhs->getProfitDemandRatio() : -1 );
+				
+				if ( lhsRatio == rhsRatio )
+					return graph->getCost( lhs ) > graph->getCost( rhs );
+					
+					return lhsRatio > rhsRatio;
+			}
+		};
+		
+		compareRatioDescending greedyCompare;
+	public:
+		Solver( model::Graph, uint, uint, uint, uint );
+		
+		Solution* solve();
+		
+		bool isFeasible( Solution );
+	};
+}
 
 #endif /* defined(__ucarpp__solver__) */

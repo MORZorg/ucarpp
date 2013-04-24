@@ -102,7 +102,7 @@ int main( int argc, const char * argv[] )
 		cerr << "Errore. " << line;
 	
 	// Lati
-	Graph grafo( V );
+	model::Graph grafo( V );
 	
 	re = *new regex( "LIST OF EDGES:" );
 	getline( in, line );
@@ -177,14 +177,14 @@ int main( int argc, const char * argv[] )
 				cerr << "auto\t\t";
 				continue;
 			}
-			Edge* edge = grafo.getEdge( i, j );
+			model::Edge* edge = grafo.getEdge( i, j );
 			cerr << grafo.getCost( i, j ) << " (" << edge->getProfit() << ", " << edge->getDemand() << ") \t";
 		}
 		cerr << endl;
 	}
 	
 	// Creo il risolutore
-	Solver solver( grafo, depot, M, Q, tMax );
+	solver::Solver solver( grafo, depot, M, Q, tMax );
 	solver.solve();
 	
     return 0;

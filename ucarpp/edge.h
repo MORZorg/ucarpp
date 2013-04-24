@@ -11,41 +11,44 @@
 
 #include "headings.h"
 
-class Edge
+namespace model
 {
-private:
-	uint src,
-		 dst;
-	uint taken;
-	
-public:
-	Edge( uint, uint );
-	
-	uint setTaken();
-	uint unsetTaken();
-	uint getTaken() const;
-	
-	uint getSrc() const;
-	uint getDst() const;
-	uint getDst( uint ) const;
-	
-	virtual uint getDemand() const;
-	virtual float getProfit() const;
-	
-	float getProfitDemandRatio() const;
-};
+	class Edge
+	{
+	private:
+		uint src,
+			 dst;
+		uint taken;
+		
+	public:
+		Edge( uint, uint );
+		
+		uint setTaken();
+		uint unsetTaken();
+		uint getTaken() const;
+		
+		uint getSrc() const;
+		uint getDst() const;
+		uint getDst( uint ) const;
+		
+		virtual uint getDemand() const;
+		virtual float getProfit() const;
+		
+		float getProfitDemandRatio() const;
+	};
 
-class ProfitableEdge: public Edge
-{
-private:
-	uint demand;
-	float profit;
-	
-public:
-	ProfitableEdge( uint, uint, uint, float );
-	
-	uint getDemand() const;
-	float getProfit() const;
-};
+	class ProfitableEdge: public Edge
+	{
+	private:
+		uint demand;
+		float profit;
+		
+	public:
+		ProfitableEdge( uint, uint, uint, float );
+		
+		uint getDemand() const;
+		float getProfit() const;
+	};
+}
 
 #endif /* defined(__ucarpp__node__) */

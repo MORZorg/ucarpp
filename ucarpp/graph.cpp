@@ -9,6 +9,7 @@
 #include "graph.h"
 
 using namespace std;
+using namespace model;
 
 /**
  * Costruttore.

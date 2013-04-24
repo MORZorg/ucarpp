@@ -9,6 +9,7 @@
 #include "edge.h"
 
 using namespace std;
+using namespace model;
 
 /*** Edge ***/
 
