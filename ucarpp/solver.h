@@ -26,12 +26,12 @@ namespace solver
 	class Solution
 	{
 	public:
-	//	std::unordered_set<Edge*> path;
-		std::list<model::Edge*> path;
+	//	std::unordered_set<MetaEdge*> path;
+		std::list<model::MetaEdge*> path;
 		
 		Solution();
 		
-		void addEdge( model::Edge*, int = -1 );
+		void addEdge( model::MetaEdge*, int = -1 );
 		void removeEdge( int = -1 );
 
 		unsigned long size();
@@ -60,7 +60,7 @@ namespace solver
 			
 			compareRatioDescending( model::Graph* g ): graph( g ) {};
 			
-			bool operator()( const model::Edge* lhs, const model::Edge* rhs ) const
+			bool operator()( const model::MetaEdge* lhs, const model::MetaEdge* rhs ) const
 			{
 				// Ratio se lato non preso, -1 altrimenti
 				float lhsRatio = ( lhs->getTaken() == 0 ? lhs->getProfitDemandRatio() : -1 ),
@@ -80,6 +80,10 @@ namespace solver
 		Solution* solve();
 		
 		bool isFeasible( Solution );
+	};
+	
+	class Veichle
+	{
 	};
 }
 

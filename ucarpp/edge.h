@@ -10,6 +10,8 @@
 #define __ucarpp__edge__
 
 #include "headings.h"
+#include <vector>
+#include "solver.h"
 
 namespace model
 {
@@ -18,23 +20,32 @@ namespace model
 	private:
 		uint src,
 			 dst;
-		uint taken;
+	
+	protected:
+		uint cost;
 		
 	public:
 		Edge( uint, uint );
-		
-		uint setTaken();
-		uint unsetTaken();
-		uint getTaken() const;
 		
 		uint getSrc() const;
 		uint getDst() const;
 		uint getDst( uint ) const;
 		
-		virtual uint getDemand() const;
-		virtual float getProfit() const;
+		uint getCost() const;
+		virtual uint getDemand() const = 0;
+		virtual float getProfit() const = 0;
 		
 		float getProfitDemandRatio() const;
+	};
+	
+	class DijkyEdge: public Edge
+	{
+	protected:
+		void setCost( uint );
+		
+	public:
+		uint getDemand() const;
+		float getProfit() const;
 	};
 
 	class ProfitableEdge: public Edge
@@ -44,10 +55,29 @@ namespace model
 		float profit;
 		
 	public:
-		ProfitableEdge( uint, uint, uint, float );
+		ProfitableEdge( uint, uint, uint, uint, float );
 		
 		uint getDemand() const;
 		float getProfit() const;
+	};
+	
+	class MetaEdge: public Edge
+	{
+	private:
+		Edge* actualEdge;
+		std::vector<Veichle*> takers;
+		
+	public:
+		MetaEdge( Edge* );
+		
+		uint getCost() const;
+		uint getDemand() const;
+		float getProfit() const;
+		
+		uint setTaken( Veichle* );
+		uint unsetTaken( Veichle* );
+		uint getTaken() const;
+		Veichle* getServer() const;
 	};
 }
 

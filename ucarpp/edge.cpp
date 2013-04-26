@@ -24,41 +24,7 @@ using namespace model;
  */
 Edge::Edge( uint src, uint dst ):
 	src( src < dst ? src : dst ),
-	dst( src > dst ? src : dst ),
-	taken( 0 ) {}
-
-/**
- * Segna il nodo come preso, incrementando il contatore del numero di volte per cui il nodo è stato preso.
- *
- * @return	il numero di volte per cui il lato è stato preso.
- */
-uint Edge::setTaken()
-{
-	return ++taken;
-}
-
-/**
- * Decrementa il contatore del numero di volte per cui il nodo è stato preso fino a renderlo non preso (valore 0);
- *
- * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
- */
-uint Edge::unsetTaken()
-{
-	if ( taken > 0 )
-		return --taken;
-	
-	return 0;
-}
-
-/**
- * Getter del numero di volte per cui il lato è stato preso.
- *
- * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
- */
-uint Edge::getTaken() const
-{
-	return taken;
-}
+	dst( src > dst ? src : dst ) {}
 
 
 /**
@@ -98,18 +64,14 @@ uint Edge::getDst( uint src ) const
 }
 
 /**
- * Getter per la domanda associata all'arco.
+ * Getter per il costo associato all'arco.
  *
- * @return	0, essendo l'arco privo di domanda.
+ * @return	il costo associato all'arco.
  */
- uint Edge::getDemand() const { return 0; }
-
-/**
- * Getter per il profitto associato all'arco.
- *
- * @return	0, essendo l'arco privo di profitto.
- */
-float Edge::getProfit() const { return 0; }
+uint Edge::getCost() const
+{
+	return cost;
+}
 
 /**
  * Calcola il rapporto tra profitto e domanda, utile per l'ordinamento.
@@ -124,12 +86,48 @@ float Edge::getProfitDemandRatio() const
 		return -1;
 }
 
-/*** ProfitEdge ***/
+/*** DijkyEdge ***/
 
-ProfitableEdge::ProfitableEdge( uint src, uint dst, uint demand, float profit ):
+/**
+ * Setter per il costo associato all'arco.
+ *
+ * @param cost	il costo da associare all'arco.
+ */
+void DijkyEdge::setCost( uint cost )
+{
+	this->cost = cost;
+}
+
+/**
+ * Getter per la domanda associata all'arco.
+ *
+ * @return	0, essendo l'arco privo di costo.
+ */
+uint DijkyEdge::getDemand() const
+{
+	return 0;
+}
+
+/**
+ * Getter per il profitto associato all'arco.
+ *
+ * @return	0, essendo l'arco privo di costo.
+ */
+float DijkyEdge::getProfit() const
+{
+	return 0;
+}
+
+
+/*** ProfitableEdge ***/
+
+ProfitableEdge::ProfitableEdge( uint src, uint dst, uint cost, uint demand, float profit ):
 	Edge( src, dst ),
 	demand( demand ),
-	profit( profit ) {}
+	profit( profit )
+{
+	this->cost = cost;
+}
 
 /**
  * Getter per la domanda associata all'arco.
@@ -149,4 +147,92 @@ uint ProfitableEdge::getDemand() const
 float ProfitableEdge::getProfit() const
 {
 	return profit;
+}
+
+/*** MetaEdge ***/
+MetaEdge::MetaEdge( Edge* reference ):
+	Edge( reference->getSrc(), reference->getDst() ),
+actualEdge( reference ) {}
+
+/**
+ * Getter per il costo associato all'arco.
+ *
+ * @return	il costo associato all'arco.
+ */
+uint MetaEdge::getCost() const
+{
+	return actualEdge->getCost();
+}
+
+/**
+ * Getter per la domanda associata all'arco.
+ *
+ * @return	la domanda associata all'arco.
+ */
+uint MetaEdge::getDemand() const
+{
+	return actualEdge->getDemand();
+}
+
+/**
+ * Getter per il profitto associato all'arco.
+ *
+ * @return	il profitto associato all'arco.
+ */
+float MetaEdge::getProfit() const
+{
+	return actualEdge->getProfit();
+}
+
+/**
+ * Segna il lato come preso dal veicolo chiamante la funzione.
+ *
+ * @param	il veicolo che imposta questo lato come preso.
+ * @return	il numero di volte per cui il lato è stato preso.
+ */
+uint MetaEdge::setTaken( Veichle* taker )
+{
+	takers.push_back( taker );
+	return takers.size();
+}
+
+/**
+ * Segna il lato come non preso dal veicolo chiamante la funzione.
+ * ! Può causare un cambio di veicolo servente in caso il veicolo rimosso sia il servente attuale.
+ *	 Questo può dar luogo a soluzioni infeasible.
+ *
+ * @param	il veicolo che imposta questo lato come non preso.
+ * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
+ */
+uint MetaEdge::unsetTaken( Veichle* taker )
+{
+	// Cerco il veicolo partendo dalla fine. Se lo trovo lo cancello, altrimenti niente.
+	for ( auto it = takers.rbegin(); it < takers.rend(); ++it )
+		if ( it == taker )
+		{
+			takers.erase( it );
+			break;
+		}
+	
+	return takers.size();
+}
+
+/**
+ * Getter del numero di volte per cui il lato è stato preso.
+ *
+ * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
+ */
+uint MetaEdge::getTaken() const
+{
+	return takers.size();
+}
+
+/**
+ * Getter del numero di volte per cui il lato è stato preso.
+ *
+ * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
+ */
+Veichle MetaEdge::getServer() const
+{
+	return takers.front();
 }

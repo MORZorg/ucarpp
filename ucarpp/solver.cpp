@@ -10,7 +10,7 @@
 
 using namespace std;
 using namespace solver;
-using namespace model; // Togliere?
+using namespace model;
 
 /*** Solution ***/
 
@@ -20,10 +20,10 @@ Solution::Solution()
 	 * TODO: Rendere profitto e domanda variabili associate ad ogni soluzione,
 	 * da calcolare ogni volta che la soluzione viene modificata.
 	 */
-	path = *new list<Edge*>();
+	path = *new list<MetaEdge*>();
 }
 
-void Solution::addEdge( Edge* edge, int index )
+void Solution::addEdge( MetaEdge* edge, int index )
 {
 	edge->setTaken();
 	
@@ -32,7 +32,7 @@ void Solution::addEdge( Edge* edge, int index )
 	else
 	{
 		// Creo l'iteratore alla posizione richiesta
-		list<Edge*>::iterator it = path.begin();
+		list<MetaEdge*>::iterator it = path.begin();
 		while ( index-- > 0 )
 			++it;
 		
@@ -51,7 +51,7 @@ void Solution::removeEdge( int index )
 	else
 	{
 		// Creo l'iteratore alla posizione richiesta
-		list<Edge*>::iterator it = path.begin();
+		list<MetaEdge*>::iterator it = path.begin();
 		while ( index-- > 0 )
 			++it;
 		
@@ -74,7 +74,7 @@ unsigned long Solution::size()
 uint Solution::getCost( Graph g )
 {
 	uint result = 0;
-	for ( list<Edge*>::iterator it = path.begin(); it != path.end(); it++ )
+	for ( list<MetaEdge*>::iterator it = path.begin(); it != path.end(); it++ )
 		result += g.getCost( *it );
 	
 	return result;
@@ -83,7 +83,7 @@ uint Solution::getCost( Graph g )
 uint Solution::getDemand()
 {
 	uint result = 0;
-	for ( list<Edge*>::iterator it = path.begin(); it != path.end(); it++ )
+	for ( list<MetaEdge*>::iterator it = path.begin(); it != path.end(); it++ )
 		result += (*it)->getDemand();
 	
 	return result;
@@ -117,7 +117,7 @@ Solution Solver::createBaseSolution()
 	uint currentNode = depot;
 	
 	// Aggiungo lati finché la soluzione è accettabile ed è possibile tornare al deposito
-	vector<Edge*> edges;
+	vector<MetaEdge*> edges;
 	bool full = false;
 	while ( !full )
 	{
@@ -126,7 +126,7 @@ Solution Solver::createBaseSolution()
 		sort( edges.begin(), edges.end(), greedyCompare );
 		
 		/*
-		 for ( Edge* edge : edges )
+		 for ( MetaEdge* edge : edges )
 		 cerr << edge->getSrc() + 1 << " " << edge->getDst() + 1 << ": "
 		 << edge->getProfitDemandRatio() << endl;
 		 */
@@ -134,7 +134,7 @@ Solution Solver::createBaseSolution()
 		// Prendo il lato ammissibile migliore, se esiste
 		full = true;
 		//for ( int i = 0; i < edges.size(); i++ )
-		for( Edge* edge : edges )
+		for( MetaEdge* edge : edges )
 		{
 			baseSolution.addEdge( edge );
 			if ( baseSolution.getDemand() < Q &&
@@ -149,7 +149,7 @@ Solution Solver::createBaseSolution()
 				baseSolution.removeEdge();
 		}
 	}
-	baseSolution.addEdge( graph.getEdge( currentNode, depot ) );
+	baseSolution.addEdge( (MetaEdge*)graph.getEdge( currentNode, depot ) );
 	
 	cerr << "Soluzione finale: " << baseSolution.toString() << endl;
 	

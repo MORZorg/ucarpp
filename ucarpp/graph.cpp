@@ -43,7 +43,7 @@ Graph::Graph( int V ):
 void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 {
 	// Creo un nuovo lato e lo aggiungo alla lista in entrambe le direzioni.
-	edges.push_back( new ProfitableEdge( src, dst, demand, profit ) );
+	edges.push_back( new ProfitableEdge( src, dst, cost, demand, profit ) );
 	adjList[ src ].push_back( edges.back() );
 	adjList[ dst ].push_back( edges.back() );
 	
@@ -125,7 +125,7 @@ void Graph::completeCosts()
 			// Evito di creare autoarchi
 			if ( !found && source != u )
 			{
-				edges.push_back( new Edge( source, u ) );
+				edges.push_back( new DijkyEdge( source, u ) );
 				adjList[ source ].push_back( edges.back() );
 				adjList[ u ].push_back( edges.back() );
 			}
