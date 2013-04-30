@@ -23,16 +23,37 @@
 
 namespace solver
 {
-	class Solution
+	class Vehicle
 	{
-	public:
-	//	std::unordered_set<MetaEdge*> path;
+	private:
+		//std::unordered_set<MetaEdge*> path;
 		std::list<model::MetaEdge*> path;
-		
-		Solution();
+
+	public:
+		Vehicle();
 		
 		void addEdge( model::MetaEdge*, int = -1 );
 		void removeEdge( int = -1 );
+
+		unsigned long size();
+		
+		uint getCost();
+		uint getDemand();
+
+		std::string toString();
+	};
+
+	class Solution
+	{
+	private:
+		int M;
+		Vehicle* vehicles;
+		
+	public:
+		Solution( int );
+
+		void addEdge( model::MetaEdge*, int, int = -1 );
+		void removeEdge( int, int = -1 );
 
 		unsigned long size();
 		
@@ -80,13 +101,6 @@ namespace solver
 		Solution* solve();
 		
 		bool isFeasible( Solution );
-	};
-	
-	class Vehicle
-	{
-
-	public:
-		Veichle();
 	};
 }
 

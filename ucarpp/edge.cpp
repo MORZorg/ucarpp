@@ -10,6 +10,7 @@
 
 using namespace std;
 using namespace model;
+using namespace solver;
 
 /*** Edge ***/
 
@@ -161,7 +162,7 @@ MetaEdge::MetaEdge( Edge* reference ):
 	Edge( reference->getSrc(), reference->getDst() ),
 actualEdge( reference )
 {
-	takers = *new vector<solver::Vehicle*>();
+	takers = *new vector<const Vehicle*>();
 }
 
 /**
@@ -200,30 +201,34 @@ float MetaEdge::getProfit() const
  * @param	il veicolo che imposta questo lato come preso.
  * @return	il numero di volte per cui il lato è stato preso.
  */
-uint MetaEdge::setTaken( solver::Vehicle* taker )
+uint MetaEdge::setTaken( const Vehicle* taker )
 {
 	takers.push_back( taker );
 	return takers.size();
 }
 
 /**
- * Segna il lato come non preso dal veicolo chiamante la funzione.
+ * Segna la n-esima occorrenza del lato come non preso dal veicolo chiamante
+ * la funzione.
  * ! Può causare un cambio di veicolo servente in caso il veicolo rimosso sia il servente attuale.
  *	 Questo può dar luogo a soluzioni infeasible.
  *
  * @param	il veicolo che imposta questo lato come non preso.
+ * @param	l'occorrenza del veicolo da rimuovere.
  * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
  */
-uint MetaEdge::unsetTaken( solver::Vehicle* taker )
+uint MetaEdge::unsetTaken( const Vehicle* taker, int occurrence )
 {
 	// Cerco il veicolo partendo dalla fine. Se lo trovo lo cancello, altrimenti niente.
-	for ( auto it = takers.rbegin(); it < takers.rend(); ++it )
+	for ( auto it = takers.begin(); it < takers.end(); ++it )
 		if ( *it == taker )
-		{
-			// Piu' o meno come fare ++i--
-			takers.erase( (it+1).base() );
-			break;
-		}
+			if ( --occurrence < 0 )
+			{
+				// In caso si usino i reverse_iterator,
+				// bisogna usare .base() facendo piu' o meno ++i--
+				takers.erase( it );
+				break;
+			}
 	
 	return takers.size();
 }
@@ -239,11 +244,22 @@ uint MetaEdge::getTaken() const
 }
 
 /**
- * Getter del numero di volte per cui il lato è stato preso.
+ * Comparatore del veicolo in input col veicolo servente il lato
  *
- * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
+ * @return	vero, se il veicolo in input serve il lato
  */
-solver::Vehicle* MetaEdge::getServer() const
+bool MetaEdge::isServer( const Vehicle* aVehicle ) const
+{
+	return takers.front() == aVehicle;
+}
+
+/**
+ * Getter del veicolo servente il lato
+ *
+ * @return	il veicolo servente il lato
+ */
+const Vehicle* MetaEdge::getServer() const
 {
 	return takers.front();
 }
+

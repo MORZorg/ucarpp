@@ -12,20 +12,16 @@ using namespace std;
 using namespace solver;
 using namespace model;
 
-/*** Solution ***/
+/*** Vehicle ***/
 
-Solution::Solution()
+Vehicle::Vehicle()
 {
-	/*
-	 * TODO: Rendere profitto e domanda variabili associate ad ogni soluzione,
-	 * da calcolare ogni volta che la soluzione viene modificata.
-	 */
 	path = *new list<MetaEdge*>();
 }
 
-void Solution::addEdge( MetaEdge* edge, int index )
+void Vehicle::addEdge( MetaEdge* edge, int index )
 {
-	edge->setTaken();
+	edge->setTaken( this );
 	
 	if ( index == -1 )
 		path.push_back( edge );
@@ -40,30 +36,81 @@ void Solution::addEdge( MetaEdge* edge, int index )
 	}
 }
 
-void Solution::removeEdge( int index )
+void Vehicle::removeEdge( int index )
 {
+	// Rimuovo l'ultimo lato
 	if ( index == -1 )
-	{
-		// Rimuovo l'ultimo lato
-		path.back()->unsetTaken();
-		path.pop_back();
-	}
-	else
-	{
-		// Creo l'iteratore alla posizione richiesta
-		list<MetaEdge*>::iterator it = path.begin();
-		while ( index-- > 0 )
-			++it;
-		
-		(*it)->unsetTaken();
-		path.erase( it );
-	}
+		index = path.size() -1;
+	
+	int occurrence = 0;
+	// Creo l'iteratore alla posizione richiesta
+	// e conto le occorrenze del lato da rimuovere
+	list<MetaEdge*>::iterator it = next( path.begin(), index );
+	for ( auto i = path.begin(); i != it; ++i )
+		if ( *i == *it )
+			occurrence++;
+	
+	(*it)->unsetTaken( this, occurrence );
+	path.erase( it );
+}
 
+unsigned long Vehicle::size()
+{
+	return path.size();
+}
+
+uint Vehicle::getCost()
+{
+	uint result = 0;
+	for ( auto it = path.begin(); it != path.end(); it++ )
+		result += (*it)->getCost();
+	
+	return result;
+}
+
+uint Vehicle::getDemand()
+{
+	uint result = 0;
+	for ( auto it = path.begin(); it != path.end(); it++ )
+	{
+		auto jt = path.begin();
+		while ( *(jt++) != *it );
+
+		result += (*it)->getDemand() * ( (*it)->isServer( this ) && jt == it );
+	}
+	
+	return result;
+}
+
+string Vehicle::toString()
+{
+	stringstream ss;
+	for ( auto it = path.begin(); it != path.end(); it++ )
+		ss << "(" << (*it)->getSrc() + 1 << " " << (*it)->getDst() + 1 << ") ";
+	
+	return ss.str();
+}
+
+/*** Solution ***/
+
+Solution::Solution( int M ):
+	M( M )
+{
 	/*
-	if ( it != path.end() )
-		if ( (*it)->unsetTaken() == 0 )
-			path.erase( it );
-	*/
+	 * TODO: Rendere profitto e domanda variabili associate ad ogni soluzione,
+	 * da calcolare ogni volta che la soluzione viene modificata.
+	 */
+	vehicles = (Vehicle*)calloc( M, sizeof( Vehicle ) );
+}
+
+void Solution::addEdge( MetaEdge* edge, int vehicle, int index )
+{
+	vehicles[ vehicle ].addEdge( edge, index );
+}
+
+void Solution::removeEdge( int vehicle, int index )
+{
+	vehicles[ vehicle ].removeEdge( index );
 }
 
 unsigned long Solution::size()
@@ -173,9 +220,4 @@ bool Solver::isFeasible( Solution s )
 	return s.getCost( graph ) < tMax && s.getDemand() < Q;
 }
 
-/*** Vehicle ***/
-
-Vehicle::Vehicle()
-{
-}
 
