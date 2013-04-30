@@ -19,8 +19,6 @@ using namespace model;
  *
  * @param src		nodo sorgente
  * @param dst		nodo destinazione
- * @param demand	domanda del lato
- * @param profit	profitto del lato
  */
 Edge::Edge( uint src, uint dst ):
 	src( src < dst ? src : dst ),
@@ -89,6 +87,15 @@ float Edge::getProfitDemandRatio() const
 /*** DijkyEdge ***/
 
 /**
+ * Costruttore.
+ *
+ * @param src		nodo sorgente
+ * @param dst		nodo destinazione
+ */
+DijkyEdge::DijkyEdge( uint src, uint dst ):
+	Edge( src, dst ) {}
+
+/**
  * Setter per il costo associato all'arco.
  *
  * @param cost	il costo da associare all'arco.
@@ -152,7 +159,10 @@ float ProfitableEdge::getProfit() const
 /*** MetaEdge ***/
 MetaEdge::MetaEdge( Edge* reference ):
 	Edge( reference->getSrc(), reference->getDst() ),
-actualEdge( reference ) {}
+actualEdge( reference )
+{
+	takers = *new vector<solver::Vehicle*>();
+}
 
 /**
  * Getter per il costo associato all'arco.
@@ -190,7 +200,7 @@ float MetaEdge::getProfit() const
  * @param	il veicolo che imposta questo lato come preso.
  * @return	il numero di volte per cui il lato è stato preso.
  */
-uint MetaEdge::setTaken( Veichle* taker )
+uint MetaEdge::setTaken( solver::Vehicle* taker )
 {
 	takers.push_back( taker );
 	return takers.size();
@@ -204,13 +214,14 @@ uint MetaEdge::setTaken( Veichle* taker )
  * @param	il veicolo che imposta questo lato come non preso.
  * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
  */
-uint MetaEdge::unsetTaken( Veichle* taker )
+uint MetaEdge::unsetTaken( solver::Vehicle* taker )
 {
 	// Cerco il veicolo partendo dalla fine. Se lo trovo lo cancello, altrimenti niente.
 	for ( auto it = takers.rbegin(); it < takers.rend(); ++it )
-		if ( it == taker )
+		if ( *it == taker )
 		{
-			takers.erase( it );
+			// Piu' o meno come fare ++i--
+			takers.erase( (it+1).base() );
 			break;
 		}
 	
@@ -232,7 +243,7 @@ uint MetaEdge::getTaken() const
  *
  * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
  */
-Veichle MetaEdge::getServer() const
+solver::Vehicle* MetaEdge::getServer() const
 {
 	return takers.front();
 }

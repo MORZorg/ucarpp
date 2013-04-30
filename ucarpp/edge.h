@@ -44,6 +44,8 @@ namespace model
 		void setCost( uint );
 		
 	public:
+		DijkyEdge( uint, uint );
+
 		uint getDemand() const;
 		float getProfit() const;
 	};
@@ -65,7 +67,7 @@ namespace model
 	{
 	private:
 		Edge* actualEdge;
-		std::vector<Veichle*> takers;
+		std::vector<solver::Vehicle*> takers;
 		
 	public:
 		MetaEdge( Edge* );
@@ -74,10 +76,10 @@ namespace model
 		uint getDemand() const;
 		float getProfit() const;
 		
-		uint setTaken( Veichle* );
-		uint unsetTaken( Veichle* );
+		uint setTaken( solver::Vehicle* );
+		uint unsetTaken( solver::Vehicle* );
 		uint getTaken() const;
-		Veichle* getServer() const;
+		solver::Vehicle* getServer() const;
 	};
 }
 

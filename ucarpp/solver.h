@@ -82,8 +82,11 @@ namespace solver
 		bool isFeasible( Solution );
 	};
 	
-	class Veichle
+	class Vehicle
 	{
+
+	public:
+		Veichle();
 	};
 }
 

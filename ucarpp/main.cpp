@@ -184,8 +184,8 @@ int main( int argc, const char * argv[] )
 	}
 	
 	// Creo il risolutore
-	solver::Solver solver( grafo, depot, M, Q, tMax );
-	solver.solve();
+	//solver::Solver solver( grafo, depot, M, Q, tMax );
+	//solver.solve();
 	
     return 0;
 }

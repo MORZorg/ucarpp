@@ -172,3 +172,10 @@ bool Solver::isFeasible( Solution s )
 {
 	return s.getCost( graph ) < tMax && s.getDemand() < Q;
 }
+
+/*** Vehicle ***/
+
+Vehicle::Vehicle()
+{
+}
+

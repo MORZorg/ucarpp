@@ -10,6 +10,7 @@
 #define ucarpp_headings_h
 
 #ifdef DEBUG
+#define DEBUG
 #include <iostream>
 #endif
 
