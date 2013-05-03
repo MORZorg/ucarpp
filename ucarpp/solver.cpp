@@ -115,34 +115,52 @@ void Solution::removeEdge( int vehicle, int index )
 
 unsigned long Solution::size()
 {
-	return path.size();
+	int result = 0;
+	for ( int i = 0; i < M; i++ )
+		result += vehicles[ i ].size();
+	return result;
 }
 
-uint Solution::getCost( Graph g )
+uint Solution::getCost()
 {
 	uint result = 0;
-	for ( list<MetaEdge*>::iterator it = path.begin(); it != path.end(); it++ )
-		result += g.getCost( *it );
+	for ( int i = 0; i < M; i++ )
+		result += getCost( i );
 	
 	return result;
+}
+
+uint Solution::getCost( int vehicle )
+{
+	return vehicles[ vehicle ].getCost();
 }
 
 uint Solution::getDemand()
 {
 	uint result = 0;
-	for ( list<MetaEdge*>::iterator it = path.begin(); it != path.end(); it++ )
-		result += (*it)->getDemand();
+	for ( int i = 0; i < M; i++ )
+		result += getDemand( i );
 	
 	return result;
+}
+
+uint Solution::getDemand( int vehicle )
+{
+	return vehicles[ vehicle ].getDemand();
 }
 
 string Solution::toString()
 {
 	stringstream ss;
-	for ( auto it = path.begin(); it != path.end(); it++ )
-		ss << "(" << (*it)->getSrc() + 1 << " " << (*it)->getDst() + 1 << ") ";
+	for ( int i = 0; i < M; i++ )
+		ss << i + 1 << ":\t" << toString( i ) << endl;
 	
 	return ss.str();
+}
+
+string Solution::toString( int vehicle )
+{
+	return vehicles[ vehicle ].toString();
 }
 
 
@@ -160,43 +178,49 @@ greedyCompare( &graph )
 Solution Solver::createBaseSolution()
 {
 	cerr << endl << "Stampo la soluzione di base:" << endl;
-	Solution baseSolution;
+	Solution baseSolution( M );
 	uint currentNode = depot;
 	
-	// Aggiungo lati finché la soluzione è accettabile ed è possibile tornare al deposito
-	vector<MetaEdge*> edges;
-	bool full = false;
-	while ( !full )
+	for ( int i = 0; i < M; i++ )
 	{
-		// Ordino i lati uscenti dal nodo corrente
-		edges = graph.getAdjList( currentNode );
-		sort( edges.begin(), edges.end(), greedyCompare );
-		
-		/*
-		 for ( MetaEdge* edge : edges )
-		 cerr << edge->getSrc() + 1 << " " << edge->getDst() + 1 << ": "
-		 << edge->getProfitDemandRatio() << endl;
-		 */
-		
-		// Prendo il lato ammissibile migliore, se esiste
-		full = true;
-		//for ( int i = 0; i < edges.size(); i++ )
-		for( MetaEdge* edge : edges )
+		// Aggiungo lati finché la soluzione è accettabile ed è possibile tornare al deposito
+		vector<MetaEdge*> edges;
+		bool full = false;
+		while ( !full )
 		{
-			baseSolution.addEdge( edge );
-			if ( baseSolution.getDemand() < Q &&
-				( baseSolution.getCost( graph ) + graph.getCost( currentNode, depot ) ) < tMax )
+			// Ordino i lati uscenti dal nodo corrente
+			edges = graph.getAdjList( currentNode );
+			sort( edges.begin(), edges.end(), greedyCompare );
+			
+			/**
+			 *
+			 * for ( MetaEdge* edge : edges )
+			 * cerr << edge->getSrc() + 1 << " " << edge->getDst() + 1 << ": "
+			 * << edge->getProfitDemandRatio() << endl;
+			 */
+			
+			// Prendo il lato ammissibile migliore, se esiste
+			full = true;
+			//for ( int i = 0; i < edges.size(); i++ )
+			for( MetaEdge* edge : edges )
 			{
-				currentNode = edge->getDst( currentNode );
-				full = false;
-				fprintf( stderr, "Preso %d (%.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
-				break;
+				baseSolution.addEdge( edge, i );
+				if ( baseSolution.getDemand( i ) < Q &&
+					( baseSolution.getCost( i ) + graph.getCost( currentNode, depot ) ) < tMax )
+				{
+					currentNode = edge->getDst( currentNode );
+					full = false;
+#ifdef DEBUG
+					fprintf( stderr, "Preso %d (%.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
+#endif
+					break;
+				}
+				else
+					baseSolution.removeEdge( i );
 			}
-			else
-				baseSolution.removeEdge();
 		}
+		baseSolution.addEdge( (MetaEdge*)graph.getEdge( currentNode, depot ) );
 	}
-	baseSolution.addEdge( (MetaEdge*)graph.getEdge( currentNode, depot ) );
 	
 	cerr << "Soluzione finale: " << baseSolution.toString() << endl;
 	

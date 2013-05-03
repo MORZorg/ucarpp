@@ -57,10 +57,13 @@ namespace solver
 
 		unsigned long size();
 		
-		uint getCost( model::Graph );
+		uint getCost();
+		uint getCost( int );
 		uint getDemand();
+		uint getDemand( int );
 
 		std::string toString();
+		std::string toString( int );
 	};
 
 	class Solver
