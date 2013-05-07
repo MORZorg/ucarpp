@@ -1,44 +1,46 @@
-//
-//  graph.cpp
-//  ucarpp
-//
-//  Created by Maurizio Zucchelli on 03/25/13.
-//  Copyright (c) 2013 Marco Maddiona, Riccardo Orizio, Mattia Rizzini, Maurizio Zucchelli. All rights reserved.
-//
+	//
+	//  graph.cpp
+	//  ucarpp
+	//
+	//  Created by Maurizio Zucchelli on 03/25/13.
+	//  Copyright (c) 2013 Marco Maddiona, Riccardo Orizio, Mattia Rizzini, Maurizio Zucchelli. All rights reserved.
+	//
 
 #include "graph.h"
 
-using namespace std;
-using namespace model;
+	using namespace std;
+	using namespace model;
 
-/**
- * Costruttore.
- * 
- * @param V	numero di vertici
- *
- */
-Graph::Graph( int V ):
-	V( V )
-{
-	this->costs = (uint**)calloc( V, sizeof( uint* ) );
-	for ( int i = 0; i < V; i++ )
-		this->costs[ i ] = (uint*)calloc( V, sizeof( uint ) );
-	
-	this->edges = *new vector<Edge*>();
-	
-	this->adjList = (vector<Edge*>*)calloc( V, sizeof( vector<Edge*> ) );
-	for ( int i = 0; i < V; i++ )
-		this->adjList[ i ] = *new vector<Edge*>();
-}
+	/*** Graph ***/
 
-/**
- * Aggiunge un lato al grafo.
- *
- * @param src		nodo sorgente
- * @param dst		nodo destinazione
- * @param cost		costo del lato
- * @param demand	domanda del lato
- * @param profit	profitto del lato
+	/**
+	 * Costruttore.
+	 * 
+	 * @param V	numero di vertici
+	 *
+	 */
+	Graph::Graph( int V ):
+		V( V )
+	{
+		//this->costs = (uint**)calloc( V, sizeof( uint* ) );
+		//for ( int i = 0; i < V; i++ )
+		//	this->costs[ i ] = (uint*)calloc( V, sizeof( uint ) );
+		
+		this->edges = *new vector<Edge*>();
+		
+		this->adjList = (vector<Edge*>*)calloc( V, sizeof( vector<Edge*> ) );
+		for ( int i = 0; i < V; i++ )
+			this->adjList[ i ] = *new vector<Edge*>();
+	}
+
+	/**
+	 * Aggiunge un lato al grafo.
+	 *
+	 * @param src		nodo sorgente
+	 * @param dst		nodo destinazione
+	 * @param cost		costo del lato
+	 * @param demand	domanda del lato
+	 * @param profit	profitto del lato
  */
 void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 {
@@ -46,21 +48,21 @@ void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 	edges.push_back( new ProfitableEdge( src, dst, cost, demand, profit ) );
 	adjList[ src ].push_back( edges.back() );
 	adjList[ dst ].push_back( edges.back() );
-	
-	// Aggiungo il costo del lato alla matrice dei costi.
-	costs[ src ][ dst ] = costs[ dst ][ src ] = cost;
 }
 
 // Funzione per il confronto tra nodi in base al loro costo.
 class dijkyNodeComparison
 {
 private:
-	uint* d;
+	Graph* g;
+	uint src;
 public:
-	dijkyNodeComparison( uint* distances ): d( distances ) {}
+	dijkyNodeComparison( Graph* graph; uint source ):
+		g( graph ), src( source ) {}
 	bool operator() ( const uint& lhs, const uint& rhs ) const
 	{
-		return ( d[ lhs ] > d[ rhs ] );
+		return ( g.getEdge( source, lhs ).getCost() >
+				 g.getEdge( source, rhs ).getCost() );
 	}
 };
 
@@ -72,12 +74,11 @@ void Graph::completeCosts()
 {
 	// Uso Dijkstra applicato ad ogni nodo del grafo.
 	// Essendo il nostro grafo sparso, non esiste algoritmo migliore.
-	uint* d;
 	vector<int> Q;
 	for ( uint source = 0; source < V; source++ )
 	{
-		// Lavoro direttamente sulla matrice dei costi.
-		dijkyNodeComparison comp( d = costs[ source ] );
+		// Da cambiare: se non esiste, crea con costo max
+		dijkyNodeComparison comp( this, source );
 		for ( uint u = 0; u < V; u++ )
 			if ( d[ u ] == 0 )
 				d[ u ] = INT_MAX;
@@ -133,20 +134,53 @@ void Graph::completeCosts()
 	}
 }
 
-// Getter della matrice dei costi
-uint Graph::getCost( uint src, uint dst ) const
+// Getter della lista dei lati
+vector<Edge*> Graph::getEdges() const
 {
-	return costs[ src ][ dst ];
+	return edges;
 }
 
-// Getter della matrice dei costi
-uint Graph::getCost( const Edge* edge ) const
+// Getter della lista di adiacenza di un nodo
+vector<Edge*> Graph::getAdjList( uint src ) const
 {
-	return getCost( edge->getSrc(), edge->getDst() );
+	return adjList[ src ];
 }
 
-// Getter della matrice dei costi
-Edge* Graph::getEdge( uint src, uint dst ) const
+/*** MetaGraph ***/
+
+/**
+ * Costruttore
+ */
+MetaGraph::MetaGraph( Graph g )
+{
+	this->edges = *new vector<MetaEdge*>();
+
+	int V = g.getEdges().size();
+	this->adjList = (vector<MetaEdge*>*)calloc( V, sizeof( vector<MetaEdge*> ) );
+	for ( int i = 0; i < V; i++ )
+		this->adjList[ i ] = *new vector<MetaEdge*>();
+
+	for ( Edge* edge : g.getEdges() )
+		edges.push_back( new MetaEdge( edge ));
+
+
+	// Per ogni lato della lista di adiacenza,
+	// cerchiamo il suo metalato corrispondente e
+	// lo inseriamo alla posizione adeguata della nostra lista di adiacenza	
+	for ( int i = 0; i < V; i++ )
+		for( Edge* edge : g.getAdjList(i) ){
+			MetaEdge* metaEdge;
+			for( metaEdge : edges )
+				if( metaEdge.getSrc() == edge.getSrc() && 
+					metaEdge.getDst() == edge.getDst() )
+						break;
+
+			adjList[i].push_back(metaEdge);
+		}
+}
+
+// Getter dei lati
+MetaEdge* MetaGraph::getEdge( uint src, uint dst ) const
 {
 	for ( int i = 0; i < adjList[ src ].size(); i++ )
 		if ( adjList[ src ][ i ]->getDst( src ) == dst )
@@ -155,14 +189,14 @@ Edge* Graph::getEdge( uint src, uint dst ) const
 	throw;
 }
 
-// Getter della lista di nodi
-vector<Edge*> Graph::getEdges() const
+// Getter della lista dei lati
+vector<MetaEdge*> MetaGraph::getEdges() const
 {
 	return edges;
 }
 
 // Getter della lista di adiacenza di un nodo
-vector<Edge*> Graph::getAdjList( uint src ) const
+vector<MetaEdge*> MetaGraph::getAdjList( uint src ) const
 {
 	return adjList[ src ];
 }

@@ -168,24 +168,25 @@ int main( int argc, const char * argv[] )
 	// Completo la magliatura del grafo
 	grafo.completeCosts();
 	cerr << "Matrice dei costi: C ( P, D ) " << endl;
-	for ( int i = 0; i < V; i++ )
-	{
-		for ( int j = 0; j < V; j++ )
+		model::MetaGraph grafoTest( grafo );
+		for ( int i = 0; i < V; i++ )
 		{
-			if ( i == j )
+			for ( int j = 0; j < V; j++ )
 			{
-				cerr << "auto\t\t";
-				continue;
+				if ( i == j )
+				{
+					cerr << "auto\t\t";
+					continue;
+				}
+				model::MetaEdge* edge = grafoTest.getEdge( i, j );
+				cerr << edge->getCost() << " (" << edge->getProfit() << ", " << edge->getDemand() << ") \t";
 			}
-			model::Edge* edge = grafo.getEdge( i, j );
-			cerr << grafo.getCost( i, j ) << " (" << edge->getProfit() << ", " << edge->getDemand() << ") \t";
+			cerr << endl;
 		}
-		cerr << endl;
-	}
-	
-	// Creo il risolutore
-	//solver::Solver solver( grafo, depot, M, Q, tMax );
-	//solver.solve();
+		
+		// Creo il risolutore
+		//solver::Solver solver( grafo, depot, M, Q, tMax );
+		//solver.solve();
 	
     return 0;
 }
