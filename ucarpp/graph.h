@@ -29,17 +29,20 @@ namespace model
 		// Lista di Adiacenza
 		std::vector<Edge*>* adjList;
 
-	protected:
-		std::vector<Edge*> getAdjList( uint ) const;
-		std::vector<Edge*> getEdges() const;
-	
 	public:
 		Graph( int );
 
 		void addEdge( uint, uint, uint, uint, float );
 		void completeCosts();
-	};
 
+		std::vector<Edge*> getAdjList( uint ) const;
+		std::vector<Edge*> getEdges() const;
+		Edge* getEdge( uint, uint ) const;
+	};
+}
+
+namespace solver
+{
 	class MetaGraph
 	{
 	private:
@@ -49,7 +52,7 @@ namespace model
 		std::vector<MetaEdge*>* adjList;
 		
 	public:
-		MetaGraph( Graph );
+		MetaGraph( model::Graph );
 		
 		MetaEdge* getEdge( uint, uint ) const;
 		std::vector<MetaEdge*> getEdges() const;

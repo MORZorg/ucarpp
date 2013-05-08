@@ -8,39 +8,40 @@
 
 #include "graph.h"
 
-	using namespace std;
-	using namespace model;
+using namespace std;
+using namespace model;
+using namespace solver;
 
-	/*** Graph ***/
+/*** Graph ***/
 
-	/**
-	 * Costruttore.
-	 * 
-	 * @param V	numero di vertici
-	 *
-	 */
-	Graph::Graph( int V ):
-		V( V )
-	{
-		//this->costs = (uint**)calloc( V, sizeof( uint* ) );
-		//for ( int i = 0; i < V; i++ )
-		//	this->costs[ i ] = (uint*)calloc( V, sizeof( uint ) );
-		
-		this->edges = *new vector<Edge*>();
-		
-		this->adjList = (vector<Edge*>*)calloc( V, sizeof( vector<Edge*> ) );
-		for ( int i = 0; i < V; i++ )
-			this->adjList[ i ] = *new vector<Edge*>();
-	}
+/**
+ * Costruttore.
+ * 
+ * @param V	numero di vertici
+ *
+ */
+Graph::Graph( int V ):
+	V( V )
+{
+	//this->costs = (uint**)calloc( V, sizeof( uint* ) );
+	//for ( int i = 0; i < V; i++ )
+	//	this->costs[ i ] = (uint*)calloc( V, sizeof( uint ) );
+	
+	this->edges = *new vector<Edge*>();
+	
+	this->adjList = (vector<Edge*>*)calloc( V, sizeof( vector<Edge*> ) );
+	for ( int i = 0; i < V; i++ )
+		this->adjList[ i ] = *new vector<Edge*>();
+}
 
-	/**
-	 * Aggiunge un lato al grafo.
-	 *
-	 * @param src		nodo sorgente
-	 * @param dst		nodo destinazione
-	 * @param cost		costo del lato
-	 * @param demand	domanda del lato
-	 * @param profit	profitto del lato
+/**
+ * Aggiunge un lato al grafo.
+ *
+ * @param src		nodo sorgente
+ * @param dst		nodo destinazione
+ * @param cost		costo del lato
+ * @param demand	domanda del lato
+ * @param profit	profitto del lato
  */
 void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 {
@@ -51,20 +52,23 @@ void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )
 }
 
 // Funzione per il confronto tra nodi in base al loro costo.
-class dijkyNodeComparison
+namespace model
 {
-private:
-	Graph* g;
-	uint src;
-public:
-	dijkyNodeComparison( Graph* graph; uint source ):
-		g( graph ), src( source ) {}
-	bool operator() ( const uint& lhs, const uint& rhs ) const
+	class dijkyNodeComparison
 	{
-		return ( g.getEdge( source, lhs ).getCost() >
-				 g.getEdge( source, rhs ).getCost() );
-	}
-};
+	private:
+		Graph* g;
+		uint src;
+	public:
+		dijkyNodeComparison( Graph* graph, uint source ):
+			g( graph ), src( source ) {}
+		bool operator() ( const uint& lhs, const uint& rhs ) const
+		{
+			return ( g->getEdge( src, lhs )->getCost() >
+					 g->getEdge( src, rhs )->getCost() );
+		}
+	};
+}
 
 /**
  * Completa la magliatura del grafo aggiungendo lati con costo minimo e
@@ -80,13 +84,24 @@ void Graph::completeCosts()
 		// Da cambiare: se non esiste, crea con costo max
 		dijkyNodeComparison comp( this, source );
 		for ( uint u = 0; u < V; u++ )
-			if ( d[ u ] == 0 )
-				d[ u ] = INT_MAX;
-		d[ source ] = 0;
+			if ( u != source )
+				try
+				{
+					getEdge( source, u );
+				}
+				catch ( exception& e )
+				{
+					edges.push_back( new DijkyEdge( source, u ) );
+					adjList[ source ].push_back( edges.back() );
+					adjList[ u ].push_back( edges.back() );
+					( (DijkyEdge*)edges.back() )->setCost( INT_MAX );
+				}
+		//d[ source ] = 0;
 		
 		// Costruisco un min-heap dei nodi.
 		for ( uint u = 0; u < V; u++ )
-			Q.push_back( u );
+			if ( u != source )
+				Q.push_back( u );
 		make_heap( Q.begin(), Q.end(), comp );
 		
 		while ( Q.size() > 0 )
@@ -97,39 +112,39 @@ void Graph::completeCosts()
 			Q.pop_back();
 			
 			// Se l'elemento migliore ha distanza infinita, non c'è più niente da fare...
-			if ( d[ u ] == INT_MAX )
+			int costo = getEdge( source, u )->getCost();
+			if ( costo == INT_MAX )
 				break;
 			
 			bool found = false;
 			uint v, alt;
-			for ( vector<Edge*>::iterator it = adjList[ u ].begin(); it != adjList[ u ].end(); it++ )
+			for ( auto it = adjList[ u ].begin(); it != adjList[ u ].end(); it++ )
 			{
 				v = (*it)->getDst( u );
 				
-				// Uso i getter per essere sicuro che il costo sia già definito ( src < dst )
-				alt = d[ u ] + this->costs[ (*it)->getSrc() ][ (*it)->getDst() ];
-				if ( alt < d[ v ] )
+				alt = costo + getEdge( u, v )->getCost();
+				if ( alt < getEdge( source, v )->getCost() )
 				{
-					d[ v ] = alt;
+					( (DijkyEdge*)getEdge( source, v ) )->setCost( alt );
 					
 					// Aggiorno la posizione di v.
 					// TODO: Teoricamente da fare in modo più efficiente.
 					make_heap( Q.begin(), Q.end(), comp );
 				}
 				
-				// Flag per indicare se esiste già un lato tra source ed u.
-				if ( v == source )
-					found = true;
+				//// Flag per indicare se esiste già un lato tra source ed u.
+				//if ( v == source )
+				//	found = true;
 			}
 			
-			// Se necessario, creo il lato associato a ( source, u ) e lo aggiungo alla lista
-			// Evito di creare autoarchi
-			if ( !found && source != u )
-			{
-				edges.push_back( new DijkyEdge( source, u ) );
-				adjList[ source ].push_back( edges.back() );
-				adjList[ u ].push_back( edges.back() );
-			}
+			//// Se necessario, creo il lato associato a ( source, u ) e lo aggiungo alla lista
+			//// Evito di creare autoarchi
+			//if ( !found && source != u )
+			//{
+			//	edges.push_back( new DijkyEdge( source, u ) );
+			//	adjList[ source ].push_back( edges.back() );
+			//	adjList[ u ].push_back( edges.back() );
+			//}
 		}
 	}
 }
@@ -144,6 +159,16 @@ vector<Edge*> Graph::getEdges() const
 vector<Edge*> Graph::getAdjList( uint src ) const
 {
 	return adjList[ src ];
+}
+
+// Getter dei lati
+Edge* Graph::getEdge( uint src, uint dst ) const
+{
+	for ( int i = 0; i < adjList[ src ].size(); i++ )
+		if ( adjList[ src ][ i ]->getDst( src ) == dst )
+			return adjList[ src ][ i ];
+	
+	throw;
 }
 
 /*** MetaGraph ***/
@@ -161,7 +186,7 @@ MetaGraph::MetaGraph( Graph g )
 		this->adjList[ i ] = *new vector<MetaEdge*>();
 
 	for ( Edge* edge : g.getEdges() )
-		edges.push_back( new MetaEdge( edge ));
+		edges.push_back( new MetaEdge( edge ) );
 
 
 	// Per ogni lato della lista di adiacenza,

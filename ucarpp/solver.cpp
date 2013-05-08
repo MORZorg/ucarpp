@@ -219,7 +219,7 @@ Solution Solver::createBaseSolution()
 					baseSolution.removeEdge( i );
 			}
 		}
-		baseSolution.addEdge( (MetaEdge*)graph.getEdge( currentNode, depot ) );
+		baseSolution.addEdge( graph.getEdge( currentNode, depot ) );
 	}
 	
 	cerr << "Soluzione finale: " << baseSolution.toString() << endl;

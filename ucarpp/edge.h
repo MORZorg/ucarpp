@@ -40,11 +40,10 @@ namespace model
 	
 	class DijkyEdge: public Edge
 	{
-	protected:
-		void setCost( uint );
-		
 	public:
 		DijkyEdge( uint, uint );
+
+		void setCost( uint );
 
 		uint getDemand() const;
 		float getProfit() const;
@@ -62,6 +61,10 @@ namespace model
 		uint getDemand() const;
 		float getProfit() const;
 	};
+}
+
+namespace solver
+{
 	
 	class MetaEdge: public Edge
 	{

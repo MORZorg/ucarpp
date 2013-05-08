@@ -69,7 +69,7 @@ namespace solver
 	class Solver
 	{
 	private:
-		model::Graph graph;
+		model::MetaGraph graph;
 		uint depot,
 		M,
 		Q,
@@ -80,7 +80,7 @@ namespace solver
 		
 		struct compareRatioDescending
 		{
-			const model::Graph* graph;
+			const model::MetaGraph* graph;
 			
 			compareRatioDescending( model::Graph* g ): graph( g ) {};
 			
