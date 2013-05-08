@@ -27,12 +27,12 @@ namespace solver
 	{
 	private:
 		//std::unordered_set<MetaEdge*> path;
-		std::list<model::MetaEdge*> path;
+		std::list<MetaEdge*> path;
 
 	public:
 		Vehicle();
 		
-		void addEdge( model::MetaEdge*, int = -1 );
+		void addEdge( MetaEdge*, int = -1 );
 		void removeEdge( int = -1 );
 
 		unsigned long size();
@@ -52,7 +52,7 @@ namespace solver
 	public:
 		Solution( int );
 
-		void addEdge( model::MetaEdge*, int, int = -1 );
+		void addEdge( MetaEdge*, int, int = -1 );
 		void removeEdge( int, int = -1 );
 
 		unsigned long size();
@@ -69,7 +69,7 @@ namespace solver
 	class Solver
 	{
 	private:
-		model::MetaGraph graph;
+		MetaGraph graph;
 		uint depot,
 		M,
 		Q,
@@ -80,11 +80,11 @@ namespace solver
 		
 		struct compareRatioDescending
 		{
-			const model::MetaGraph* graph;
+			const MetaGraph* graph;
 			
-			compareRatioDescending( model::Graph* g ): graph( g ) {};
+			compareRatioDescending( MetaGraph* g ): graph( g ) {};
 			
-			bool operator()( const model::MetaEdge* lhs, const model::MetaEdge* rhs ) const
+			bool operator()( const MetaEdge* lhs, const MetaEdge* rhs ) const
 			{
 				// Ratio se lato non preso, -1 altrimenti
 				float lhsRatio = ( lhs->getTaken() == 0 ? lhs->getProfitDemandRatio() : -1 ),
@@ -99,7 +99,7 @@ namespace solver
 		
 		compareRatioDescending greedyCompare;
 	public:
-		Solver( model::Graph, uint, uint, uint, uint );
+		Solver( MetaGraph, uint, uint, uint, uint );
 		
 		Solution* solve();
 		

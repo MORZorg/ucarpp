@@ -66,24 +66,29 @@ namespace model
 namespace solver
 {
 	
-	class MetaEdge: public Edge
+	class MetaEdge: public model::Edge
 	{
 	private:
 		Edge* actualEdge;
-		std::vector<const solver::Vehicle*> takers;
+		std::vector<const Vehicle*> takers;
 		
 	public:
-		MetaEdge( Edge* );
+		MetaEdge( model::Edge* );
+		
+		uint getSrc() const;
+		uint getDst() const;
+		uint getDst( uint ) const;
 		
 		uint getCost() const;
 		uint getDemand() const;
 		float getProfit() const;
+		//float getProfitDemandRatio() const;
 		
-		uint setTaken( const solver::Vehicle* );
-		uint unsetTaken( const solver::Vehicle*, int );
+		uint setTaken( const Vehicle* );
+		uint unsetTaken( const Vehicle*, int );
 		uint getTaken() const;
-		bool isServer( const solver::Vehicle* ) const;
-		const solver::Vehicle* getServer() const;
+		bool isServer( const Vehicle* ) const;
+		const Vehicle* getServer() const;
 	};
 }
 

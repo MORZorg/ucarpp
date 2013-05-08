@@ -166,7 +166,7 @@ string Solution::toString( int vehicle )
 
 /*** Solver ***/
 
-Solver::Solver( Graph graph, uint depot, uint M, uint Q, uint tMax ):
+Solver::Solver( MetaGraph graph, uint depot, uint M, uint Q, uint tMax ):
 graph( graph ), depot( depot ), M( M ), Q( Q ), tMax( tMax ),
 greedyCompare( &graph )
 {

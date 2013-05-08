@@ -165,6 +165,21 @@ actualEdge( reference )
 	takers = *new vector<const Vehicle*>();
 }
 
+uint MetaEdge::getSrc() const
+{
+	return actualEdge->getSrc();
+}
+
+uint MetaEdge::getDst() const
+{
+	return actualEdge->getDst();
+}
+
+uint MetaEdge::getDst( uint src ) const
+{
+	return actualEdge->getDst( src );
+}
+
 /**
  * Getter per il costo associato all'arco.
  *

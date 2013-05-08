@@ -194,13 +194,16 @@ MetaGraph::MetaGraph( Graph g )
 	// lo inseriamo alla posizione adeguata della nostra lista di adiacenza	
 	for ( int i = 0; i < V; i++ )
 		for( Edge* edge : g.getAdjList(i) ){
-			MetaEdge* metaEdge;
-			for( metaEdge : edges )
-				if( metaEdge.getSrc() == edge.getSrc() && 
-					metaEdge.getDst() == edge.getDst() )
-						break;
+			MetaEdge* tempEdge;
+			for( MetaEdge* metaEdge : edges )
+				if( metaEdge->getSrc() == edge->getSrc() && 
+					metaEdge->getDst() == edge->getDst() )
+				{
+					tempEdge = metaEdge;
+					break;
+				}
 
-			adjList[i].push_back(metaEdge);
+			adjList[i].push_back( tempEdge );
 		}
 }
 
