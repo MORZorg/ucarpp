@@ -35,28 +35,10 @@ namespace model
 		void addEdge( uint, uint, uint, uint, float );
 		void completeCosts();
 
+		uint size() const;
 		std::vector<Edge*> getAdjList( uint ) const;
 		std::vector<Edge*> getEdges() const;
-		Edge* getEdge( uint, uint ) const;
-	};
-}
-
-namespace solver
-{
-	class MetaGraph
-	{
-	private:
-		// Vettore dei Lati
-		std::vector<MetaEdge*> edges;
-		// Lista di Adiacenza
-		std::vector<MetaEdge*>* adjList;
-		
-	public:
-		MetaGraph( model::Graph );
-		
-		MetaEdge* getEdge( uint, uint ) const;
-		std::vector<MetaEdge*> getEdges() const;
-		std::vector<MetaEdge*> getAdjList( uint ) const;
+		Edge* getEdge( uint, uint ) const throw( int );
 	};
 }
 

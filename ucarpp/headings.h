@@ -9,8 +9,11 @@
 #ifndef ucarpp_headings_h
 #define ucarpp_headings_h
 
-#ifdef DEBUG
+#ifndef DEBUG
 #define DEBUG
+#endif
+
+#ifdef DEBUG
 #include <iostream>
 #endif
 

@@ -10,7 +10,6 @@
 
 using namespace std;
 using namespace model;
-using namespace solver;
 
 /*** Graph ***/
 
@@ -89,7 +88,7 @@ void Graph::completeCosts()
 				{
 					getEdge( source, u );
 				}
-				catch ( exception& e )
+				catch ( ... )
 				{
 					edges.push_back( new DijkyEdge( source, u ) );
 					adjList[ source ].push_back( edges.back() );
@@ -116,11 +115,12 @@ void Graph::completeCosts()
 			if ( costo == INT_MAX )
 				break;
 			
-			bool found = false;
 			uint v, alt;
 			for ( auto it = adjList[ u ].begin(); it != adjList[ u ].end(); it++ )
 			{
 				v = (*it)->getDst( u );
+				if ( v == source )
+					continue;
 				
 				alt = costo + getEdge( u, v )->getCost();
 				if ( alt < getEdge( source, v )->getCost() )
@@ -149,10 +149,10 @@ void Graph::completeCosts()
 	}
 }
 
-// Getter della lista dei lati
-vector<Edge*> Graph::getEdges() const
+// Getter della dimensione del grafo (numero di nodi)
+uint Graph::size() const
 {
-	return edges;
+	return V;
 }
 
 // Getter della lista di adiacenza di un nodo
@@ -161,70 +161,18 @@ vector<Edge*> Graph::getAdjList( uint src ) const
 	return adjList[ src ];
 }
 
-// Getter dei lati
-Edge* Graph::getEdge( uint src, uint dst ) const
-{
-	for ( int i = 0; i < adjList[ src ].size(); i++ )
-		if ( adjList[ src ][ i ]->getDst( src ) == dst )
-			return adjList[ src ][ i ];
-	
-	throw;
-}
-
-/*** MetaGraph ***/
-
-/**
- * Costruttore
- */
-MetaGraph::MetaGraph( Graph g )
-{
-	this->edges = *new vector<MetaEdge*>();
-
-	int V = g.getEdges().size();
-	this->adjList = (vector<MetaEdge*>*)calloc( V, sizeof( vector<MetaEdge*> ) );
-	for ( int i = 0; i < V; i++ )
-		this->adjList[ i ] = *new vector<MetaEdge*>();
-
-	for ( Edge* edge : g.getEdges() )
-		edges.push_back( new MetaEdge( edge ) );
-
-
-	// Per ogni lato della lista di adiacenza,
-	// cerchiamo il suo metalato corrispondente e
-	// lo inseriamo alla posizione adeguata della nostra lista di adiacenza	
-	for ( int i = 0; i < V; i++ )
-		for( Edge* edge : g.getAdjList(i) ){
-			MetaEdge* tempEdge;
-			for( MetaEdge* metaEdge : edges )
-				if( metaEdge->getSrc() == edge->getSrc() && 
-					metaEdge->getDst() == edge->getDst() )
-				{
-					tempEdge = metaEdge;
-					break;
-				}
-
-			adjList[i].push_back( tempEdge );
-		}
-}
-
-// Getter dei lati
-MetaEdge* MetaGraph::getEdge( uint src, uint dst ) const
-{
-	for ( int i = 0; i < adjList[ src ].size(); i++ )
-		if ( adjList[ src ][ i ]->getDst( src ) == dst )
-			return adjList[ src ][ i ];
-	
-	throw;
-}
-
 // Getter della lista dei lati
-vector<MetaEdge*> MetaGraph::getEdges() const
+vector<Edge*> Graph::getEdges() const
 {
 	return edges;
 }
 
-// Getter della lista di adiacenza di un nodo
-vector<MetaEdge*> MetaGraph::getAdjList( uint src ) const
+// Getter dei lati
+Edge* Graph::getEdge( uint src, uint dst ) const throw( int )
 {
-	return adjList[ src ];
+	for ( int i = 0; i < adjList[ src ].size(); i++ )
+		if ( adjList[ src ][ i ]->getDst( src ) == dst )
+			return adjList[ src ][ i ];
+	
+	throw -1;
 }

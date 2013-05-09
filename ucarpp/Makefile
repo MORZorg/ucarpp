@@ -1,5 +1,5 @@
-OBJS = main.cpp graph.cpp edge.cpp solver.cpp
-LIBS = headings.h main.h graph.h edge.h solver.h
+OBJS = main.cpp graph.cpp edge.cpp solver.cpp meta.h
+LIBS = headings.h main.h graph.h edge.h solver.h meta.h
 
 ucarpp: $(OBJS) $(LIBS)
 	$(CXX)	-I/usr/include/boost \

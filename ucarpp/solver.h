@@ -20,6 +20,7 @@
 #include "headings.h"
 #include "edge.h"
 #include "graph.h"
+#include "meta.h"
 
 namespace solver
 {
@@ -32,13 +33,14 @@ namespace solver
 	public:
 		Vehicle();
 		
-		void addEdge( MetaEdge*, int = -1 );
-		void removeEdge( int = -1 );
+		void addEdge( MetaEdge*, long = -1 );
+		void removeEdge( long = -1 );
 
 		unsigned long size();
 		
 		uint getCost();
 		uint getDemand();
+		uint getProfit();
 
 		std::string toString();
 	};
@@ -47,7 +49,7 @@ namespace solver
 	{
 	private:
 		int M;
-		Vehicle* vehicles;
+		Vehicle** vehicles;
 		
 	public:
 		Solution( int );
@@ -74,16 +76,12 @@ namespace solver
 		M,
 		Q,
 		tMax;
-		Solution* currentSolution;
+		Solution currentSolution;
 		
 		Solution createBaseSolution();
 		
 		struct compareRatioDescending
 		{
-			const MetaGraph* graph;
-			
-			compareRatioDescending( MetaGraph* g ): graph( g ) {};
-			
 			bool operator()( const MetaEdge* lhs, const MetaEdge* rhs ) const
 			{
 				// Ratio se lato non preso, -1 altrimenti
@@ -91,7 +89,7 @@ namespace solver
 				rhsRatio = ( rhs->getTaken() == 0 ? rhs->getProfitDemandRatio() : -1 );
 				
 				if ( lhsRatio == rhsRatio )
-					return graph->getCost( lhs ) > graph->getCost( rhs );
+					return lhs->getCost() > rhs->getCost();
 					
 					return lhsRatio > rhsRatio;
 			}
@@ -101,9 +99,7 @@ namespace solver
 	public:
 		Solver( MetaGraph, uint, uint, uint, uint );
 		
-		Solution* solve();
-		
-		bool isFeasible( Solution );
+		Solution solve();
 	};
 }
 
