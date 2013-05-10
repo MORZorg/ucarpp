@@ -12,6 +12,7 @@
 #include "headings.h"
 #include "edge.h"
 #include "graph.h"
+//#include "solver.h"
 
 namespace solver
 {

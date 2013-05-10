@@ -17,5 +17,6 @@
 #include "headings.h"
 #include "graph.h"
 #include "solver.h"
+#include "meta.h"
 
 #endif /* defined(__ucarpp__main__) */

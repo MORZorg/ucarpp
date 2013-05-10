@@ -1,4 +1,4 @@
-OBJS = main.cpp graph.cpp edge.cpp solver.cpp meta.h
+OBJS = main.cpp graph.cpp edge.cpp solver.cpp meta.cpp
 LIBS = headings.h main.h graph.h edge.h solver.h meta.h
 
 ucarpp: $(OBJS) $(LIBS)
@@ -10,4 +10,7 @@ ucarpp: $(OBJS) $(LIBS)
 
 run: ucarpp
 	./$< ../instances\&Results/instances/test1A.dat
+
+clean:
+	rm *.gch *~
 

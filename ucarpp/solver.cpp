@@ -248,7 +248,7 @@ Solution Solver::createBaseSolution()
 				{
 					full = false;
 #ifdef DEBUG
-					fprintf( stderr, "\t\tPreso %d (%.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
+					fprintf( stderr, "\t\tPreso %d (r: %.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
 #endif
 					break;
 				}
