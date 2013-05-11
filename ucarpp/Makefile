@@ -13,4 +13,3 @@ run: ucarpp
 
 clean:
 	rm *.gch *~
-
