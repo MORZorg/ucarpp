@@ -167,7 +167,7 @@ int main( int argc, const char * argv[] )
 	
 	// Completo la magliatura del grafo
 	grafo.completeCosts();
-	cerr << "Matrice dei costi: C ( P, D ) " << endl;
+	cerr << "Matrice dei costi: C (P, D) " << endl;
 	solver::MetaGraph grafoTest( grafo );
 	for ( int i = 0; i < V; i++ )
 	{

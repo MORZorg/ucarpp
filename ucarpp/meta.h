@@ -19,7 +19,7 @@ namespace solver
 	// Forward declaration to avoid cyclic includes
 	class Vehicle;
 	
-	class MetaEdge: public model::Edge
+	class MetaEdge
 	{
 		private:
 			model::Edge* actualEdge;
@@ -35,6 +35,7 @@ namespace solver
 			uint getCost() const;
 			uint getDemand() const;
 			float getProfit() const;
+			float getProfitDemandRatio() const;
 			
 			unsigned long setTaken( const Vehicle* );
 			unsigned long unsetTaken( const Vehicle*, int );
@@ -55,6 +56,7 @@ namespace solver
 			MetaGraph( model::Graph );
 			
 			MetaEdge* getEdge( uint, uint ) const throw( int );
+			MetaEdge* getEdge( const model::Edge* ) const throw( int );
 			std::vector<MetaEdge*> getEdges() const;
 			std::vector<MetaEdge*> getAdjList( uint ) const;
 	};

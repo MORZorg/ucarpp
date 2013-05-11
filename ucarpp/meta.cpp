@@ -15,7 +15,6 @@ using namespace model;
 /*** MetaEdge ***/
 
 MetaEdge::MetaEdge( Edge* reference ):
-	Edge( reference->getSrc(), reference->getDst() ),
 	actualEdge( reference )
 {
 	takers = *new vector<const Vehicle*>();
@@ -64,6 +63,16 @@ uint MetaEdge::getDemand() const
 float MetaEdge::getProfit() const
 {
 	return actualEdge->getProfit();
+}
+
+/**
+ * Getter del rapporto tra profitto e domanda associati all'arco, utile per l'ordinamento.
+ *
+ * @return profitto/domanda se domanda != 0, -1 altrimenti
+ */
+float MetaEdge::getProfitDemandRatio() const
+{
+	return actualEdge->getProfitDemandRatio();
 }
 
 /**
@@ -179,6 +188,12 @@ MetaEdge* MetaGraph::getEdge( uint src, uint dst ) const throw( int )
 			return adjList[ src ][ i ];
 	
 	throw -1;
+}
+
+// Getter della corrispondenza lato reale - metalato
+MetaEdge* MetaGraph::getEdge( const Edge* edge ) const throw( int )
+{
+	return getEdge( edge->getSrc(), edge->getDst() );
 }
 
 // Getter della lista dei lati

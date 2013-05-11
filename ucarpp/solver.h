@@ -49,12 +49,13 @@ namespace solver
 	{
 	private:
 		int M;
+		MetaGraph graph;
 		Vehicle** vehicles;
 		
 	public:
-		Solution( int );
+		Solution( int, model::Graph );
 
-		void addEdge( MetaEdge*, int, int = -1 );
+		void addEdge( model::Edge*, int, int = -1 );
 		void removeEdge( int, int = -1 );
 
 		unsigned long size();
@@ -66,12 +67,34 @@ namespace solver
 
 		std::string toString();
 		std::string toString( int );
+		
+		struct compareRatioGreedy
+		{
+			MetaGraph* graph;
+			
+			compareRatioGreedy( MetaGraph* graph ): graph( graph ) {}
+			
+			bool operator() ( const model::Edge* lhs, const model::Edge* rhs ) const
+			{
+				MetaEdge* metaLhs = graph->getEdge( lhs ),
+						* metaRhs = graph->getEdge( rhs );
+				
+				// Ratio se lato non preso, -1 altrimenti
+				float lhsRatio = ( metaLhs->getTaken() == 0 ? metaLhs->getProfitDemandRatio() : -1 ),
+				rhsRatio = ( metaRhs->getTaken() == 0 ? metaRhs->getProfitDemandRatio() : -1 );
+				
+				if ( lhsRatio == rhsRatio )
+					return metaLhs->getCost() > metaRhs->getCost();
+					
+					return lhsRatio > rhsRatio;
+			}
+		} compareRatioGreedy;
 	};
 
 	class Solver
 	{
 	private:
-		MetaGraph graph;
+		model::Graph graph;
 		uint depot,
 		M,
 		Q,
@@ -80,24 +103,24 @@ namespace solver
 		
 		Solution createBaseSolution();
 		
-		struct compareRatioDescending
-		{
-			bool operator()( const MetaEdge* lhs, const MetaEdge* rhs ) const
-			{
-				// Ratio se lato non preso, -1 altrimenti
-				float lhsRatio = ( lhs->getTaken() == 0 ? lhs->getProfitDemandRatio() : -1 ),
-				rhsRatio = ( rhs->getTaken() == 0 ? rhs->getProfitDemandRatio() : -1 );
-				
-				if ( lhsRatio == rhsRatio )
-					return lhs->getCost() > rhs->getCost();
-					
-					return lhsRatio > rhsRatio;
-			}
-		};
-		
-		compareRatioDescending greedyCompare;
+//		struct compareRatioDescending
+//		{
+//			bool operator()( const MetaEdge* lhs, const MetaEdge* rhs ) const
+//			{
+//				// Ratio se lato non preso, -1 altrimenti
+//				float lhsRatio = ( lhs->getTaken() == 0 ? lhs->getProfitDemandRatio() : -1 ),
+//				rhsRatio = ( rhs->getTaken() == 0 ? rhs->getProfitDemandRatio() : -1 );
+//				
+//				if ( lhsRatio == rhsRatio )
+//					return lhs->getCost() > rhs->getCost();
+//					
+//					return lhsRatio > rhsRatio;
+//			}
+//		};
+//		
+//		compareRatioDescending greedyCompare;
 	public:
-		Solver( MetaGraph, uint, uint, uint, uint );
+		Solver( model::Graph, uint, uint, uint, uint );
 		
 		Solution solve();
 	};

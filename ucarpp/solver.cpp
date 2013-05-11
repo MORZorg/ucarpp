@@ -121,8 +121,8 @@ string Vehicle::toString()
 
 /*** Solution ***/
 
-Solution::Solution( int M ):
-	M( M )
+Solution::Solution( int M, Graph graph ):
+	M( M ), graph( graph ), compareRatioGreedy( &this->graph )
 {
 	/*
 	 * TODO: Rendere profitto e domanda variabili associate ad ogni soluzione,
@@ -133,9 +133,9 @@ Solution::Solution( int M ):
 		vehicles[ i ] = new Vehicle();
 }
 
-void Solution::addEdge( MetaEdge* edge, int vehicle, int index )
+void Solution::addEdge( Edge* edge, int vehicle, int index )
 {
-	vehicles[ vehicle ]->addEdge( edge, index );
+	vehicles[ vehicle ]->addEdge( graph.getEdge( edge ), index );
 }
 
 void Solution::removeEdge( int vehicle, int index )
@@ -193,19 +193,18 @@ string Solution::toString( int vehicle )
 	return vehicles[ vehicle ]->toString();
 }
 
-
 /*** Solver ***/
 
-Solver::Solver( MetaGraph graph, uint depot, uint M, uint Q, uint tMax ):
+Solver::Solver( Graph graph, uint depot, uint M, uint Q, uint tMax ):
 	graph( graph ), depot( depot ), M( M ), Q( Q ), tMax( tMax ),
-	greedyCompare(), currentSolution( createBaseSolution() ) {}
+	currentSolution( createBaseSolution() ) {}
 
 Solution Solver::createBaseSolution()
 {
 #ifdef DEBUG
 	cerr << endl << "Stampo la soluzione di base:" << endl;
 #endif
-	Solution baseSolution( M );
+	Solution baseSolution( M, graph );
 	uint currentNode = depot;
 	
 	for ( int i = 0; i < M; i++ )
@@ -214,13 +213,13 @@ Solution Solver::createBaseSolution()
 		cerr << "\tVeicolo " << i + 1 << endl;
 #endif
 		// Aggiungo lati finché la soluzione è accettabile ed è possibile tornare al deposito
-		vector<MetaEdge*> edges;
+		vector<Edge*> edges;
 		bool full = false;
 		while ( !full )
 		{
 			// Ordino i lati uscenti dal nodo corrente
 			edges = graph.getAdjList( currentNode );
-			sort( edges.begin(), edges.end(), greedyCompare );
+			sort( edges.begin(), edges.end(), baseSolution.compareRatioGreedy );
 			
 			/**
 			 *
@@ -232,7 +231,7 @@ Solution Solver::createBaseSolution()
 			// Prendo il lato ammissibile migliore, se esiste
 			full = true;
 			//for ( int i = 0; i < edges.size(); i++ )
-			for( MetaEdge* edge : edges )
+			for( Edge* edge : edges )
 			{
 				currentNode = edge->getDst( currentNode );
 				
@@ -248,7 +247,7 @@ Solution Solver::createBaseSolution()
 				{
 					full = false;
 #ifdef DEBUG
-					fprintf( stderr, "\t\tPreso %d (r: %.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
+					fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
 #endif
 					break;
 				}
