@@ -12,6 +12,7 @@
 #include "headings.h"
 #include "edge.h"
 #include "graph.h"
+#include <unordered_map>	// If not working: Boost
 //#include "solver.h"
 
 namespace solver
@@ -48,17 +49,18 @@ namespace solver
 	{
 		private:
 			// Vettore dei Lati
-			std::vector<MetaEdge*> edges;
+			//std::vector<MetaEdge*> edges;
+			std::unordered_map<model::Edge*, MetaEdge*> edges;
 			// Lista di Adiacenza
-			std::vector<MetaEdge*>* adjList;
+			//std::unordered_map<uint, MetaEdge*>* adjList;
 			
 		public:
 			MetaGraph( model::Graph );
 			
-			MetaEdge* getEdge( uint, uint ) const throw( int );
-			MetaEdge* getEdge( const model::Edge* ) const throw( int );
-			std::vector<MetaEdge*> getEdges() const;
-			std::vector<MetaEdge*> getAdjList( uint ) const;
+//			MetaEdge* getEdge( uint, uint ) const throw( int );
+			MetaEdge* getEdge( const model::Edge* ) const throw( std::out_of_range );
+//			std::unordered_map<model::Edge*, MetaEdge*> getEdges() const;
+//			std::unordered_map<uint, MetaEdge*> getAdjList( uint ) const;
 	};
 }
 

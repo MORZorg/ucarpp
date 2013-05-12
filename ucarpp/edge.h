@@ -35,6 +35,8 @@ namespace model
 		virtual float getProfit() const = 0;
 		
 		float getProfitDemandRatio() const;
+		
+		bool operator==( const Edge* ) const;
 	};
 	
 	class DijkyEdge: public Edge

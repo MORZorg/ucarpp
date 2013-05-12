@@ -72,6 +72,21 @@ uint Edge::getCost() const
 }
 
 /**
+ * Comparatore di uguaglianza tra archi.
+ *
+ * @return	vero, se gli archi hanno le stesse proprietà
+ *			( sorgente, destinazione, costo, profitto, domanda )
+ */
+bool Edge::operator==( const Edge* other ) const
+{
+	return getSrc() == other->getDst( getDst() ) &&
+		   getDst() == other->getDst( getSrc() ) &&
+		   getCost() == other->getCost() &&
+		   getProfit() == other->getProfit() &&
+		   getDemand() == other->getDemand();
+}
+
+/**
  * Calcola il rapporto tra profitto e domanda, utile per l'ordinamento.
  *
  * @return profitto/domanda se domanda != 0, -1 altrimenti

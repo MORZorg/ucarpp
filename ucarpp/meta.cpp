@@ -150,60 +150,63 @@ const Vehicle* MetaEdge::getServer() const
  */
 MetaGraph::MetaGraph( Graph g )
 {
-	this->edges = *new vector<MetaEdge*>();
+	this->edges = *new unordered_map<Edge*, MetaEdge*>();
 	
-	long V = g.size();
-	this->adjList = (vector<MetaEdge*>*)calloc( V, sizeof( vector<MetaEdge*> ) );
-	for ( int i = 0; i < V; i++ )
-		this->adjList[ i ] = *new vector<MetaEdge*>();
+//	long V = g.size();
+//	this->adjList =
+//			(unordered_map<uint, MetaEdge*>*)calloc( V, sizeof( unordered_map<uint, MetaEdge*> ) );
+//	for ( int i = 0; i < V; i++ )
+//		this->adjList[ i ] = *new unordered_map<uint, MetaEdge*>();
 	
 	for ( Edge* edge : g.getEdges() )
-		edges.push_back( new MetaEdge( edge ) );
+		edges.insert( make_pair( edge, new MetaEdge( edge ) ) );
 	
 	
-	// Per ogni lato della lista di adiacenza,
-	// cerchiamo il suo metalato corrispondente e
-	// lo inseriamo alla posizione adeguata della nostra lista di adiacenza
-	for ( int i = 0; i < V; i++ )
-		for( Edge* edge : g.getAdjList( i ) )
-		{
-			MetaEdge* tempEdge;
-			for( MetaEdge* metaEdge : edges )
-				if( metaEdge->getSrc() == edge->getSrc() &&
-				   metaEdge->getDst() == edge->getDst() )
-				{
-					tempEdge = metaEdge;
-					break;
-				}
-			
-			adjList[ i ].push_back( tempEdge );
-		}
+//	// Per ogni lato della lista di adiacenza,
+//	// cerchiamo il suo metalato corrispondente e
+//	// lo inseriamo alla posizione adeguata della nostra lista di adiacenza
+//	for ( int i = 0; i < V; i++ )
+//		for( Edge* edge : g.getAdjList( i ) )
+//		{
+////			MetaEdge* tempEdge;
+////			for( MetaEdge* metaEdge : edges )
+////				if( metaEdge->getSrc() == edge->getSrc() &&
+////				   metaEdge->getDst() == edge->getDst() )
+////				{
+////					tempEdge = metaEdge;
+////					break;
+////				}
+//			
+//			adjList[ i ].insert( make_pair( edge->getDst( i ), edges.at( edge ) ) );
+//		}
 }
 
-// Getter dei lati
-MetaEdge* MetaGraph::getEdge( uint src, uint dst ) const throw( int )
-{
-	for ( int i = 0; i < adjList[ src ].size(); i++ )
-		if ( adjList[ src ][ i ]->getDst( src ) == dst )
-			return adjList[ src ][ i ];
-	
-	throw -1;
-}
+//// Getter dei lati
+//MetaEdge* MetaGraph::getEdge( uint src, uint dst ) const throw( int )
+//{
+//	for ( int i = 0; i < adjList[ src ].size(); i++ )
+//		if ( adjList[ src ][ i ]->getDst( src ) == dst )
+//			return adjList[ src ][ i ];
+//	
+//	throw -1;
+//}
 
 // Getter della corrispondenza lato reale - metalato
-MetaEdge* MetaGraph::getEdge( const Edge* edge ) const throw( int )
+MetaEdge* MetaGraph::getEdge( const Edge* edge ) const throw( out_of_range )
 {
-	return getEdge( edge->getSrc(), edge->getDst() );
+	// edge deve essere const per l'uso che viene fatto della funzione (greedyCompare etc),
+	// ma non può esserlo per unordered_map => const_cast
+	return edges.at( const_cast<Edge*>( edge ) );
 }
 
-// Getter della lista dei lati
-vector<MetaEdge*> MetaGraph::getEdges() const
-{
-	return edges;
-}
+//// Getter della lista dei lati
+//unordered_map<Edge*, MetaEdge*> MetaGraph::getEdges() const
+//{
+//	return edges;
+//}
 
-// Getter della lista di adiacenza di un nodo
-vector<MetaEdge*> MetaGraph::getAdjList( uint src ) const
-{
-	return adjList[ src ];
-}
+//// Getter della lista di adiacenza di un nodo
+//unordered_map<uint, MetaEdge*> MetaGraph::getAdjList( uint src ) const
+//{
+//	return adjList[ src ];
+//}
