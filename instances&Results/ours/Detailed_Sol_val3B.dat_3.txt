@@ -1,0 +1,45 @@
+Solution of Problem val3B.dat - Number of Vehicles: 3
+
+Total Profit: 131
+
+Total Cost: 77
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+:]
+
+Profit: 77
+Cost: 25
+Load: 35
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+:]
+
+Profit: 41
+Cost: 26
+Load: 26
+
+
+Route 2 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+:]
+
+Profit: 13
+Cost: 26
+Load: 10
+

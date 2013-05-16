@@ -1,3 +1,4 @@
+INSTPATH = ../instances\&Results/instances/
 OBJS = main.cpp graph.cpp edge.cpp solver.cpp meta.cpp
 LIBS = headings.h main.h graph.h edge.h solver.h meta.h
 
@@ -9,7 +10,18 @@ ucarpp: $(OBJS) $(LIBS)
 	mv a.out $@
 
 run: ucarpp
-	./$< ../instances\&Results/instances/test1A.dat
+	./$< $(INSTPATH)/test1A.dat
+
+OURS = ../instances\&Results/ours/
+INSTANCES = $(shell ls $(INSTPATH))
+VEHICLES = 2 3 4
+batch: ucarpp
+	$(foreach test, \
+		$(INSTANCES), \
+		$(foreach i, $(VEHICLES), \
+			./$< $(INSTPATH)$(test) $(i) \
+				> $(OURS)Detailed_Sol_$(test)_$(i).txt \
+				2> /dev/null;))
 
 clean:
 	rm *.gch *~

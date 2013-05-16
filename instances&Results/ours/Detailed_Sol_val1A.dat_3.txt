@@ -1,0 +1,45 @@
+Solution of Problem val1A.dat - Number of Vehicles: 3
+
+Total Profit: 566
+
+Total Cost: 234
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+:]
+
+Profit: 326
+Cost: 77
+Load: 145
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+:]
+
+Profit: 182
+Cost: 79
+Load: 89
+
+
+Route 2 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+:]
+
+Profit: 58
+Cost: 78
+Load: 32
+

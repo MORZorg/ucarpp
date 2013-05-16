@@ -27,6 +27,7 @@ int main( int argc, const char * argv[] )
 		Q = 0,
 		tMax = 0,
 		depot = 0;
+	string filename;
 	if ( argc > 2 )
 	{
 		//stringstream ss( argv[ 2 ] );
@@ -41,12 +42,18 @@ int main( int argc, const char * argv[] )
 	smatch sm;
 	regex re;
 	
-	re = *new regex( "NUMBER:\\s(.*)\\.dat" );
+	re = *new regex( "NUMBER:\\s(.*\\.dat)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
+	{
+		filename = sm[ 1 ];
 		cerr << "File: " << sm[ 1 ] << endl;
+	}
 	else
-		cerr << "Errore. " << line;
+	{
+		cerr << "Errore nella lettura del nome del file. " << line << endl;
+		exit( 1 );
+	}
 	
 	// Dati
 	re = *new regex( "NUMBER OF VERTICES:\\s(\\d+)" );
@@ -60,7 +67,10 @@ int main( int argc, const char * argv[] )
 		cerr << "Vertici: " << V << endl;
 	}
 	else
-		cerr << "Errore. " << line;
+	{
+		cerr << "Errore nella lettura del numero di vertici. " << line << endl;
+		exit( 1 );
+	}
 	
 	re = *new regex( "NUMBER OF EDGES:\\s(\\d+)" );
 	getline( in, line );
@@ -73,7 +83,10 @@ int main( int argc, const char * argv[] )
 		cerr << "Lati: " << L << endl;
 	}
 	else
-		cerr << "Errore. " << line;
+	{
+		cerr << "Errore nella lettura del numero di lati. " << line << endl;
+		exit( 1 );
+	}
 	
 	re = *new regex( "CAPACITY:\\s(\\d+)" );
 	getline( in, line );
@@ -86,7 +99,10 @@ int main( int argc, const char * argv[] )
 		cerr << "Capacita`: " << Q << endl;
 	}
 	else
-		cerr << "Errore. " << line;
+	{
+		cerr << "Errore nella lettura della capacita`. " << line << endl;
+		exit( 1 );
+	}
 	
 	re = *new regex( "TIME LIMIT:\\s(\\d+)" );
 	getline( in, line );
@@ -99,7 +115,10 @@ int main( int argc, const char * argv[] )
 		cerr << "Tempo disponibile: " << tMax << endl;
 	}
 	else
-		cerr << "Errore. " << line;
+	{
+		cerr << "Errore nella lettura del tempo disponibile. " << line << endl;
+		exit( 1 );
+	}
 	
 	// Lati
 	model::Graph grafo( V );
@@ -117,7 +136,10 @@ int main( int argc, const char * argv[] )
 		getline( in, line );
 		regex_search( line, sm, re );
 		if ( sm.size() < 6 )
-			cerr << "Errore. " << line << endl;
+		{
+			cerr << "Errore nella lettura dei dati del lato. " << line << endl;
+			exit( 1 );
+		}
 		else
 		{
 			// Pessimo...
@@ -161,12 +183,16 @@ int main( int argc, const char * argv[] )
 		cerr << "Deposito: " << depot << endl;
 	}
 	else
-		cerr << "Errore. " << line << endl;
+	{
+		cerr << "Errore nella lettura del deposito. " << line << endl;
+		exit( 1 );
+	}
 	
 	in.close();
 	
 	// Completo la magliatura del grafo
 	grafo.completeCosts();
+#ifdef DEBUG
 	cerr << "Matrice dei costi: C (P, D) " << endl;
 	for ( int i = 0; i < V; i++ )
 	{
@@ -182,10 +208,32 @@ int main( int argc, const char * argv[] )
 		}
 		cerr << endl;
 	}
+#endif
 	
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );
-	solver.solve();
+	solver::Solution solution = solver.solve();
+	
+	// Stampo l'output
+	cout << "Solution of Problem " << filename << " - Number of Vehicles: " << M << endl << endl;
+	cout << "Total Profit: " << solution.getProfit() << endl << endl;
+	cout << "Total Cost: " << solution.getCost() << endl << endl;
+	for ( int i = 0; i < M; i++ )
+	{
+		cout << endl << "Route " << i << " Details:" << endl;
+
+		cout << endl << "Services Sequence:" << endl;
+		cout << ":)" << endl;
+
+		cout << endl << "Vertex Sequence:" << endl;
+		cout << ":]" << endl;
+		
+		cout << endl;
+		cout << "Profit: " << solution.getProfit( i ) << endl;
+		cout << "Cost: " << solution.getCost( i ) << endl;
+		cout << "Load: " << solution.getDemand( i ) << endl;
+		cout << endl;
+	}
 	
     return 0;
 }

@@ -33,6 +33,7 @@ namespace solver
 	public:
 		Vehicle();
 		
+		MetaEdge* getEdge( int ) const;
 		void addEdge( MetaEdge*, long = -1 );
 		void removeEdge( long = -1 );
 
@@ -55,18 +56,22 @@ namespace solver
 	public:
 		Solution( int, model::Graph );
 
+		MetaEdge* getEdge( int, int ) const;
 		void addEdge( model::Edge*, int, int = -1 );
 		void removeEdge( int, int = -1 );
 
-		unsigned long size();
+		unsigned long size() const;
+		unsigned long size( int ) const;
 		
-		uint getCost();
-		uint getCost( int );
-		uint getDemand();
-		uint getDemand( int );
+		uint getProfit() const;
+		uint getProfit( int ) const;
+		uint getCost() const;
+		uint getCost( int ) const;
+		uint getDemand() const;
+		uint getDemand( int ) const;
 
-		std::string toString();
-		std::string toString( int );
+		std::string toString() const;
+		std::string toString( int ) const;
 		
 		struct compareRatioGreedy
 		{
@@ -102,23 +107,7 @@ namespace solver
 		Solution currentSolution;
 		
 		Solution createBaseSolution();
-		
-//		struct compareRatioDescending
-//		{
-//			bool operator()( const MetaEdge* lhs, const MetaEdge* rhs ) const
-//			{
-//				// Ratio se lato non preso, -1 altrimenti
-//				float lhsRatio = ( lhs->getTaken() == 0 ? lhs->getProfitDemandRatio() : -1 ),
-//				rhsRatio = ( rhs->getTaken() == 0 ? rhs->getProfitDemandRatio() : -1 );
-//				
-//				if ( lhsRatio == rhsRatio )
-//					return lhs->getCost() > rhs->getCost();
-//					
-//					return lhsRatio > rhsRatio;
-//			}
-//		};
-//		
-//		compareRatioDescending greedyCompare;
+		Solution vns( int, Solution );
 	public:
 		Solver( model::Graph, uint, uint, uint, uint );
 		

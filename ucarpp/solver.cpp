@@ -19,6 +19,11 @@ Vehicle::Vehicle()
 	path = *new list<MetaEdge*>();
 }
 
+MetaEdge* Vehicle::getEdge( int index ) const
+{
+	return *next( path.begin(), index );
+}
+
 void Vehicle::addEdge( MetaEdge* edge, long index )
 {
 	// TODO: fare tutta la roba del removeEdge
@@ -133,6 +138,11 @@ Solution::Solution( int M, Graph graph ):
 		vehicles[ i ] = new Vehicle();
 }
 
+MetaEdge* Solution::getEdge( int vehicle, int index ) const
+{
+	return vehicles[ vehicle ]->getEdge( index );
+}
+
 void Solution::addEdge( Edge* edge, int vehicle, int index )
 {
 	vehicles[ vehicle ]->addEdge( graph.getEdge( edge ), index );
@@ -143,15 +153,35 @@ void Solution::removeEdge( int vehicle, int index )
 	vehicles[ vehicle ]->removeEdge( index );
 }
 
-unsigned long Solution::size()
+unsigned long Solution::size() const
 {
-	int result = 0;
+	unsigned long result = 0;
 	for ( int i = 0; i < M; i++ )
-		result += vehicles[ i ]->size();
+		result += size( i );
+	
 	return result;
 }
 
-uint Solution::getCost()
+unsigned long Solution::size( int vehicle ) const
+{
+	return vehicles[ vehicle ]->size();
+}
+
+uint Solution::getProfit() const
+{
+	uint result = 0;
+	for ( int i = 0; i < M; i++ )
+		result += getProfit( i );
+	
+	return result;
+}
+
+uint Solution::getProfit( int vehicle ) const
+{
+	return vehicles[ vehicle ]->getProfit();
+}
+
+uint Solution::getCost() const
 {
 	uint result = 0;
 	for ( int i = 0; i < M; i++ )
@@ -160,12 +190,12 @@ uint Solution::getCost()
 	return result;
 }
 
-uint Solution::getCost( int vehicle )
+uint Solution::getCost( int vehicle ) const
 {
 	return vehicles[ vehicle ]->getCost();
 }
 
-uint Solution::getDemand()
+uint Solution::getDemand() const
 {
 	uint result = 0;
 	for ( int i = 0; i < M; i++ )
@@ -174,12 +204,12 @@ uint Solution::getDemand()
 	return result;
 }
 
-uint Solution::getDemand( int vehicle )
+uint Solution::getDemand( int vehicle ) const
 {
 	return vehicles[ vehicle ]->getDemand();
 }
 
-string Solution::toString()
+string Solution::toString() const
 {
 	stringstream ss;
 	for ( int i = 0; i < M; i++ )
@@ -188,7 +218,7 @@ string Solution::toString()
 	return ss.str();
 }
 
-string Solution::toString( int vehicle )
+string Solution::toString( int vehicle ) const
 {
 	return vehicles[ vehicle ]->toString();
 }
@@ -205,13 +235,16 @@ Solution Solver::createBaseSolution()
 	cerr << endl << "Stampo la soluzione di base:" << endl;
 #endif
 	Solution baseSolution( M, graph );
-	uint currentNode = depot;
+	uint currentNode;
 	
 	for ( int i = 0; i < M; i++ )
 	{
 #ifdef DEBUG
 		cerr << "\tVeicolo " << i + 1 << endl;
 #endif
+		
+		currentNode = depot;
+		
 		// Aggiungo lati finché la soluzione è accettabile ed è possibile tornare al deposito
 		vector<Edge*> edges;
 		bool full = false;
@@ -221,34 +254,31 @@ Solution Solver::createBaseSolution()
 			edges = graph.getAdjList( currentNode );
 			sort( edges.begin(), edges.end(), baseSolution.compareRatioGreedy );
 			
-			/**
-			 *
-			 * for ( MetaEdge* edge : edges )
-			 * cerr << edge->getSrc() + 1 << " " << edge->getDst() + 1 << ": "
-			 * << edge->getProfitDemandRatio() << endl;
-			 */
-			
 			// Prendo il lato ammissibile migliore, se esiste
 			full = true;
-			//for ( int i = 0; i < edges.size(); i++ )
 			for( Edge* edge : edges )
 			{
 				currentNode = edge->getDst( currentNode );
 				
-				uint returnCost;
-				if ( currentNode == depot )
-					returnCost = 0;
-				else
-					returnCost = graph.getEdge( currentNode, depot )->getCost();
-				
+				// Aggiungo il lato selezionato e, in caso non sia tornato al deposito,
+				//  il lato necessario alla chiusura.
+				bool addedEdge;
 				baseSolution.addEdge( edge, i );
-				if ( baseSolution.getDemand( i ) < Q &&
-				   ( baseSolution.getCost( i ) + returnCost ) < tMax )
+				if ( ( addedEdge = ( currentNode != depot ) ) )
 				{
-					full = false;
+					Edge* returnEdge = graph.getEdge( currentNode, depot );
+					baseSolution.addEdge( returnEdge, i );
+				}
+				
+				// Se la soluzione resta feasible avendo preso il lato selezionato ed il lato di
+				//  ritorno, accetto il nuovo lato e proseguo al successivo.
+				if ( baseSolution.getDemand( i ) < Q && baseSolution.getCost( i ) < tMax )
+				{
 #ifdef DEBUG
 					fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
 #endif
+					
+					full = false;
 					break;
 				}
 				else
@@ -257,6 +287,9 @@ Solution Solver::createBaseSolution()
 					currentNode = edge->getDst( currentNode );
 					baseSolution.removeEdge( i );
 				}
+				
+				if ( addedEdge )
+					baseSolution.removeEdge( i );
 			}
 		}
 		
@@ -264,15 +297,51 @@ Solution Solver::createBaseSolution()
 			baseSolution.addEdge( graph.getEdge( currentNode, depot ), i );
 	}
 	
-	cerr << "Soluzione finale:\n" << baseSolution.toString() << endl;
+#ifdef DEBUG
+	cerr << "Soluzione iniziale:\n" << baseSolution.toString() << endl;
+#endif
 	
 	return baseSolution;
 }
 
+Solution Solver::vns( int nIter, Solution baseSolution )
+{
+	srand( (uint)time( NULL ) );
+	int kMax = 10,
+		k = 1;
+	// !!! Copy constructor
+	Solution shakedSolution( baseSolution );
+	
+	while ( nIter > 0 )
+	{
+		nIter--;
+		
+		// Estraggo un veicolo ed un lato iniziale casuali
+		uint vehicle = rand() % M,
+			 edge = (uint)( rand() % shakedSolution.size( vehicle ) );
+		
+		// Rimuovo k+1 lati
+		shakedSolution.removeEdge( vehicle, edge );
+		for ( int i = 0; i < k; i++ )
+		{
+			// Decido se rimuovere il lato all'inizio (edge-1) o alla fine (edge) del buco creato
+			edge -= rand() & 2;
+			shakedSolution.removeEdge( vehicle, edge );
+		}
+		
+#ifdef DEBUG
+		cerr << shakedSolution.toString() << endl;
+		cerr << baseSolution.toString() << endl;
+#endif
+		
+		k = 1 + k % kMax;
+	}
+	
+	return baseSolution;
+}
 
 Solution Solver::solve()
 {
-	return currentSolution;
+	return vns( 1, currentSolution );
 }
-
 

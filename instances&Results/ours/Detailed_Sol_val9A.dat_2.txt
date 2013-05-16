@@ -1,0 +1,32 @@
+Solution of Problem val9A.dat - Number of Vehicles: 2
+
+Total Profit: 766
+
+Total Cost: 195
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+:]
+
+Profit: 319
+Cost: 97
+Load: 131
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+:]
+
+Profit: 447
+Cost: 98
+Load: 204
+
