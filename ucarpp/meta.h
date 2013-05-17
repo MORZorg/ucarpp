@@ -13,6 +13,7 @@
 #include "edge.h"
 #include "graph.h"
 #include <unordered_map>	// If not working: Boost
+#include <stdexcept>		// out_of_range
 //#include "solver.h"
 
 namespace solver
@@ -58,7 +59,7 @@ namespace solver
 			MetaGraph( model::Graph );
 			
 //			MetaEdge* getEdge( uint, uint ) const throw( int );
-			MetaEdge* getEdge( const model::Edge* ) const throw( std::out_of_range );
+			MetaEdge* getEdge( const model::Edge* ) const;
 //			std::unordered_map<model::Edge*, MetaEdge*> getEdges() const;
 //			std::unordered_map<uint, MetaEdge*> getAdjList( uint ) const;
 	};

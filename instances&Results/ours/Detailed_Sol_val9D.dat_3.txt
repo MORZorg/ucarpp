@@ -1,8 +1,8 @@
 Solution of Problem val9D.dat - Number of Vehicles: 3
 
-Total Profit: 381
+Total Profit: 190
 
-Total Cost: 125
+Total Cost: 123
 
 
 Route 0 Details:
@@ -13,9 +13,9 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 138
-Cost: 42
-Load: 67
+Profit: 62
+Cost: 35
+Load: 28
 
 
 Route 1 Details:
@@ -26,9 +26,9 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 120
-Cost: 41
-Load: 65
+Profit: 69
+Cost: 44
+Load: 34
 
 
 Route 2 Details:
@@ -39,7 +39,7 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 123
-Cost: 42
-Load: 67
+Profit: 59
+Cost: 44
+Load: 30
 

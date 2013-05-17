@@ -1,8 +1,8 @@
 Solution of Problem val6B.dat - Number of Vehicles: 3
 
-Total Profit: 454
+Total Profit: 209
 
-Total Cost: 143
+Total Cost: 155
 
 
 Route 0 Details:
@@ -13,9 +13,9 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 243
-Cost: 48
-Load: 91
+Profit: 118
+Cost: 39
+Load: 51
 
 
 Route 1 Details:
@@ -26,9 +26,9 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 151
-Cost: 46
-Load: 72
+Profit: 91
+Cost: 53
+Load: 39
 
 
 Route 2 Details:
@@ -39,7 +39,7 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 60
-Cost: 49
-Load: 34
+Profit: 0
+Cost: 63
+Load: 0
 

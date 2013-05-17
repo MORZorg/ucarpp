@@ -1,8 +1,8 @@
 Solution of Problem val7C.dat - Number of Vehicles: 3
 
-Total Profit: 319
+Total Profit: 168
 
-Total Cost: 113
+Total Cost: 117
 
 
 Route 0 Details:
@@ -13,9 +13,9 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 122
-Cost: 38
-Load: 59
+Profit: 62
+Cost: 33
+Load: 23
 
 
 Route 1 Details:
@@ -26,9 +26,9 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 104
-Cost: 38
-Load: 58
+Profit: 57
+Cost: 47
+Load: 28
 
 
 Route 2 Details:
@@ -39,7 +39,7 @@ Services Sequence:
 Vertex Sequence:
 :]
 
-Profit: 93
+Profit: 49
 Cost: 37
-Load: 47
+Load: 19
 

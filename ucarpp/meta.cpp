@@ -192,7 +192,7 @@ MetaGraph::MetaGraph( Graph g )
 //}
 
 // Getter della corrispondenza lato reale - metalato
-MetaEdge* MetaGraph::getEdge( const Edge* edge ) const throw( out_of_range )
+MetaEdge* MetaGraph::getEdge( const Edge* edge ) const
 {
 	// edge deve essere const per l'uso che viene fatto della funzione (greedyCompare etc),
 	// ma non può esserlo per unordered_map => const_cast
