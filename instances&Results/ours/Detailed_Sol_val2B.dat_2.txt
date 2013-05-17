@@ -2,7 +2,7 @@ Solution of Problem val2B.dat - Number of Vehicles: 2
 
 Total Profit: 157
 
-Total Cost: 151
+Total Cost: 165
 
 
 Route 0 Details:
@@ -14,7 +14,7 @@ Vertex Sequence:
 :]
 
 Profit: 94
-Cost: 70
+Cost: 84
 Load: 46
 
 

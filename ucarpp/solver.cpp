@@ -126,6 +126,14 @@ string Vehicle::toString()
 
 /*** Solution ***/
 
+Solution::Solution( int _M, MetaGraph _graph, Vehicle** _vehicles ):
+	M( _M ), graph( _graph ), compareRatioGreedy( &this->graph )
+{
+	vehicles = (Vehicle**)calloc( M, sizeof( Vehicle* ) );
+	for ( int i = 0; i < M; i++ )
+		vehicles[ i ] = new Vehicle( *_vehicles[ i ] );
+}
+
 Solution::Solution( int M, Graph graph ):
 	M( M ), graph( graph ), compareRatioGreedy( &this->graph )
 {
@@ -136,6 +144,11 @@ Solution::Solution( int M, Graph graph ):
 	vehicles = (Vehicle**)calloc( M, sizeof( Vehicle* ) );
 	for ( int i = 0; i < M; i++ )
 		vehicles[ i ] = new Vehicle();
+}
+
+Solution* Solution::clone() const
+{
+	return new Solution( M, graph, vehicles );
 }
 
 MetaEdge* Solution::getEdge( int vehicle, int index ) const
@@ -229,12 +242,12 @@ Solver::Solver( Graph graph, uint depot, uint M, uint Q, uint tMax ):
 	graph( graph ), depot( depot ), M( M ), Q( Q ), tMax( tMax ),
 	currentSolution( createBaseSolution() ) {}
 
-Solution Solver::createBaseSolution()
+Solution* Solver::createBaseSolution()
 {
 #ifdef DEBUG
 	cerr << endl << "Stampo la soluzione di base:" << endl;
 #endif
-	Solution baseSolution( M, graph );
+	Solution* baseSolution = new Solution( M, graph );
 	uint currentNode;
 	
 	for ( int i = 0; i < M; i++ )
@@ -252,7 +265,7 @@ Solution Solver::createBaseSolution()
 		{
 			// Ordino i lati uscenti dal nodo corrente
 			edges = graph.getAdjList( currentNode );
-			sort( edges.begin(), edges.end(), baseSolution.compareRatioGreedy );
+			sort( edges.begin(), edges.end(), baseSolution->compareRatioGreedy );
 			
 			// Prendo il lato ammissibile migliore, se esiste
 			full = true;
@@ -263,19 +276,24 @@ Solution Solver::createBaseSolution()
 				// Aggiungo il lato selezionato e, in caso non sia tornato al deposito,
 				//  il lato necessario alla chiusura.
 				bool addedEdge;
-				baseSolution.addEdge( edge, i );
+				baseSolution->addEdge( edge, i );
 				if ( ( addedEdge = ( currentNode != depot ) ) )
 				{
 					Edge* returnEdge = graph.getEdge( currentNode, depot );
-					baseSolution.addEdge( returnEdge, i );
+					baseSolution->addEdge( returnEdge, i );
 				}
 				
-				// Se la soluzione resta feasible avendo preso il lato selezionato ed il lato di
-				//  ritorno, accetto il nuovo lato e proseguo al successivo.
-				if ( baseSolution.getDemand( i ) < Q && baseSolution.getCost( i ) < tMax )
+				/**
+				 * Se la soluzione resta feasible avendo preso
+				 * il lato selezionato ed il lato di ritorno,
+				 * accetto il nuovo lato e proseguo al successivo.
+				 */
+				if ( baseSolution->getDemand( i ) < Q &&
+						baseSolution->getCost( i ) < tMax )
 				{
 #ifdef DEBUG
-					fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n", currentNode + 1, edge->getProfitDemandRatio() );
+					fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n",
+							currentNode + 1, edge->getProfitDemandRatio() );
 #endif
 					
 					full = false;
@@ -285,32 +303,32 @@ Solution Solver::createBaseSolution()
 				{
 					// Annullo la mossa
 					currentNode = edge->getDst( currentNode );
-					baseSolution.removeEdge( i );
+					baseSolution->removeEdge( i );
 				}
 				
 				if ( addedEdge )
-					baseSolution.removeEdge( i );
+					baseSolution->removeEdge( i );
 			}
 		}
 		
 		if ( currentNode != depot )
-			baseSolution.addEdge( graph.getEdge( currentNode, depot ), i );
+			baseSolution->addEdge( graph.getEdge( currentNode, depot ), i );
 	}
 	
 #ifdef DEBUG
-	cerr << "Soluzione iniziale:\n" << baseSolution.toString() << endl;
+	cerr << "Soluzione iniziale:\n" << baseSolution->toString() << endl;
 #endif
 	
 	return baseSolution;
 }
 
-Solution Solver::vns( int nIter, Solution baseSolution )
+Solution* Solver::vns( int nIter, Solution* baseSolution )
 {
 	srand( (uint)time( NULL ) );
 	int kMax = 10,
 		k = 1;
 	// !!! Copy constructor
-	Solution shakedSolution( baseSolution );
+	Solution* shakedSolution = baseSolution->clone();
 	
 	while ( nIter > 0 )
 	{
@@ -318,20 +336,20 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		
 		// Estraggo un veicolo ed un lato iniziale casuali
 		uint vehicle = rand() % M,
-			 edge = (uint)( rand() % shakedSolution.size( vehicle ) );
+			 edge = (uint)( rand() % shakedSolution->size( vehicle ) );
 		
 		// Rimuovo k+1 lati
-		shakedSolution.removeEdge( vehicle, edge );
+		shakedSolution->removeEdge( vehicle, edge );
 		for ( int i = 0; i < k; i++ )
 		{
 			// Decido se rimuovere il lato all'inizio (edge-1) o alla fine (edge) del buco creato
-			edge -= rand() & 2;
-			shakedSolution.removeEdge( vehicle, edge );
+			edge -= ( edge > 0 ) & rand() & 2;
+			shakedSolution->removeEdge( vehicle, edge );
 		}
 		
 #ifdef DEBUG
-		cerr << shakedSolution.toString() << endl;
-		cerr << baseSolution.toString() << endl;
+		cerr << shakedSolution->toString() << endl;
+		cerr << baseSolution->toString() << endl;
 #endif
 		
 		k = 1 + k % kMax;
@@ -340,8 +358,9 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 	return baseSolution;
 }
 
-Solution Solver::solve()
+Solution* Solver::solve()
 {
-	return vns( 1, currentSolution );
+	//return vns( 1, currentSolution );
+	return currentSolution;
 }
 

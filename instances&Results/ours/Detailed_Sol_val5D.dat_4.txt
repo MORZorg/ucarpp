@@ -2,7 +2,7 @@ Solution of Problem val5D.dat - Number of Vehicles: 4
 
 Total Profit: 142
 
-Total Cost: 280
+Total Cost: 344
 
 
 Route 0 Details:
@@ -53,6 +53,6 @@ Vertex Sequence:
 :]
 
 Profit: 0
-Cost: 32
+Cost: 96
 Load: 0
 

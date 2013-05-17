@@ -2,7 +2,7 @@ Solution of Problem val9C.dat - Number of Vehicles: 4
 
 Total Profit: 422
 
-Total Cost: 232
+Total Cost: 250
 
 
 Route 0 Details:
@@ -40,7 +40,7 @@ Vertex Sequence:
 :]
 
 Profit: 83
-Cost: 41
+Cost: 59
 Load: 36
 
 

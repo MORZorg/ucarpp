@@ -19,4 +19,6 @@
 #include "solver.h"
 #include "meta.h"
 
+#define FORMAL_OUT
+
 #endif /* defined(__ucarpp__main__) */

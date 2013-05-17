@@ -52,9 +52,13 @@ namespace solver
 		int M;
 		MetaGraph graph;
 		Vehicle** vehicles;
+
+		Solution( int, MetaGraph, Vehicle** );
 		
 	public:
 		Solution( int, model::Graph );
+
+		Solution* clone() const;
 
 		MetaEdge* getEdge( int, int ) const;
 		void addEdge( model::Edge*, int, int = -1 );
@@ -104,14 +108,14 @@ namespace solver
 		M,
 		Q,
 		tMax;
-		Solution currentSolution;
+		Solution* currentSolution;
 		
-		Solution createBaseSolution();
-		Solution vns( int, Solution );
+		Solution* createBaseSolution();
+		Solution* vns( int, Solution* );
 	public:
 		Solver( model::Graph, uint, uint, uint, uint );
 		
-		Solution solve();
+		Solution* solve();
 	};
 }
 

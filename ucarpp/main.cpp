@@ -212,12 +212,13 @@ int main( int argc, const char * argv[] )
 	
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );
-	solver::Solution solution = solver.solve();
+	solver::Solution* solution = solver.solve();
 	
+#ifdef FORMAL_OUT
 	// Stampo l'output
 	cout << "Solution of Problem " << filename << " - Number of Vehicles: " << M << endl << endl;
-	cout << "Total Profit: " << solution.getProfit() << endl << endl;
-	cout << "Total Cost: " << solution.getCost() << endl << endl;
+	cout << "Total Profit: " << solution->getProfit() << endl << endl;
+	cout << "Total Cost: " << solution->getCost() << endl << endl;
 	for ( int i = 0; i < M; i++ )
 	{
 		cout << endl << "Route " << i << " Details:" << endl;
@@ -229,11 +230,12 @@ int main( int argc, const char * argv[] )
 		cout << ":]" << endl;
 		
 		cout << endl;
-		cout << "Profit: " << solution.getProfit( i ) << endl;
-		cout << "Cost: " << solution.getCost( i ) << endl;
-		cout << "Load: " << solution.getDemand( i ) << endl;
+		cout << "Profit: " << solution->getProfit( i ) << endl;
+		cout << "Cost: " << solution->getCost( i ) << endl;
+		cout << "Load: " << solution->getDemand( i ) << endl;
 		cout << endl;
 	}
+#endif
 	
     return 0;
 }
