@@ -327,7 +327,6 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 	srand( (uint)time( NULL ) );
 	int kMax = 10,
 		k = 1;
-	// !!! Copy constructor
 	Solution* shakedSolution = baseSolution->clone();
 	
 	while ( nIter > 0 )
@@ -339,7 +338,11 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 			 edge = (uint)( rand() % shakedSolution->size( vehicle ) );
 		
 		// Rimuovo k+1 lati
+		// Itero sul minimo valore tra k e la lunghezza attuale della soluzione, così da non togliere più lati di quanti la soluzione non ne abbia
+		uint ktemp = ( k < shakedSolution->size( vehicle ) ? k : shakedSolution->size( vehicle ) );
+		// Rimuovo 1 lato
 		shakedSolution->removeEdge( vehicle, edge );
+		// Rimuovo al più k lati
 		for ( int i = 0; i < k; i++ )
 		{
 			// Decido se rimuovere il lato all'inizio (edge-1) o alla fine (edge) del buco creato
@@ -349,7 +352,7 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 		
 #ifdef DEBUG
 		cerr << shakedSolution->toString() << endl;
-		cerr << baseSolution->toString() << endl;
+		//cerr << baseSolution->toString() << endl;
 #endif
 		
 		k = 1 + k % kMax;
@@ -360,7 +363,8 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 
 Solution* Solver::solve()
 {
-	//return vns( 1, currentSolution );
-	return currentSolution;
+	// Numero di iterazioni
+	return vns( 1, currentSolution );
+	//return currentSolution;
 }
 
