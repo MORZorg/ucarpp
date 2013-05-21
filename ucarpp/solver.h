@@ -43,6 +43,8 @@ namespace solver
 		uint getDemand();
 		uint getProfit();
 
+		bool getDirection( int );
+
 		std::string toString();
 	};
 
@@ -73,6 +75,8 @@ namespace solver
 		uint getCost( int ) const;
 		uint getDemand() const;
 		uint getDemand( int ) const;
+
+		bool getDirection( int, int ) const;
 
 		std::string toString() const;
 		std::string toString( int ) const;

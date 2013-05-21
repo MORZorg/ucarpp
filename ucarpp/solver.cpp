@@ -104,6 +104,22 @@ uint Vehicle::getProfit()
 	return result;
 }
 
+// true se la direzione di percorrenza è da src a dst, false altrimenti
+bool Vehicle::getDirection( int edge )
+{
+	auto desired = next( path.begin(), edge );
+	uint previous;
+	auto it = path.begin();
+	if ( it == path.end() )
+		throw 404;
+	previous = (*it)->getSrc();
+		
+	for ( ; it != desired; it++ )
+		previous = (*it)->getDst( previous );
+	
+	return previous == (*it)->getSrc();
+}
+
 string Vehicle::toString()
 {
 	stringstream ss;
@@ -222,6 +238,11 @@ uint Solution::getDemand( int vehicle ) const
 	return vehicles[ vehicle ]->getDemand();
 }
 
+bool Solution::getDirection( int vehicle, int index ) const
+{
+	return vehicles[ vehicle ]->getDirection( index );
+}
+
 string Solution::toString() const
 {
 	stringstream ss;
@@ -288,7 +309,7 @@ Solution* Solver::createBaseSolution()
 				 * il lato selezionato ed il lato di ritorno,
 				 * accetto il nuovo lato e proseguo al successivo.
 				 */
-				if ( baseSolution->getDemand( i ) < Q &&
+				if (	baseSolution->getDemand( i ) < Q &&
 						baseSolution->getCost( i ) < tMax )
 				{
 #ifdef DEBUG
@@ -335,7 +356,12 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 		
 		// Estraggo un veicolo ed un lato iniziale casuali
 		uint vehicle = rand() % M,
-			 edge = (uint)( rand() % shakedSolution->size( vehicle ) );
+			 edge = (uint)( rand() % shakedSolution->size( vehicle ) ),
+			 src = shakedSolution->getEdge( vehicle, edge )->getSrc(),
+			 dst = shakedSolution->getEdge( vehicle, edge )->getDst();
+
+		if ( !shakedSolution->getDirection( vehicle, edge ) )
+			dst ^= src ^= dst ^= src;
 		
 		// Rimuovo k+1 lati
 		// Itero sul minimo valore tra k e la lunghezza attuale della soluzione, così da non togliere più lati di quanti la soluzione non ne abbia
@@ -343,16 +369,35 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 		// Rimuovo 1 lato
 		shakedSolution->removeEdge( vehicle, edge );
 		// Rimuovo al più k lati
-		for ( int i = 0; i < k; i++ )
+		for ( int i = 0; i < ktemp; i++ )
 		{
 			// Decido se rimuovere il lato all'inizio (edge-1) o alla fine (edge) del buco creato
-			edge -= ( edge > 0 ) & rand() & 2;
+			// ( edge > 0 ) serve a garantire che il deposito non venga estromesso dalla soluzione ( se edge è il deposito allora è già stato rimosso un lato a lui connesso e non ne possono essere rimossi altri ), il controllo esterno a verificare circa quasi la stessa cosa
+			// ls -alF
+			bool lsaf = rand() & 2;
+			edge -= lsaf;
+			if( edge >= shakedSolution->size( vehicle ) )
+			{
+				edge = shakedSolution->size( vehicle ) - 1;
+				lsaf = false;
+			}
+			else if ( edge <= 0 )
+			{
+				edge = 0;
+				lsaf = false;
+			}
+
+			if ( lsaf )
+				src = shakedSolution->getEdge( vehicle, edge )->getDst( src );
+			else
+				dst = shakedSolution->getEdge( vehicle, edge )->getDst( dst );
+
 			shakedSolution->removeEdge( vehicle, edge );
 		}
 		
 #ifdef DEBUG
 		cerr << shakedSolution->toString() << endl;
-		//cerr << baseSolution->toString() << endl;
+		cerr << "Buco " << src << " " << dst << endl;
 #endif
 		
 		k = 1 + k % kMax;
