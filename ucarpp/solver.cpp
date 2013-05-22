@@ -74,7 +74,7 @@ uint Vehicle::getCost()
 	return result;
 }
 
-uint Vehicle::etDemand()
+uint Vehicle::getDemand()
 {
 	uint result = 0;
 	for ( auto it = path.begin(); it != path.end(); it++ )
@@ -466,6 +466,7 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 		//  - 1: soluzione feasible non chiusa
 		//  - 2: soluzione unfeasible
 		uint solutionNotFound = 1;
+		int temp;
 
 		// Ciclo fino a quando non trovo una nuova soluzione
 		while( solutionNotFound )
@@ -492,10 +493,18 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 				// Controllo subito se il lato inserito mi porta ad una situazione di soluzione non feasible
 				if ( !isFeasible( shakedSolution, vehicle ) )
 				{
-					while( currentNode != src )
-						shakedSolution->removeEdge( vehicle, currentNode-- );
+					cerr << "BEFORE: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
 
+					while( currentNode != src )
+					{
+						shakedSolution->removeEdge( vehicle, currentNode );
+						currentNode--;
+					}
+
+					cerr << "AFTER: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
 					currentNode = src;
+
+					cin >> temp;
 
 					// Blocco il ciclo for e inizierò da capo la procedura casuale per trovare una nuova soluzione
 					solutionNotFound = 2;
@@ -519,6 +528,11 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 #endif
 					break;
 				}
+
+#ifdef DEBUG
+				cerr << "Solution state: " << solutionNotFound << endl;
+#endif
+
 			}
 
 			// A seconda dello stato in cui mi trovo elaboro la soluzione corrente in modo differente
