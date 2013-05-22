@@ -30,8 +30,6 @@ int main( int argc, const char * argv[] )
 	string filename;
 	if ( argc > 2 )
 	{
-		//stringstream ss( argv[ 2 ] );
-		//ss >> M;
 		M = stoi( argv[ 2 ] );
 	}
 	
@@ -60,8 +58,6 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		//stringstream ss( sm[ 1 ] );
-		//ss >> V;
 		V = stoi( sm[ 1 ] );
 		
 		cerr << "Vertici: " << V << endl;
@@ -76,8 +72,6 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		//stringstream ss( sm[ 1 ] );
-		//ss >> L;
 		L = stoi( sm[ 1 ] );
 		
 		cerr << "Lati: " << L << endl;
@@ -92,8 +86,6 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		//stringstream ss( sm[ 1 ] );
-		//ss >> Q;
 		Q = stoi( sm[ 1 ] );
 		
 		cerr << "Capacita`: " << Q << endl;
@@ -108,8 +100,6 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		//stringstream ss( sm[ 1 ] );
-		//ss >> tMax;
 		tMax = stoi( sm[ 1 ] );
 		
 		cerr << "Tempo disponibile: " << tMax << endl;
@@ -142,27 +132,14 @@ int main( int argc, const char * argv[] )
 		}
 		else
 		{
-			// Pessimo...
-			//stringstream ss1( sm[ 1 ] );
-			//ss1 >> src;
-			//src--;
 			src = stoi( sm [ 1 ] ) - 1;
 
-			//stringstream ss2( sm[ 2 ] );
-			//ss2 >> dst;
-			//dst--;
 			dst = stoi( sm[ 2 ] ) - 1;
 
-			//stringstream ss3( sm[ 3 ] );
-			//ss3 >> t;
 			t = stoi( sm[ 3 ] );
 
-			//stringstream ss4( sm[ 4 ] );
-			//ss4 >> d;
 			d = stoi( sm[ 4 ] );
 
-			//stringstream ss5( sm[ 5 ] );
-			//ss5 >> p;
 			p = stoi( sm[ 5 ] );
 			
 			grafo.addEdge( src, dst, t, d, p );
@@ -175,9 +152,6 @@ int main( int argc, const char * argv[] )
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
-		//stringstream ss( sm[ 1 ] );
-		//ss >> depot;
-		//depot--;
 		depot = stoi( sm[ 1 ] ) - 1;
 
 		cerr << "Deposito: " << depot << endl;

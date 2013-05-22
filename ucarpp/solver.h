@@ -107,6 +107,10 @@ namespace solver
 	class Solver
 	{
 	private:
+		const int	K_MAX	= 10;
+		const float	XI		= 4;
+		const float	P_CLOSE	= .05;
+
 		model::Graph graph;
 		uint depot,
 		M,
@@ -116,6 +120,8 @@ namespace solver
 		
 		Solution* createBaseSolution();
 		Solution* vns( int, Solution* );
+
+		bool isFeasible( Solution*, int ) const;
 	public:
 		Solver( model::Graph, uint, uint, uint, uint );
 		
