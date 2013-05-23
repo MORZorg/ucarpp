@@ -65,4 +65,6 @@ namespace solver
 	};
 }
 
+#include "solver.h"
+
 #endif /* defined(__ucarpp__meta__) */

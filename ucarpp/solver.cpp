@@ -14,7 +14,7 @@ using namespace model;
 
 /*** Vehicle ***/
 
-Vehicle::Vehicle()
+Vehicle::Vehicle( int _id ) : id( _id )
 {
 	path = *new list<MetaEdge*>();
 }
@@ -149,6 +149,20 @@ string Vehicle::toString()
 	return ss.str();
 }
 
+// Ritorna l'identificativo del veicolo
+int Vehicle::getId() const
+{
+	return id;
+}
+
+/**
+ * Comparatore di uguaglianza tra veicoli
+ */
+bool Vehicle::equals( const Vehicle* other ) const
+{
+	return getId() == other->getId();
+}
+
 /*** Solution ***/
 
 Solution::Solution( int _M, MetaGraph _graph, Vehicle** _vehicles ):
@@ -168,7 +182,7 @@ Solution::Solution( int M, Graph graph ):
 	 */
 	vehicles = (Vehicle**)calloc( M, sizeof( Vehicle* ) );
 	for ( int i = 0; i < M; i++ )
-		vehicles[ i ] = new Vehicle();
+		vehicles[ i ] = new Vehicle( i );
 }
 
 Solution* Solution::clone() const
@@ -456,7 +470,7 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 		cerr << "Buco " << src << " " << dst << endl;
 #endif
 		// Inizio con la chiusura della soluzione, partendo dal nodo sorgente, ovvero dove ha inizio il buco
-		int kvns = this->XI * k;
+		int kvns = XI * k;
 		uint currentNode;
 		
 		// Tengo traccia dei nodi inseriti nella soluzione, così da poterli togliere nel caso in cui la soluzione non sia feasible
@@ -484,7 +498,7 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 				edges = graph.getAdjList( currentNode );
 				// Casualmente prelevo un nodo da inserire nella soluzione
 				Edge* victim = edges[ rand() % edges.size() ];
-				shakedSolution->addEdge( victim, vehicle, currentNode );
+				shakedSolution->addEdge( victim, vehicle, edge );
 
 #ifdef DEBUG
 				cerr << "Lato selezionato: (" << victim->getSrc() << "," << victim->getDst() << ")" << endl;
@@ -495,16 +509,13 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 				{
 					cerr << "BEFORE: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
 
-					while( currentNode != src )
-					{
-						shakedSolution->removeEdge( vehicle, currentNode );
-						currentNode--;
-					}
+					for( int j = 0; j <= i; j++ )
+						shakedSolution->removeEdge( vehicle, edge - j );
 
-					cerr << "AFTER: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
+					edge = edge - i;
 					currentNode = src;
 
-					cin >> temp;
+					cerr << "AFTER: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
 
 					// Blocco il ciclo for e inizierò da capo la procedura casuale per trovare una nuova soluzione
 					solutionNotFound = 2;
@@ -517,7 +528,8 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 				}
 
 				// Aggiorno il nuovo nodo sorgente
-				currentNode = victim->getDst();
+				currentNode = victim->getDst( currentNode );
+				edge++;
 
 				// La soluzione è feasible: controllo se la soluzione forma un ciclo, verificando se l'ultimo lato inserito termina sul mio nodo destinazione.
 				if( currentNode == dst )
@@ -532,15 +544,15 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 #ifdef DEBUG
 				cerr << "Solution state: " << solutionNotFound << endl;
 #endif
-
 			}
+			
 
 			// A seconda dello stato in cui mi trovo elaboro la soluzione corrente in modo differente
 			if( solutionNotFound == 1 )
 			{
 				// La soluzione è corretta, ma non chiusa.
 				// Casualmente decido se chiuderla con il nodo di destinazione o se ripetere tutto casualmente
-				if( (float) ( rand() / RAND_MAX ) < this->P_CLOSE )
+				if( ( (float) rand() / RAND_MAX ) < P_CLOSE )
 				{
 					// Chiudo con il nodo destinazione
 					Edge* finalEdge = graph.getEdge( currentNode, dst );
@@ -552,8 +564,14 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 
 					// Controllo che la soluzione sia feasible
 					if( !isFeasible( shakedSolution, vehicle ) )
-						solutionNotFound = 2;
+					{
+						for( int j = 1; j <= kvns; j++ )
+							shakedSolution->removeEdge( vehicle, edge - j );
 
+						currentNode = src;
+						edge = edge - kvns;
+						solutionNotFound = 2;
+					}
 					else
 					{
 						solutionNotFound = false;
@@ -566,21 +584,19 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 					}
 				}
 				else
+				{
+					for( int j = 1; j <= kvns - 1; j++ )
+						shakedSolution->removeEdge( vehicle, edge - j );
+
+					currentNode = src;
+					edge = edge - kvns + 1;
 					solutionNotFound = true;
-
-			}
-			// La soluzione trovata è non feasible: devo eliminare tutti i lati inseriti alla soluzione e riportarmi allo stato di partenza
-			else if( solutionNotFound == 2 )
-			{
-				// Elimino tutti i lati inseriti fino a tornare al src
-				while( currentNode != src )
-					shakedSolution->removeEdge( vehicle, currentNode-- );
-
 #ifdef DEBUG
-				cerr << "Ripristino la soluzione iniziale: " << shakedSolution->toString() << endl;
+					cerr << "Ripristino la soluzione iniziale: " << shakedSolution->toString() << endl;
 #endif
-			}
+				}
 
+			}
 		}
 		
 #ifdef DEBUG

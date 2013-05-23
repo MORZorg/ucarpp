@@ -80,10 +80,12 @@ uint Edge::getCost() const
 bool Edge::operator==( const Edge* other ) const
 {
 	return getSrc() == other->getDst( getDst() ) &&
-		   getDst() == other->getDst( getSrc() ) &&
+		   getDst() == other->getDst( getSrc() );
+		   /*&&
 		   getCost() == other->getCost() &&
 		   getProfit() == other->getProfit() &&
 		   getDemand() == other->getDemand();
+		   */
 }
 
 /**

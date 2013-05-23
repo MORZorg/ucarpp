@@ -28,10 +28,13 @@ namespace solver
 	{
 	private:
 		//std::unordered_set<MetaEdge*> path;
+		int id;
 		std::list<MetaEdge*> path;
 
+		int getId() const;
+
 	public:
-		Vehicle();
+		Vehicle( int );
 		
 		MetaEdge* getEdge( int ) const;
 		void addEdge( MetaEdge*, long = -1 );
@@ -46,6 +49,8 @@ namespace solver
 		bool getDirection( int );
 
 		std::string toString();
+
+		bool equals( const Vehicle* ) const;
 	};
 
 	class Solution

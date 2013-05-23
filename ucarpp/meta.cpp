@@ -130,7 +130,7 @@ unsigned long MetaEdge::getTaken() const
  */
 bool MetaEdge::isServer( const Vehicle* aVehicle ) const
 {
-	return takers.front() == aVehicle;
+	return takers.front()->equals( aVehicle );
 }
 
 /**
