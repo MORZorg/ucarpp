@@ -125,6 +125,7 @@ namespace solver
 		
 		Solution* createBaseSolution();
 		Solution* vns( int, Solution* );
+		bool closeSolutionRandom( Solution*, int, uint, uint, int, int );
 
 		bool isFeasible( Solution*, int ) const;
 	public:

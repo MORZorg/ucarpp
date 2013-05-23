@@ -54,6 +54,7 @@ namespace solver
 			std::unordered_map<model::Edge*, MetaEdge*> edges;
 			// Lista di Adiacenza
 			//std::unordered_map<uint, MetaEdge*>* adjList;
+			MetaGraph( std::unordered_map <model::Edge*, MetaEdge* > );
 			
 		public:
 			MetaGraph( model::Graph );
@@ -62,6 +63,8 @@ namespace solver
 			MetaEdge* getEdge( const model::Edge* ) const;
 //			std::unordered_map<model::Edge*, MetaEdge*> getEdges() const;
 //			std::unordered_map<uint, MetaEdge*> getAdjList( uint ) const;
+
+			MetaGraph* clone();
 	};
 }
 

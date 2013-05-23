@@ -81,8 +81,22 @@ float MetaEdge::getProfitDemandRatio() const
  * @param	il veicolo che imposta questo lato come preso.
  * @return	il numero di volte per cui il lato è stato preso.
  */
-unsigned long MetaEdge::setTaken( const Vehicle* taker )
+unsigned long MetaEdge::setTaken( const Vehicle* taker, int occurence )
 {
+	// Cerco il veicolo partendo dalla fine. Se lo trovo lo cancello, altrimenti niente.
+	fadghlauh
+	for ( auto it = takers.begin(); it < takers.end(); ++it )
+		if ( *it == taker )
+			if ( --occurrence < 0 )
+			{
+				// In caso si usino i reverse_iterator,
+				// bisogna usare .base() facendo piu' o meno ++i--
+				takers.erase( it );
+				break;
+			}
+	
+	return takers.size();
+
 	takers.push_back( taker );
 	return takers.size();
 }
@@ -152,44 +166,22 @@ MetaGraph::MetaGraph( Graph g )
 {
 	this->edges = *new unordered_map<Edge*, MetaEdge*>();
 	
-//	long V = g.size();
-//	this->adjList =
-//			(unordered_map<uint, MetaEdge*>*)calloc( V, sizeof( unordered_map<uint, MetaEdge*> ) );
-//	for ( int i = 0; i < V; i++ )
-//		this->adjList[ i ] = *new unordered_map<uint, MetaEdge*>();
-	
 	for ( Edge* edge : g.getEdges() )
 		edges.insert( make_pair( edge, new MetaEdge( edge ) ) );
-	
-	
-//	// Per ogni lato della lista di adiacenza,
-//	// cerchiamo il suo metalato corrispondente e
-//	// lo inseriamo alla posizione adeguata della nostra lista di adiacenza
-//	for ( int i = 0; i < V; i++ )
-//		for( Edge* edge : g.getAdjList( i ) )
-//		{
-////			MetaEdge* tempEdge;
-////			for( MetaEdge* metaEdge : edges )
-////				if( metaEdge->getSrc() == edge->getSrc() &&
-////				   metaEdge->getDst() == edge->getDst() )
-////				{
-////					tempEdge = metaEdge;
-////					break;
-////				}
-//			
-//			adjList[ i ].insert( make_pair( edge->getDst( i ), edges.at( edge ) ) );
-//		}
 }
 
-//// Getter dei lati
-//MetaEdge* MetaGraph::getEdge( uint src, uint dst ) const throw( int )
-//{
-//	for ( int i = 0; i < adjList[ src ].size(); i++ )
-//		if ( adjList[ src ][ i ]->getDst( src ) == dst )
-//			return adjList[ src ][ i ];
-//	
-//	throw -1;
-//}
+// Costruttore strambo
+MetaGraph::MetaGraph( unordered_map <model::Edge*, MetaEdge*>  _edges )
+{
+	// Creo la nuova mappa lati-metalati
+	this->edges = * new unordered_map <Edge*, MetaEdge*> ();
+
+	// Ciclo su tutti i metalati del metagrafo e ne faccio una copia
+	for( auto edge : _edges )
+	{
+		edges.insert( make_pair( edge.first, new MetaEdge( *edge.second ) ) );
+	}
+}
 
 // Getter della corrispondenza lato reale - metalato
 MetaEdge* MetaGraph::getEdge( const Edge* edge ) const
@@ -199,14 +191,9 @@ MetaEdge* MetaGraph::getEdge( const Edge* edge ) const
 	return edges.at( const_cast<Edge*>( edge ) );
 }
 
-//// Getter della lista dei lati
-//unordered_map<Edge*, MetaEdge*> MetaGraph::getEdges() const
-//{
-//	return edges;
-//}
 
-//// Getter della lista di adiacenza di un nodo
-//unordered_map<uint, MetaEdge*> MetaGraph::getAdjList( uint src ) const
-//{
-//	return adjList[ src ];
-//}
+MetaGraph* MetaGraph::clone()
+{
+	return new MetaGraph( edges );
+}
+

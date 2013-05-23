@@ -26,20 +26,24 @@ MetaEdge* Vehicle::getEdge( int index ) const
 
 void Vehicle::addEdge( MetaEdge* edge, long index )
 {
-	// TODO: fare tutta la roba del removeEdge
-	edge->setTaken( this );
+	list <MetaEdge*>::iterator it;
+	if( index == -1 )
+		it = path.end();
+	else
+		it = next( path.begin(), index );
+
+	// Controllo in che punto della lista devo inserire il passaggio del veicolo nel metalato 
+	int occurence = 0;
+	for( auto i = path.begin(); i != it; ++i )
+		if( *i == edge )
+			occurence++;
+
+	edge->setTaken( this, occurence );
 	
-	if ( index == -1 )
+	if ( index == ( path.size() - 1 ) )
 		path.push_back( edge );
 	else
-	{
-		// Creo l'iteratore alla posizione richiesta
-		list<MetaEdge*>::iterator it = path.begin();
-		while ( index-- > 0 )
-			++it;
-		
 		path.insert( it, edge );
-	}
 }
 
 void Vehicle::removeEdge( long index )
@@ -166,7 +170,7 @@ bool Vehicle::equals( const Vehicle* other ) const
 /*** Solution ***/
 
 Solution::Solution( int _M, MetaGraph _graph, Vehicle** _vehicles ):
-	M( _M ), graph( _graph ), compareRatioGreedy( &this->graph )
+	M( _M ), graph( *(_graph.clone() ) ), compareRatioGreedy( &this->graph )
 {
 	vehicles = (Vehicle**)calloc( M, sizeof( Vehicle* ) );
 	for ( int i = 0; i < M; i++ )
@@ -382,11 +386,13 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 	srand( (uint)time( NULL ) );
 	int k = 1;
 	// Creo una copia della soluzione iniziale sulla quale applicare la vns
-	Solution* shakedSolution = baseSolution->clone();
+	Solution* shakedSolution; 
+	Solution* optimalSolution = baseSolution->clone();
 	
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
 	while ( nIter > 0 )
 	{
+		shakedSolution = baseSolution->clone();
 		nIter--;
 		
 		// Estraggo un veicolo ed un lato iniziale casuali
@@ -469,151 +475,233 @@ Solution* Solver::vns( int nIter, Solution* baseSolution )
 		cerr << shakedSolution->toString() << endl;
 		cerr << "Buco " << src << " " << dst << endl;
 #endif
+		
 		// Inizio con la chiusura della soluzione, partendo dal nodo sorgente, ovvero dove ha inizio il buco
-		int kvns = XI * k;
-		uint currentNode;
-		
-		// Tengo traccia dei nodi inseriti nella soluzione, così da poterli togliere nel caso in cui la soluzione non sia feasible
-		vector <Edge*> edges;
-		// Indica lo stato di evoluzione della soluzione
-		//  - true: soluzione trovata
-		//  - 1: soluzione feasible non chiusa
-		//  - 2: soluzione unfeasible
-		uint solutionNotFound = 1;
-		int temp;
+		int kvns = XI * ( k + 1 );
 
-		// Ciclo fino a quando non trovo una nuova soluzione
-		while( solutionNotFound )
+/*
+ *		uint currentNode;
+ *		vector <Edge*> edges;
+ *		// Indica lo stato di evoluzione della soluzione
+ *		//  - true: soluzione trovata
+ *		//  - 1: soluzione feasible non chiusa
+ *		//  - 2: soluzione unfeasible
+ *		uint solutionNotFound = 1;
+ *
+ *		// Ciclo fino a quando non trovo una nuova soluzione
+ *		while( solutionNotFound )
+ *		{
+ *			currentNode = src;
+ *
+ *			// Creo un ciclo nel lungo al più kvns passi all'interno del quale cerco di richiudere casualmente la soluzione
+ *			for( int i = 0; i < ( kvns - 1 ); i++ )
+ *			{
+ *#ifdef DEBUG
+ *				cerr << "i: " << i << endl;
+ *#endif
+ *
+ *				// Prendo i nodi adiacenti al nodo di partenza
+ *				edges = graph.getAdjList( currentNode );
+ *				// Casualmente prelevo un nodo da inserire nella soluzione
+ *				Edge* victim = edges[ rand() % edges.size() ];
+ *				shakedSolution->addEdge( victim, vehicle, edge );
+ *
+ *#ifdef DEBUG
+ *				cerr << "Lato selezionato: (" << victim->getSrc() << "," << victim->getDst() << ")" << endl;
+ *#endif
+ *
+ *				// Controllo subito se il lato inserito mi porta ad una situazione di soluzione non feasible
+ *				if ( !isFeasible( shakedSolution, vehicle ) )
+ *				{
+ *					cerr << "BEFORE: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
+ *
+ *					for( int j = 0; j <= i; j++ )
+ *						shakedSolution->removeEdge( vehicle, edge - j );
+ *
+ *					edge = edge - i;
+ *					currentNode = src;
+ *
+ *					cerr << "AFTER: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
+ *
+ *					// Blocco il ciclo for e inizierò da capo la procedura casuale per trovare una nuova soluzione
+ *					solutionNotFound = 2;
+ *
+ *#ifdef DEBUG
+ *					cerr << "Soluzione non feasible, ricomincio" << endl;
+ *#endif
+ *
+ *					break;
+ *				}
+ *
+ *				// Aggiorno il nuovo nodo sorgente
+ *				currentNode = victim->getDst( currentNode );
+ *				edge++;
+ *
+ *				// La soluzione è feasible: controllo se la soluzione forma un ciclo, verificando se l'ultimo lato inserito termina sul mio nodo destinazione.
+ *				if( currentNode == dst )
+ *				{
+ *					solutionNotFound = false; 
+ *#ifdef DEBUG
+ *					cerr << "Soluzione chiusa random: " << shakedSolution->toString() << endl;
+ *#endif
+ *					break;
+ *				}
+ *
+ *#ifdef DEBUG
+ *				cerr << "Solution state: " << solutionNotFound << endl;
+ *#endif
+ *			}
+ *			
+ *
+ *			// A seconda dello stato in cui mi trovo elaboro la soluzione corrente in modo differente
+ *			if( solutionNotFound == 1 )
+ *			{
+ *				// La soluzione è corretta, ma non chiusa.
+ *				// Casualmente decido se chiuderla con il nodo di destinazione o se ripetere tutto casualmente
+ *				if( ( (float) rand() / RAND_MAX ) < P_CLOSE )
+ *				{
+ *					// Chiudo con il nodo destinazione
+ *					Edge* finalEdge = graph.getEdge( currentNode, dst );
+ *					shakedSolution->addEdge( finalEdge, vehicle, currentNode );
+ *
+ *#ifdef DEBUG
+ *					cerr << "Chiudo direttamente" << endl;
+ *#endif
+ *
+ *					// Controllo che la soluzione sia feasible
+ *					if( !isFeasible( shakedSolution, vehicle ) )
+ *					{
+ *						for( int j = 1; j <= kvns; j++ )
+ *							shakedSolution->removeEdge( vehicle, edge - j );
+ *
+ *						currentNode = src;
+ *						edge = edge - kvns;
+ *						solutionNotFound = 2;
+ *					}
+ *					else
+ *					{
+ *						solutionNotFound = false;
+ *						currentNode = finalEdge->getDst();
+ *
+ *#ifdef DEBUG
+ *						cerr << "Soluzione chiusa diretta: " << shakedSolution->toString() << endl;
+ *#endif
+ *
+ *					}
+ *				}
+ *				else
+ *				{
+ *					for( int j = 1; j <= kvns - 1; j++ )
+ *						shakedSolution->removeEdge( vehicle, edge - j );
+ *
+ *					currentNode = src;
+ *					edge = edge - kvns + 1;
+ *					solutionNotFound = true;
+ *#ifdef DEBUG
+ *					cerr << "Ripristino la soluzione iniziale: " << shakedSolution->toString() << endl;
+ *#endif
+ *				}
+ *
+ *			}
+ *		}
+ *		
+ *#ifdef DEBUG
+ *		cerr << "Closed: " << shakedSolution->toString() << endl;
+ *#endif
+ */
+
+		while( !closeSolutionRandom( shakedSolution, vehicle, src, dst, kvns, edge ) );
+
+#ifdef DEBUG
+	cerr << "Soluzioni:" << endl;
+	cerr << "Base: " << baseSolution->toString();
+	cerr << "Shaked: " << shakedSolution->toString();
+	cerr << "Optimal: " << optimalSolution->toString();
+#endif
+
+		// Se sbar  dasukh  > asfh 
+		// Aggiorno la soluzione con quella più profittevole
+		if( shakedSolution->getProfit() > baseSolution->getProfit() )
 		{
-			currentNode = src;
-
-			// Creo un ciclo nel lungo al più kvns passi all'interno del quale cerco di richiudere casualmente la soluzione
-			for( int i = 0; i < ( kvns - 1 ); i++ )
-			{
 #ifdef DEBUG
-				cerr << "i: " << i << endl;
+			cerr << "Soluzione migliorata: " << optimalSolution->getProfit() << " => " << shakedSolution->getProfit() << endl;
 #endif
-
-				// Prendo i nodi adiacenti al nodo di partenza
-				edges = graph.getAdjList( currentNode );
-				// Casualmente prelevo un nodo da inserire nella soluzione
-				Edge* victim = edges[ rand() % edges.size() ];
-				shakedSolution->addEdge( victim, vehicle, edge );
-
-#ifdef DEBUG
-				cerr << "Lato selezionato: (" << victim->getSrc() << "," << victim->getDst() << ")" << endl;
-#endif
-
-				// Controllo subito se il lato inserito mi porta ad una situazione di soluzione non feasible
-				if ( !isFeasible( shakedSolution, vehicle ) )
-				{
-					cerr << "BEFORE: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
-
-					for( int j = 0; j <= i; j++ )
-						shakedSolution->removeEdge( vehicle, edge - j );
-
-					edge = edge - i;
-					currentNode = src;
-
-					cerr << "AFTER: current node unfeasible: " << currentNode << " => " << src << " : src" << " => " << shakedSolution->toString() << endl;
-
-					// Blocco il ciclo for e inizierò da capo la procedura casuale per trovare una nuova soluzione
-					solutionNotFound = 2;
-
-#ifdef DEBUG
-					cerr << "Soluzione non feasible, ricomincio" << endl;
-#endif
-
-					break;
-				}
-
-				// Aggiorno il nuovo nodo sorgente
-				currentNode = victim->getDst( currentNode );
-				edge++;
-
-				// La soluzione è feasible: controllo se la soluzione forma un ciclo, verificando se l'ultimo lato inserito termina sul mio nodo destinazione.
-				if( currentNode == dst )
-				{
-					solutionNotFound = false; 
-#ifdef DEBUG
-					cerr << "Soluzione chiusa random: " << shakedSolution->toString() << endl;
-#endif
-					break;
-				}
-
-#ifdef DEBUG
-				cerr << "Solution state: " << solutionNotFound << endl;
-#endif
-			}
-			
-
-			// A seconda dello stato in cui mi trovo elaboro la soluzione corrente in modo differente
-			if( solutionNotFound == 1 )
-			{
-				// La soluzione è corretta, ma non chiusa.
-				// Casualmente decido se chiuderla con il nodo di destinazione o se ripetere tutto casualmente
-				if( ( (float) rand() / RAND_MAX ) < P_CLOSE )
-				{
-					// Chiudo con il nodo destinazione
-					Edge* finalEdge = graph.getEdge( currentNode, dst );
-					shakedSolution->addEdge( finalEdge, vehicle, currentNode );
-
-#ifdef DEBUG
-					cerr << "Chiudo direttamente" << endl;
-#endif
-
-					// Controllo che la soluzione sia feasible
-					if( !isFeasible( shakedSolution, vehicle ) )
-					{
-						for( int j = 1; j <= kvns; j++ )
-							shakedSolution->removeEdge( vehicle, edge - j );
-
-						currentNode = src;
-						edge = edge - kvns;
-						solutionNotFound = 2;
-					}
-					else
-					{
-						solutionNotFound = false;
-						currentNode = finalEdge->getDst();
-
-#ifdef DEBUG
-						cerr << "Soluzione chiusa diretta: " << shakedSolution->toString() << endl;
-#endif
-
-					}
-				}
-				else
-				{
-					for( int j = 1; j <= kvns - 1; j++ )
-						shakedSolution->removeEdge( vehicle, edge - j );
-
-					currentNode = src;
-					edge = edge - kvns + 1;
-					solutionNotFound = true;
-#ifdef DEBUG
-					cerr << "Ripristino la soluzione iniziale: " << shakedSolution->toString() << endl;
-#endif
-				}
-
-			}
+			optimalSolution = shakedSolution;
+			k = 0;
 		}
-		
-#ifdef DEBUG
-		cerr << "Closed: " << shakedSolution->toString() << endl;
-#endif
 
+#ifdef DEBUG
+		cerr << "Chiusura " << shakedSolution->toString();
+#endif
 		
-		k = 1 + k % this->K_MAX;
+		k = 1 + k % K_MAX;
 	}
 	
-	return baseSolution;
+	return optimalSolution;
+}
+
+bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uint dst, int k, int edgeIndex )
+{
+#ifdef DEBUG
+	cerr << "k: " << k << endl;
+#endif
+
+	// Piede della ricorsione: se src == dst ho chiuso 
+	if( src == dst )
+		return true;
+
+	// Non posso aggiungere altri lati
+	if( k == 0 )
+		return false;
+
+	// Controllo se devo chiudere il ciclo direttamente o meno
+	if( ( k == 1 ) && ( (float) rand() / RAND_MAX ) < P_CLOSE )
+	{
+		solution->addEdge( graph.getEdge( src, dst ), vehicle, edgeIndex );
+
+		if( !isFeasible( solution, vehicle ) )
+		{
+			solution->removeEdge( vehicle, edgeIndex );
+			return false;
+		}
+
+		return true;
+	}
+
+	// Inizio con la chiusura della soluzione, partendo dal nodo sorgente, ovvero dove ha inizio il buco
+	vector <Edge*> edges = graph.getAdjList( src );
+	// Casualmente prelevo un nodo da inserire nella soluzione
+	Edge* victim = edges[ rand() % edges.size() ];
+	solution->addEdge( victim, vehicle, edgeIndex );
+
+#ifdef DEBUG
+	cerr << "Lato selezionato: (" << victim->getSrc() << "," << victim->getDst() << ")" << endl;
+#endif
+
+	// Controllo subito se il lato inserito mi porta ad una situazione di soluzione non feasible
+	if ( !isFeasible( solution, vehicle ) )
+	{
+		cerr << "BEFORE: current node unfeasible: " << src << " => " << solution->toString();
+
+		solution->removeEdge( vehicle, edgeIndex );
+		return false;
+	}
+
+	// Se i miei figli non trovano alcun lato buono, allora elimino il lato inserito fino a tornare alla soluzione iniziale
+	if( !closeSolutionRandom( solution, vehicle, victim->getDst( src ), dst, k - 1, edgeIndex + 1 ) )
+	{
+		solution->removeEdge( vehicle, edgeIndex );
+		return false;
+	}
+
+	return true;
+
 }
 
 Solution* Solver::solve()
 {
 	// Numero di iterazioni
-	return vns( 1, currentSolution );
+	return vns( 10, currentSolution );
 	//return currentSolution;
 }
 
