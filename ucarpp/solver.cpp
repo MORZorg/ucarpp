@@ -9,7 +9,7 @@
 #include "solver.h"
 
 #ifndef DEBUG
-//#define DEBUG
+#define DEBUG
 #endif
 
 using namespace std;
@@ -28,9 +28,9 @@ Vehicle::Vehicle( const Vehicle& source ) : id( source.id )
 	path = source.path;
 }
 
-MetaEdge Vehicle::getEdge( int index ) const
+MetaEdge* Vehicle::getEdge( int index ) const
 {
-	return **next( path.begin(), index );
+	return *next( path.begin(), index );
 }
 
 void Vehicle::addEdge( MetaEdge* edge, long index )
@@ -110,6 +110,12 @@ uint Vehicle::getProfit() const
 		while ( **(jt++) != **it );
 		jt--;
 		
+//#ifdef DEBUG
+//		cerr << "Lato: " << (*it)->getSrc() << " " << (*it)->getDst() << endl;
+//		cerr << "Profitto: " << (*it)->getProfit() << endl;
+//		cerr << "Servente: " << (*it)->isServer( this ) << endl;
+//		cerr << "Uguale: " << ( ( jt == it ) ? "vero" : "falso" ) << endl;
+//#endif
 		result += (*it)->getProfit() * ( (*it)->isServer( this ) && jt == it );
 	}
 	
@@ -196,9 +202,14 @@ M( source.M ), graph( source.graph ), compareRatioGreedy( &this->graph )
 	vehicles = vector<Vehicle>();
 	for ( int i = 0; i < M; i++ )
 		vehicles.push_back( source.vehicles[ i ] );
+//	{
+//		vehicles.push_back( Vehicle( i ) );
+//		for ( int j = 0; j < source.vehicles.size(); j++ )
+//			vehicles[ i ].addEdge( graph.getEdge( source.vehicles[ i ].getEdge( j )->getEdge() ) );
+//	}
 }
 
-MetaEdge Solution::getEdge( int vehicle, int index ) const
+MetaEdge* Solution::getEdge( int vehicle, int index ) const
 {
 	return vehicles[ vehicle ].getEdge( index );
 }
@@ -387,14 +398,14 @@ void Solver::createBaseSolution( Solution* baseSolution, int vehicle )
 		baseSolution->addEdge( graph.getEdge( currentNode, depot ), vehicle );
 }
 
-Solution Solver::vns( int nIter, Solution baseSolution )
+Solution* Solver::vns( int nIter, Solution baseSolution )
 {
 	// Inizializzo il generatore di numeri casuali
 	srand( (uint)time( NULL ) );
 	int k = 1;
 	// Creo una copia della soluzione iniziale sulla quale applicare la vns
 	Solution shakedSolution = baseSolution;
-	Solution optimalSolution = baseSolution;
+	Solution* optimalSolution = new Solution( baseSolution );
 	
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
 	while ( nIter-- > 0 )
@@ -413,8 +424,8 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 			createBaseSolution( &shakedSolution, vehicle );
 		
 		edge = (uint)( rand() % shakedSolution.size( vehicle ) );
-		src = shakedSolution.getEdge( vehicle, edge ).getSrc();
-		dst = shakedSolution.getEdge( vehicle, edge ).getDst();
+		src = shakedSolution.getEdge( vehicle, edge )->getSrc();
+		dst = shakedSolution.getEdge( vehicle, edge )->getDst();
 		
 		// Barbascambio di variabili a seconda del verso in cui tale lato viene percorso dal veicolo
 		if ( !shakedSolution.getDirection( vehicle, edge ) )
@@ -460,9 +471,9 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 			
 			// Controllo se devo aggiornare il nodo di partenza o destinazione, a seconda del lato rimosso
 			if ( holeDirection )
-				src = shakedSolution.getEdge( vehicle, edge ).getDst( src );
+				src = shakedSolution.getEdge( vehicle, edge )->getDst( src );
 			else
-				dst = shakedSolution.getEdge( vehicle, edge ).getDst( dst );
+				dst = shakedSolution.getEdge( vehicle, edge )->getDst( dst );
 			
 			// Rimuovo il lato scelto dalla soluzione
 			shakedSolution.removeEdge( vehicle, edge );
@@ -507,7 +518,8 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 #ifdef DEBUG
 			cerr << "Soluzione migliorata: " << optimalSolution.getProfit() << " => " << shakedSolution.getProfit() << endl;
 #endif
-			optimalSolution = shakedSolution;
+			//delete optimalSolution
+			optimalSolution = new Solution( shakedSolution );
 			
 			// ~VND
 			baseSolution = shakedSolution;
@@ -518,6 +530,7 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		k = 1 + k % K_MAX;
 	}
 	
+	cerr << "VNS" << optimalSolution.toString();
 	return optimalSolution;
 }
 
@@ -586,20 +599,21 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 	
 #ifdef DEBUG
 	cerr << "Mi arrendo. " << endl;
-	for ( int i = 0; i < edges.size(); i++ )
-		cerr << tried[ i ] << " ";
-	cerr << endl;
+	//for ( int i = 0; i < edges.size(); i++ )
+	//	cerr << tried[ i ] << " ";
+	//cerr << endl;
 #endif
 
 	return false;
 
 }
 
-Solution Solver::solve()
+Solution* Solver::solve()
 {
 	// Numero di iterazioni
-	currentSolution = vns( 200, currentSolution );
+	currentSolution = vns( 200, &currentSolution );
 	
+	cerr << "Solve" << currentSolution->toString();
 	return currentSolution;
 }
 

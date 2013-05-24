@@ -9,7 +9,7 @@
 #ifndef __ucarpp__main__
 #define __ucarpp__main__
 
-#define FORMAL_OUT
+//#define FORMAL_OUT
 
 #include <iostream>
 #include <fstream>

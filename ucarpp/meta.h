@@ -46,6 +46,7 @@ namespace solver
 			unsigned long getTaken() const;
 			bool isServer( const Vehicle* ) const;
 			const Vehicle* getServer() const;
+			model::Edge* getEdge() const;
 		
 			bool operator ==( MetaEdge& ) const;
 			bool operator !=( MetaEdge& ) const;

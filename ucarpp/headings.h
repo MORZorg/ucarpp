@@ -10,7 +10,7 @@
 #define ucarpp_headings_h
 
 #ifndef DEBUG
-//#define DEBUG
+#define DEBUG
 #endif
 
 #ifdef DEBUG

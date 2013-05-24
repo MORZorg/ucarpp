@@ -164,6 +164,10 @@ const Vehicle* MetaEdge::getServer() const
 {
 	return takers.front();
 }
+Edge* MetaEdge::getEdge() const
+{
+	return actualEdge;
+}
 
 /**
  * Operatore di confronto tra lati
@@ -203,7 +207,8 @@ MetaGraph::MetaGraph( const MetaGraph& source )
 	// Ciclo su tutti i metalati del metagrafo e ne faccio una copia
 	for( auto edge : source.edges )
 	{
-		edges.insert( make_pair( edge.first, edge.second ) );
+		edges.insert( make_pair( edge.first, new MetaEdge( edge.first ) ) );
+		// TODO: Mantenere le statistiche!
 	}
 }
 

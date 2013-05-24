@@ -34,7 +34,7 @@ namespace solver
 		Vehicle( int );
 		Vehicle( const Vehicle& );
 		
-		MetaEdge getEdge( int ) const;
+		MetaEdge* getEdge( int ) const;
 		void addEdge( MetaEdge*, long = -1 );
 		void removeEdge( long = -1 );
 
@@ -63,7 +63,7 @@ namespace solver
 		Solution( int, model::Graph );
 		Solution( const Solution& );
 
-		MetaEdge getEdge( int, int ) const;
+		MetaEdge* getEdge( int, int ) const;
 		void addEdge( model::Edge*, int, int = -1 );
 		void removeEdge( int, int = -1 );
 
@@ -118,7 +118,7 @@ namespace solver
 		M,
 		Q,
 		tMax;
-		Solution currentSolution;
+		Solution* currentSolution;
 		
 		Solution createBaseSolution();
 		void createBaseSolution( Solution*, int );
@@ -129,7 +129,7 @@ namespace solver
 	public:
 		Solver( model::Graph, uint, uint, uint, uint );
 		
-		Solution solve();
+		Solution* solve();
 	};
 }
 
