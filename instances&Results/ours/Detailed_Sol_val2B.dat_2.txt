@@ -1,0 +1,32 @@
+Solution of Problem val2B.dat - Number of Vehicles: 2
+
+Total Profit: 36
+
+Total Cost: 91
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 12) (12 16) (16 15) (15 11) (11 5) (5 4) (4 3) (3 1)  Profitto: 0
+
+Profit: 0
+Cost: 61
+Load: 0
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 2) (2 4) (4 5) (5 3) (3 1)  Profitto: 36
+
+Profit: 36
+Cost: 30
+Load: 16
+

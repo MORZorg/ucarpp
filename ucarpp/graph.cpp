@@ -26,11 +26,11 @@ Graph::Graph( int V ):
 	//for ( int i = 0; i < V; i++ )
 	//	this->costs[ i ] = (uint*)calloc( V, sizeof( uint ) );
 	
-	this->edges = *new vector<Edge*>();
+	this->edges = vector<Edge*>();
 	
 	this->adjList = (vector<Edge*>*)calloc( V, sizeof( vector<Edge*> ) );
 	for ( int i = 0; i < V; i++ )
-		this->adjList[ i ] = *new vector<Edge*>();
+		this->adjList[ i ] = vector<Edge*>();
 }
 
 /**

@@ -9,6 +9,8 @@
 #ifndef __ucarpp__main__
 #define __ucarpp__main__
 
+#define FORMAL_OUT
+
 #include <iostream>
 #include <fstream>
 
@@ -19,6 +21,5 @@
 #include "solver.h"
 #include "meta.h"
 
-#define FORMAL_OUT
 
 #endif /* defined(__ucarpp__main__) */

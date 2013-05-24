@@ -1,0 +1,32 @@
+Solution of Problem val4A.dat - Number of Vehicles: 2
+
+Total Profit: 23
+
+Total Cost: 194
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 7) (7 8) (8 2) (2 3) (3 9) (9 10) (10 11) (11 16) (16 17) (17 11) (11 5) (5 4) (4 3) (3 38) (38 34) (34 29) (29 23) (23 24) (24 14) (14 9) (9 1)  Profitto: 0
+
+Profit: 0
+Cost: 121
+Load: 0
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 38) (38 34) (34 29) (29 1)  Profitto: 23
+
+Profit: 23
+Cost: 73
+Load: 12
+

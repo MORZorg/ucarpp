@@ -19,7 +19,9 @@ namespace model
 	private:
 		uint src,
 			 dst;
-	
+		
+		bool equals( const Edge& ) const;
+		
 	protected:
 		uint cost;
 		
@@ -36,7 +38,7 @@ namespace model
 		
 		float getProfitDemandRatio() const;
 		
-		bool operator==( const Edge* ) const;
+		bool operator ==( const Edge& ) const;
 	};
 	
 	class DijkyEdge: public Edge

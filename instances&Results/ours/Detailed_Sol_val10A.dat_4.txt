@@ -1,8 +1,8 @@
 Solution of Problem val10A.dat - Number of Vehicles: 4
 
-Total Profit: 925
+Total Profit: 273
 
-Total Cost: 522
+Total Cost: 435
 
 
 Route 0 Details:
@@ -11,11 +11,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-:]
+(1 5) (5 6) (6 12) (12 11) (11 5) (5 18) (18 26) (26 29) (29 39) (39 33) (33 30) (30 27) (27 36) (36 35) (35 27) (27 31) (31 22) (22 14) (14 8) (8 9) (9 3) (3 4) (4 10) (10 9) (9 15) (15 14) (14 13) (13 6) (6 1)  Profitto: 0
 
-Profit: 504
-Cost: 129
-Load: 247
+Profit: 0
+Cost: 119
+Load: 0
 
 
 Route 1 Details:
@@ -24,11 +24,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-:]
+(1 47) (47 48) (48 49) (49 50) (50 43) (43 38) (38 45) (45 43) (43 37) (37 32) (32 38) (38 28) (28 25) (25 17) (17 16) (16 9) (9 34) (34 30) (30 1)  Profitto: 167
 
-Profit: 343
-Cost: 131
-Load: 149
+Profit: 167
+Cost: 102
+Load: 70
 
 
 Route 2 Details:
@@ -37,11 +37,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-:]
+(1 6) (6 5) (5 11) (11 19) (19 20) (20 21) (21 27) (27 36) (36 35) (35 41) (41 33) (33 34) (34 8) (8 13) (13 22) (22 31) (31 1)  Profitto: 51
 
-Profit: 72
-Cost: 131
-Load: 37
+Profit: 51
+Cost: 90
+Load: 22
 
 
 Route 3 Details:
@@ -50,9 +50,9 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-:]
+(1 5) (5 6) (6 7) (7 13) (13 21) (21 20) (20 12) (12 11) (11 5) (5 18) (18 19) (19 26) (26 6) (6 14) (14 10) (10 17) (17 16) (16 9) (9 15) (15 14) (14 3) (3 4) (4 1)  Profitto: 55
 
-Profit: 6
-Cost: 131
-Load: 7
+Profit: 55
+Cost: 124
+Load: 22
 

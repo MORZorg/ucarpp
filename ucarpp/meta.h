@@ -13,7 +13,6 @@
 #include "edge.h"
 #include "graph.h"
 #include <unordered_map>	// If not working: Boost
-#include <stdexcept>		// out_of_range
 //#include "solver.h"
 
 namespace solver
@@ -26,9 +25,12 @@ namespace solver
 		private:
 			model::Edge* actualEdge;
 			std::vector<const Vehicle*> takers;
-			
+		
+			bool equals( const MetaEdge& ) const;
+		
 		public:
 			MetaEdge( model::Edge* );
+			MetaEdge( const MetaEdge& );
 			
 			uint getSrc() const;
 			uint getDst() const;
@@ -39,11 +41,14 @@ namespace solver
 			float getProfit() const;
 			float getProfitDemandRatio() const;
 			
-			unsigned long setTaken( const Vehicle* );
+			unsigned long setTaken( const Vehicle*, int );
 			unsigned long unsetTaken( const Vehicle*, int );
 			unsigned long getTaken() const;
 			bool isServer( const Vehicle* ) const;
 			const Vehicle* getServer() const;
+		
+			bool operator ==( MetaEdge& ) const;
+			bool operator !=( MetaEdge& ) const;
 	};
 	
 	class MetaGraph
@@ -54,17 +59,15 @@ namespace solver
 			std::unordered_map<model::Edge*, MetaEdge*> edges;
 			// Lista di Adiacenza
 			//std::unordered_map<uint, MetaEdge*>* adjList;
-			MetaGraph( std::unordered_map <model::Edge*, MetaEdge* > );
 			
 		public:
 			MetaGraph( model::Graph );
+			MetaGraph( const MetaGraph& );
 			
 //			MetaEdge* getEdge( uint, uint ) const throw( int );
 			MetaEdge* getEdge( const model::Edge* ) const;
 //			std::unordered_map<model::Edge*, MetaEdge*> getEdges() const;
 //			std::unordered_map<uint, MetaEdge*> getAdjList( uint ) const;
-
-			MetaGraph* clone();
 	};
 }
 

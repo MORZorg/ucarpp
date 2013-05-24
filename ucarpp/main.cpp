@@ -10,6 +10,10 @@
 
 #include "main.h"
 
+#ifndef DEBUG
+//#define DEBUG
+#endif
+
 using namespace std;
 using namespace boost;
 
@@ -40,7 +44,7 @@ int main( int argc, const char * argv[] )
 	smatch sm;
 	regex re;
 	
-	re = *new regex( "NUMBER:\\s(.*\\.dat)" );
+	re = regex::basic_regex( "NUMBER:\\s(.*\\.dat)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
@@ -54,7 +58,7 @@ int main( int argc, const char * argv[] )
 	}
 	
 	// Dati
-	re = *new regex( "NUMBER OF VERTICES:\\s(\\d+)" );
+	re = regex::basic_regex( "NUMBER OF VERTICES:\\s(\\d+)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
@@ -68,7 +72,7 @@ int main( int argc, const char * argv[] )
 		exit( 1 );
 	}
 	
-	re = *new regex( "NUMBER OF EDGES:\\s(\\d+)" );
+	re = regex::basic_regex( "NUMBER OF EDGES:\\s(\\d+)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
@@ -82,7 +86,7 @@ int main( int argc, const char * argv[] )
 		exit( 1 );
 	}
 	
-	re = *new regex( "CAPACITY:\\s(\\d+)" );
+	re = regex::basic_regex( "CAPACITY:\\s(\\d+)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
@@ -96,7 +100,7 @@ int main( int argc, const char * argv[] )
 		exit( 1 );
 	}
 	
-	re = *new regex( "TIME LIMIT:\\s(\\d+)" );
+	re = regex::basic_regex( "TIME LIMIT:\\s(\\d+)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
@@ -113,14 +117,14 @@ int main( int argc, const char * argv[] )
 	// Lati
 	model::Graph grafo( V );
 	
-	re = *new regex( "LIST OF EDGES:" );
+	re = regex::basic_regex( "LIST OF EDGES:" );
 	getline( in, line );
 	if ( !regex_search( line, re ) )
 		cerr << "Errore. " << line << endl;
 	
 	int src, dst, t, d;
 	float p;
-	re = *new regex( "\\((\\d+),(\\d+)\\) cost (\\d+) demand (\\d+) profit ([0-9.]+)" );
+	re = regex::basic_regex( "\\((\\d+),(\\d+)\\) cost (\\d+) demand (\\d+) profit ([0-9.]+)" );
 	for ( int i = 0; i < L; i++ )
 	{
 		getline( in, line );
@@ -148,7 +152,7 @@ int main( int argc, const char * argv[] )
 		}
 	}
 	
-	re = *new regex( "DEPOT:\\s(\\d+)" );
+	re = regex::basic_regex( "DEPOT:\\s(\\d+)" );
 	getline( in, line );
 	if ( regex_search( line, sm, re ) )
 	{
@@ -186,13 +190,13 @@ int main( int argc, const char * argv[] )
 	
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );
-	solver::Solution* solution = solver.solve();
+	solver::Solution solution = solver.solve();
 	
 #ifdef FORMAL_OUT
 	// Stampo l'output
 	cout << "Solution of Problem " << filename << " - Number of Vehicles: " << M << endl << endl;
-	cout << "Total Profit: " << solution->getProfit() << endl << endl;
-	cout << "Total Cost: " << solution->getCost() << endl << endl;
+	cout << "Total Profit: " << solution.getProfit() << endl << endl;
+	cout << "Total Cost: " << solution.getCost() << endl << endl;
 	for ( int i = 0; i < M; i++ )
 	{
 		cout << endl << "Route " << i << " Details:" << endl;
@@ -201,12 +205,12 @@ int main( int argc, const char * argv[] )
 		cout << ":)" << endl;
 
 		cout << endl << "Vertex Sequence:" << endl;
-		cout << ":]" << endl;
+		cout << solution.toString( i );
 		
 		cout << endl;
-		cout << "Profit: " << solution->getProfit( i ) << endl;
-		cout << "Cost: " << solution->getCost( i ) << endl;
-		cout << "Load: " << solution->getDemand( i ) << endl;
+		cout << "Profit: " << solution.getProfit( i ) << endl;
+		cout << "Cost: " << solution.getCost( i ) << endl;
+		cout << "Load: " << solution.getDemand( i ) << endl;
 		cout << endl;
 	}
 #endif

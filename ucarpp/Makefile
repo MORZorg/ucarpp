@@ -21,9 +21,11 @@ batch: ucarpp
 	$(foreach test, \
 		$(INSTANCES), \
 		$(foreach i, $(VEHICLES), \
+			echo $(test)_$(i)... && \
 			./$< $(INSTPATH)$(test) $(i) \
 				> $(OURS)Detailed_Sol_$(test)_$(i).txt \
-				2> /dev/null;))
+				2> ./ucarpp.log;))
+#2> /dev/null;))
 
 .PHONY: clean
 clean:

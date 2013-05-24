@@ -77,10 +77,15 @@ uint Edge::getCost() const
  * @return	vero, se gli archi hanno le stesse proprietà
  *			( sorgente, destinazione, costo, profitto, domanda )
  */
-bool Edge::operator==( const Edge* other ) const
+bool Edge::operator ==( const Edge& other ) const
 {
-	return getSrc() == other->getDst( getDst() ) &&
-		   getDst() == other->getDst( getSrc() );
+	return this->equals( other );
+}
+
+bool Edge::equals( const Edge& other ) const
+{
+	return getSrc() == other.getDst( getDst() ) &&
+		   getDst() == other.getDst( getSrc() );
 		   /*&&
 		   getCost() == other->getCost() &&
 		   getProfit() == other->getProfit() &&

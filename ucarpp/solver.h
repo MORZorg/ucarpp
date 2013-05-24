@@ -9,12 +9,9 @@
 #ifndef __ucarpp__solver__
 #define __ucarpp__solver__
 
-#ifndef DEBUG
-#define DEBUG
-#endif
-
 //#include <unordered_set>
 #include <list>
+#include <vector>
 #include <sstream>
 
 #include "headings.h"
@@ -27,30 +24,32 @@ namespace solver
 	class Vehicle
 	{
 	private:
-		//std::unordered_set<MetaEdge*> path;
 		int id;
 		std::list<MetaEdge*> path;
 
 		int getId() const;
+		bool equals( const Vehicle& ) const;
 
 	public:
 		Vehicle( int );
+		Vehicle( const Vehicle& );
 		
-		MetaEdge* getEdge( int ) const;
+		MetaEdge getEdge( int ) const;
 		void addEdge( MetaEdge*, long = -1 );
 		void removeEdge( long = -1 );
 
-		unsigned long size();
+		unsigned long size() const;
 		
-		uint getCost();
-		uint getDemand();
-		uint getProfit();
+		uint getCost() const;
+		uint getDemand() const;
+		uint getProfit() const;
 
-		bool getDirection( int );
+		bool getDirection( int ) const;
 
-		std::string toString();
+		std::string toString() const;
+		
+		bool operator ==( const Vehicle & ) const;
 
-		bool equals( const Vehicle* ) const;
 	};
 
 	class Solution
@@ -58,16 +57,13 @@ namespace solver
 	private:
 		int M;
 		MetaGraph graph;
-		Vehicle** vehicles;
-
-		Solution( int, MetaGraph, Vehicle** );
+		std::vector<Vehicle> vehicles;
 		
 	public:
 		Solution( int, model::Graph );
+		Solution( const Solution& );
 
-		Solution* clone() const;
-
-		MetaEdge* getEdge( int, int ) const;
+		MetaEdge getEdge( int, int ) const;
 		void addEdge( model::Edge*, int, int = -1 );
 		void removeEdge( int, int = -1 );
 
@@ -112,26 +108,28 @@ namespace solver
 	class Solver
 	{
 	private:
-		const int	K_MAX	= 10;
-		const float	XI		= 4;
-		const float	P_CLOSE	= .05;
+		const int	K_MAX		= 10;
+		const float	XI			= 2;
+		const float	P_CLOSE		= .10;
+		const float	P_ACCEPT	= .90;
 
 		model::Graph graph;
 		uint depot,
 		M,
 		Q,
 		tMax;
-		Solution* currentSolution;
+		Solution currentSolution;
 		
-		Solution* createBaseSolution();
-		Solution* vns( int, Solution* );
+		Solution createBaseSolution();
+		void createBaseSolution( Solution*, int );
+		Solution vns( int, Solution );
 		bool closeSolutionRandom( Solution*, int, uint, uint, int, int );
 
-		bool isFeasible( Solution*, int ) const;
+		bool isFeasible( Solution, int ) const;
 	public:
 		Solver( model::Graph, uint, uint, uint, uint );
 		
-		Solution* solve();
+		Solution solve();
 	};
 }
 

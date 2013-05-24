@@ -1,8 +1,8 @@
 Solution of Problem val9C.dat - Number of Vehicles: 4
 
-Total Profit: 733
+Total Profit: 149
 
-Total Cost: 229
+Total Cost: 174
 
 
 Route 0 Details:
@@ -11,11 +11,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-:]
+(1 9) (9 13) (13 8) (8 9) (9 14) (14 23) (23 29) (29 37) (37 38) (38 46) (46 45) (45 50) (50 46) (46 1)  Profitto: 0
 
-Profit: 217
+Profit: 0
 Cost: 55
-Load: 90
+Load: 0
 
 
 Route 1 Details:
@@ -24,11 +24,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-:]
+(1 16) (16 17) (17 30) (30 34) (34 13) (13 9) (9 1)  Profitto: 60
 
-Profit: 193
-Cost: 58
-Load: 86
+Profit: 60
+Cost: 34
+Load: 26
 
 
 Route 2 Details:
@@ -37,11 +37,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-:]
+(1 15) (15 24) (24 17) (17 31) (31 32) (32 18) (18 1)  Profitto: 0
 
-Profit: 243
-Cost: 58
-Load: 111
+Profit: 0
+Cost: 31
+Load: 0
 
 
 Route 3 Details:
@@ -50,9 +50,9 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-:]
+(1 48) (48 43) (43 42) (42 41) (41 33) (33 34) (34 26) (26 27) (27 28) (28 23) (23 14) (14 1)  Profitto: 89
 
-Profit: 80
-Cost: 58
-Load: 46
+Profit: 89
+Cost: 54
+Load: 38
 

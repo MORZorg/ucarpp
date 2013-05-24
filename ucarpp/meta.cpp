@@ -14,10 +14,19 @@ using namespace model;
 
 /*** MetaEdge ***/
 
+/**
+ * Costruttore
+ */
 MetaEdge::MetaEdge( Edge* reference ):
 	actualEdge( reference )
 {
-	takers = *new vector<const Vehicle*>();
+	takers = vector<const Vehicle*>();
+}
+
+MetaEdge::MetaEdge( const MetaEdge& source ):
+	actualEdge( source.actualEdge )
+{
+	takers = source.takers;
 }
 
 uint MetaEdge::getSrc() const
@@ -81,23 +90,22 @@ float MetaEdge::getProfitDemandRatio() const
  * @param	il veicolo che imposta questo lato come preso.
  * @return	il numero di volte per cui il lato è stato preso.
  */
-unsigned long MetaEdge::setTaken( const Vehicle* taker, int occurence )
+unsigned long MetaEdge::setTaken( const Vehicle* taker, int occurrence )
 {
-	// Cerco il veicolo partendo dalla fine. Se lo trovo lo cancello, altrimenti niente.
-	fadghlauh
+	// Cerco n le occorrenze del veicolo. Inserisco prima della (n+1)-esima.
 	for ( auto it = takers.begin(); it < takers.end(); ++it )
-		if ( *it == taker )
-			if ( --occurrence < 0 )
+		if ( **it == *taker )
+			if ( occurrence-- < 0 )
 			{
 				// In caso si usino i reverse_iterator,
 				// bisogna usare .base() facendo piu' o meno ++i--
-				takers.erase( it );
-				break;
+				takers.insert( it, taker );
+				return takers.size();
 			}
-	
-	return takers.size();
 
+	// Non ho trovato n+1 occorrenze. Inserisco in coda.
 	takers.push_back( taker );
+	
 	return takers.size();
 }
 
@@ -113,9 +121,9 @@ unsigned long MetaEdge::setTaken( const Vehicle* taker, int occurence )
  */
 unsigned long MetaEdge::unsetTaken( const Vehicle* taker, int occurrence )
 {
-	// Cerco il veicolo partendo dalla fine. Se lo trovo lo cancello, altrimenti niente.
+	// Cerco il veicolo. Se lo trovo lo cancello, altrimenti niente.
 	for ( auto it = takers.begin(); it < takers.end(); ++it )
-		if ( *it == taker )
+		if ( **it == *taker )
 			if ( --occurrence < 0 )
 			{
 				// In caso si usino i reverse_iterator,
@@ -144,7 +152,7 @@ unsigned long MetaEdge::getTaken() const
  */
 bool MetaEdge::isServer( const Vehicle* aVehicle ) const
 {
-	return takers.front()->equals( aVehicle );
+	return *( takers.front() ) == *aVehicle;
 }
 
 /**
@@ -157,6 +165,22 @@ const Vehicle* MetaEdge::getServer() const
 	return takers.front();
 }
 
+/**
+ * Operatore di confronto tra lati
+ */
+bool MetaEdge::operator ==( MetaEdge& other ) const
+{
+	return this->equals( other );
+}
+bool MetaEdge::operator !=( MetaEdge& other ) const
+{
+	return !( *this == other );
+}
+bool MetaEdge::equals( const MetaEdge& other ) const
+{
+	return actualEdge == other.actualEdge;
+}
+
 /*** MetaGraph ***/
 
 /**
@@ -164,22 +188,22 @@ const Vehicle* MetaEdge::getServer() const
  */
 MetaGraph::MetaGraph( Graph g )
 {
-	this->edges = *new unordered_map<Edge*, MetaEdge*>();
+	this->edges = unordered_map<Edge*, MetaEdge*>();
 	
 	for ( Edge* edge : g.getEdges() )
 		edges.insert( make_pair( edge, new MetaEdge( edge ) ) );
 }
 
 // Costruttore strambo
-MetaGraph::MetaGraph( unordered_map <model::Edge*, MetaEdge*>  _edges )
+MetaGraph::MetaGraph( const MetaGraph& source )
 {
 	// Creo la nuova mappa lati-metalati
-	this->edges = * new unordered_map <Edge*, MetaEdge*> ();
+	this->edges = unordered_map<Edge*, MetaEdge*>();
 
 	// Ciclo su tutti i metalati del metagrafo e ne faccio una copia
-	for( auto edge : _edges )
+	for( auto edge : source.edges )
 	{
-		edges.insert( make_pair( edge.first, new MetaEdge( *edge.second ) ) );
+		edges.insert( make_pair( edge.first, edge.second ) );
 	}
 }
 
@@ -189,11 +213,5 @@ MetaEdge* MetaGraph::getEdge( const Edge* edge ) const
 	// edge deve essere const per l'uso che viene fatto della funzione (greedyCompare etc),
 	// ma non può esserlo per unordered_map => const_cast
 	return edges.at( const_cast<Edge*>( edge ) );
-}
-
-
-MetaGraph* MetaGraph::clone()
-{
-	return new MetaGraph( edges );
 }
 

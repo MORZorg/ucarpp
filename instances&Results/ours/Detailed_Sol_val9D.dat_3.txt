@@ -1,0 +1,45 @@
+Solution of Problem val9D.dat - Number of Vehicles: 3
+
+Total Profit: 63
+
+Total Cost: 102
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 9) (9 13) (13 8) (8 9) (9 20) (20 9) (9 1)  Profitto: 0
+
+Profit: 0
+Cost: 33
+Load: 0
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 9) (9 14) (14 17) (17 31) (31 1)  Profitto: 0
+
+Profit: 0
+Cost: 27
+Load: 0
+
+
+Route 2 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 10) (10 11) (11 12) (12 7) (7 4) (4 3) (3 2) (2 5) (5 10) (10 17) (17 18) (18 19) (19 9) (9 1)  Profitto: 63
+
+Profit: 63
+Cost: 42
+Load: 34
+
