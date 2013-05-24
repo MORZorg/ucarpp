@@ -27,7 +27,7 @@ namespace model
 		// Vettore dei Lati
 		std::vector<Edge*> edges;
 		// Lista di Adiacenza
-		std::vector<Edge*>* adjList;
+		std::vector< std::vector<Edge*> > adjList;
 
 	public:
 		Graph( int );

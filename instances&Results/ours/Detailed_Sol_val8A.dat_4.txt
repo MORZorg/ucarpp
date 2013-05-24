@@ -1,8 +1,8 @@
 Solution of Problem val8A.dat - Number of Vehicles: 4
 
-Total Profit: 167
+Total Profit: 854
 
-Total Cost: 283
+Total Cost: 478
 
 
 Route 0 Details:
@@ -11,11 +11,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 8) (8 7) (7 3) (3 1)  Profitto: 0
+(0 7) (7 13) (12 13) (7 12) (7 8) (1 8) (1 2) (2 9) (9 14) (14 18) (9 18) (8 9) (0 8) (0 4) (3 4) (3 5) (5 6) (6 11) (11 12) (4 12) (0 4)  Profitto: 425
 
-Profit: 0
-Cost: 38
-Load: 0
+Profit: 425
+Cost: 120
+Load: 189
 
 
 Route 1 Details:
@@ -24,11 +24,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 12) (12 11) (11 22) (22 17) (17 18) (18 23) (23 18) (18 8) (8 5) (5 1)  Profitto: 54
+(0 1) (1 26) (19 26) (10 19) (5 10) (5 25) (22 25) (22 29) (24 29) (0 24)  Profitto: 117
 
-Profit: 54
-Cost: 78
-Load: 30
+Profit: 117
+Cost: 119
+Load: 59
 
 
 Route 2 Details:
@@ -37,11 +37,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 23) (23 29) (29 30) (30 14) (14 17) (17 16) (16 1)  Profitto: 43
+(0 26) (23 26) (20 23) (20 28) (27 28) (20 27) (20 21) (16 21) (13 16) (13 14) (7 14) (4 7) (4 8) (0 8)  Profitto: 211
 
-Profit: 43
-Cost: 75
-Load: 21
+Profit: 211
+Cost: 121
+Load: 101
 
 
 Route 3 Details:
@@ -50,9 +50,9 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 5) (5 12) (12 7) (7 11) (11 6) (6 7) (7 30) (30 1)  Profitto: 70
+(0 26) (26 27) (23 27) (19 23) (15 19) (15 16) (16 17) (17 18) (5 18) (5 9) (0 9)  Profitto: 101
 
-Profit: 70
-Cost: 92
-Load: 28
+Profit: 101
+Cost: 118
+Load: 56
 

@@ -26,7 +26,9 @@ MetaEdge::MetaEdge( Edge* reference ):
 MetaEdge::MetaEdge( const MetaEdge& source ):
 	actualEdge( source.actualEdge )
 {
-	takers = source.takers;
+	// TODO: Copio le statistiche ma non i lati passanti
+	takers = vector<const Vehicle*>();
+//	takers = source.takers;
 }
 
 uint MetaEdge::getSrc() const
@@ -207,8 +209,7 @@ MetaGraph::MetaGraph( const MetaGraph& source )
 	// Ciclo su tutti i metalati del metagrafo e ne faccio una copia
 	for( auto edge : source.edges )
 	{
-		edges.insert( make_pair( edge.first, new MetaEdge( edge.first ) ) );
-		// TODO: Mantenere le statistiche!
+		edges.insert( make_pair( edge.first, new MetaEdge( *edge.second ) ) );
 	}
 }
 

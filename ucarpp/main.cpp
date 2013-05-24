@@ -190,8 +190,9 @@ int main( int argc, const char * argv[] )
 	
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );
-	solver::Solution* solution = solver.solve();
+	solver::Solution solution = solver.solve();
 	
+//	cerr << "main" << solution.toString();
 	cerr << "main" << solution.toString();
 #ifdef FORMAL_OUT
 	// Stampo l'output

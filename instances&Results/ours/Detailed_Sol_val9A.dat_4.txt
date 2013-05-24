@@ -1,8 +1,8 @@
 Solution of Problem val9A.dat - Number of Vehicles: 4
 
-Total Profit: 173
+Total Profit: 958
 
-Total Cost: 211
+Total Cost: 391
 
 
 Route 0 Details:
@@ -11,11 +11,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 9) (9 13) (13 8) (8 9) (9 14) (14 23) (23 10) (10 1)  Profitto: 0
+(0 8) (8 12) (7 12) (7 8) (8 13) (13 22) (22 28) (28 36) (36 37) (37 45) (44 45) (44 49) (45 49) (3 45) (2 3) (1 2) (1 4) (4 9) (9 10) (10 11) (6 11) (3 6) (3 8) (0 8)  Profitto: 319
 
-Profit: 0
-Cost: 34
-Load: 0
+Profit: 319
+Cost: 97
+Load: 131
 
 
 Route 1 Details:
@@ -24,11 +24,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 16) (16 17) (17 24) (24 23) (23 28) (28 36) (36 44) (44 45) (45 49) (49 48) (48 43) (43 42) (42 41) (41 33) (33 34) (34 26) (26 27) (27 28) (28 29) (29 30) (30 40) (40 1)  Profitto: 107
+(0 15) (15 16) (16 29) (23 29) (22 23) (22 27) (27 35) (35 43) (43 44) (44 48) (47 48) (42 47) (41 42) (40 41) (32 40) (32 33) (25 33) (25 26) (26 27) (27 28) (28 29) (29 38) (38 46) (39 46) (31 39) (18 31) (17 18) (16 17) (0 16)  Profitto: 447
 
-Profit: 107
-Cost: 86
-Load: 53
+Profit: 447
+Cost: 98
+Load: 204
 
 
 Route 2 Details:
@@ -37,10 +37,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
+(0 14) (14 23) (16 23) (16 30) (30 31) (7 31) (7 47) (44 47) (2 44) (2 5) (4 5) (0 4)  Profitto: 139
 
-Profit: 0
-Cost: 0
-Load: 0
+Profit: 139
+Cost: 98
+Load: 85
 
 
 Route 3 Details:
@@ -49,9 +50,9 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 16) (16 15) (15 1) (1 10) (10 11) (11 12) (12 7) (7 4) (4 48) (48 45) (45 50) (50 49) (49 45) (45 46) (46 21) (21 13) (13 1)  Profitto: 66
+(0 9) (9 16) (16 47) (1 47) (1 5) (5 6) (6 44) (0 44)  Profitto: 53
 
-Profit: 66
-Cost: 91
-Load: 35
+Profit: 53
+Cost: 98
+Load: 28
 

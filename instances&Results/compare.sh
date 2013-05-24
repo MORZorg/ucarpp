@@ -1,7 +1,7 @@
 #/bin/bash
 
 cd `dirname $0`;
-rm -f ours/*test*;
+mv -f ours/*test* test/;
 
 FILES=(`ls ours/`);
 OURS=(`sed 's///g' ours/* | sed -n 's/Total Profit: \([0-9][0-9]*$\)/\1/p'`);

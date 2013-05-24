@@ -1,8 +1,8 @@
 Solution of Problem val4A.dat - Number of Vehicles: 4
 
-Total Profit: 173
+Total Profit: 618
 
-Total Cost: 451
+Total Cost: 487
 
 
 Route 0 Details:
@@ -11,11 +11,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 7) (7 8) (8 2) (2 3) (3 9) (9 10) (10 11) (11 16) (16 17) (17 11) (11 5) (5 4) (4 3) (3 21) (21 9) (9 29) (29 23) (23 24) (24 14) (14 9) (9 1)  Profitto: 0
+(0 6) (6 7) (1 7) (1 2) (2 8) (8 9) (9 10) (10 15) (15 16) (10 16) (4 10) (3 4) (2 3) (2 37) (33 37) (28 33) (22 28) (22 23) (13 23) (8 13) (0 8)  Profitto: 405
 
-Profit: 0
-Cost: 112
-Load: 0
+Profit: 405
+Cost: 121
+Load: 180
 
 
 Route 1 Details:
@@ -24,11 +24,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 38) (38 26) (26 19) (19 30) (30 1)  Profitto: 27
+(0 1) (1 37) (37 38) (34 38) (33 34) (5 33) (4 5) (4 12) (6 12) (0 6)  Profitto: 125
 
-Profit: 27
-Cost: 106
-Load: 10
+Profit: 125
+Cost: 122
+Load: 57
 
 
 Route 2 Details:
@@ -37,11 +37,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 39) (39 35) (35 11) (11 10) (10 17) (17 28) (28 3) (3 2) (2 1)  Profitto: 20
+(0 37) (5 37) (5 11) (10 11) (10 29) (28 29) (0 28) (0 1) (0 1)  Profitto: 35
 
-Profit: 20
-Cost: 116
-Load: 7
+Profit: 35
+Cost: 122
+Load: 23
 
 
 Route 3 Details:
@@ -50,9 +50,9 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 38) (38 39) (39 40) (40 26) (26 27) (27 20) (20 21) (21 27) (27 32) (32 26) (26 1) (1 2) (2 1)  Profitto: 126
+(0 37) (5 37) (5 30) (24 30) (14 24) (9 14) (0 9)  Profitto: 53
 
-Profit: 126
-Cost: 117
-Load: 50
+Profit: 53
+Cost: 122
+Load: 33
 

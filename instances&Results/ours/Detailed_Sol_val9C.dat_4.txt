@@ -1,8 +1,8 @@
 Solution of Problem val9C.dat - Number of Vehicles: 4
 
-Total Profit: 149
+Total Profit: 733
 
-Total Cost: 174
+Total Cost: 229
 
 
 Route 0 Details:
@@ -11,11 +11,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 9) (9 13) (13 8) (8 9) (9 14) (14 23) (23 29) (29 37) (37 38) (38 46) (46 45) (45 50) (50 46) (46 1)  Profitto: 0
+(0 8) (8 12) (7 12) (7 8) (8 13) (13 22) (22 28) (28 36) (36 37) (37 45) (44 45) (44 49) (45 49) (0 45)  Profitto: 217
 
-Profit: 0
+Profit: 217
 Cost: 55
-Load: 0
+Load: 90
 
 
 Route 1 Details:
@@ -24,11 +24,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 16) (16 17) (17 30) (30 34) (34 13) (13 9) (9 1)  Profitto: 60
+(0 15) (15 16) (16 29) (23 29) (22 23) (22 27) (27 35) (35 43) (43 44) (44 48) (48 49) (15 49) (0 15)  Profitto: 193
 
-Profit: 60
-Cost: 34
-Load: 26
+Profit: 193
+Cost: 58
+Load: 86
 
 
 Route 2 Details:
@@ -37,11 +37,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 15) (15 24) (24 17) (17 31) (31 32) (32 18) (18 1)  Profitto: 0
+(0 14) (14 23) (16 23) (16 30) (30 31) (18 31) (11 18) (10 11) (9 10) (4 9) (1 4) (1 2) (2 3) (3 6) (6 11) (11 15) (0 15)  Profitto: 243
 
-Profit: 0
-Cost: 31
-Load: 0
+Profit: 243
+Cost: 58
+Load: 111
 
 
 Route 3 Details:
@@ -50,9 +50,9 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(1 48) (48 43) (43 42) (42 41) (41 33) (33 34) (34 26) (26 27) (27 28) (28 23) (23 14) (14 1)  Profitto: 89
+(0 9) (9 16) (16 17) (10 17) (5 10) (2 5) (2 44) (0 44)  Profitto: 80
 
-Profit: 89
-Cost: 54
-Load: 38
+Profit: 80
+Cost: 58
+Load: 46
 

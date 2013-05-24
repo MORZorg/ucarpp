@@ -18,15 +18,15 @@ using namespace model;
 
 /*** Vehicle ***/
 
-Vehicle::Vehicle( int _id ) : id( _id )
+Vehicle::Vehicle( int _id ): id( _id )
 {
 	path = list<MetaEdge*>();
 }
 
-Vehicle::Vehicle( const Vehicle& source ) : id( source.id )
-{
-	path = source.path;
-}
+//Vehicle::Vehicle( const Vehicle& source ): id( source.id )
+//{
+//	path = source.path;
+//}
 
 MetaEdge* Vehicle::getEdge( int index ) const
 {
@@ -191,37 +191,40 @@ Solution::Solution( int M, Graph graph ):
 //	vehicles = static_cast<Vehicle*> (::operator new ( sizeof( Vehicle ) * M ) );
 //	for ( int i = 0; i < M; i++ )
 //		new ( &vehicles[ i ] ) Vehicle( i );
-	vehicles = vector<Vehicle>();
+	vehicles = vector<Vehicle*>();
 	for ( int i = 0; i < M; i++ )
-		vehicles.push_back( Vehicle( i ) );
+		vehicles.push_back( new Vehicle( i ) );
 }
 
 Solution::Solution( const Solution& source ):
 M( source.M ), graph( source.graph ), compareRatioGreedy( &this->graph )
 {
-	vehicles = vector<Vehicle>();
+	vehicles = vector<Vehicle*>();
 	for ( int i = 0; i < M; i++ )
-		vehicles.push_back( source.vehicles[ i ] );
-//	{
-//		vehicles.push_back( Vehicle( i ) );
-//		for ( int j = 0; j < source.vehicles.size(); j++ )
-//			vehicles[ i ].addEdge( graph.getEdge( source.vehicles[ i ].getEdge( j )->getEdge() ) );
-//	}
+//		vehicles.push_back( source.vehicles[ i ] );
+	{
+		vehicles.push_back( new Vehicle( i ) );
+		for ( int j = 0; j < source.vehicles[ i ]->size(); j++ )
+		{
+			Edge* e = source.getEdge( i, j )->getEdge();
+			vehicles[ i ]->addEdge( graph.getEdge( e ) );
+		}
+	}
 }
 
 MetaEdge* Solution::getEdge( int vehicle, int index ) const
 {
-	return vehicles[ vehicle ].getEdge( index );
+	return vehicles[ vehicle ]->getEdge( index );
 }
 
 void Solution::addEdge( Edge* edge, int vehicle, int index )
 {
-	vehicles[ vehicle ].addEdge( graph.getEdge( edge ), index );
+	vehicles[ vehicle ]->addEdge( graph.getEdge( edge ), index );
 }
 
 void Solution::removeEdge( int vehicle, int index )
 {
-	vehicles[ vehicle ].removeEdge( index );
+	vehicles[ vehicle ]->removeEdge( index );
 }
 
 unsigned long Solution::size() const
@@ -235,7 +238,7 @@ unsigned long Solution::size() const
 
 unsigned long Solution::size( int vehicle ) const
 {
-	return vehicles[ vehicle ].size();
+	return vehicles[ vehicle ]->size();
 }
 
 uint Solution::getProfit() const
@@ -249,7 +252,7 @@ uint Solution::getProfit() const
 
 uint Solution::getProfit( int vehicle ) const
 {
-	return vehicles[ vehicle ].getProfit();
+	return vehicles[ vehicle ]->getProfit();
 }
 
 uint Solution::getCost() const
@@ -263,7 +266,7 @@ uint Solution::getCost() const
 
 uint Solution::getCost( int vehicle ) const
 {
-	return vehicles[ vehicle ].getCost();
+	return vehicles[ vehicle ]->getCost();
 }
 
 uint Solution::getDemand() const
@@ -277,12 +280,12 @@ uint Solution::getDemand() const
 
 uint Solution::getDemand( int vehicle ) const
 {
-	return vehicles[ vehicle ].getDemand();
+	return vehicles[ vehicle ]->getDemand();
 }
 
 bool Solution::getDirection( int vehicle, int index ) const
 {
-	return vehicles[ vehicle ].getDirection( index );
+	return vehicles[ vehicle ]->getDirection( index );
 }
 
 string Solution::toString() const
@@ -296,7 +299,7 @@ string Solution::toString() const
 
 string Solution::toString( int vehicle ) const
 {
-	return vehicles[ vehicle ].toString();
+	return vehicles[ vehicle ]->toString();
 }
 
 /*** Solver ***/
@@ -369,7 +372,7 @@ void Solver::createBaseSolution( Solution* baseSolution, int vehicle )
 			 * il lato selezionato ed il lato di ritorno,
 			 * accetto il nuovo lato e proseguo al successivo.
 			 */
-			if ( isFeasible( *baseSolution, vehicle ) )
+			if ( isFeasible( baseSolution, vehicle ) )
 			{
 #ifdef DEBUG
 				fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n\n",
@@ -398,7 +401,7 @@ void Solver::createBaseSolution( Solution* baseSolution, int vehicle )
 		baseSolution->addEdge( graph.getEdge( currentNode, depot ), vehicle );
 }
 
-Solution* Solver::vns( int nIter, Solution baseSolution )
+Solution Solver::vns( int nIter, Solution baseSolution )
 {
 	// Inizializzo il generatore di numeri casuali
 	srand( (uint)time( NULL ) );
@@ -494,7 +497,7 @@ Solution* Solver::vns( int nIter, Solution baseSolution )
 #endif
 		
 		// Inizio con la chiusura della soluzione, partendo dal nodo sorgente, ovvero dove ha inizio il buco
-		int kvns = XI * ( k + 1 );
+		int kvns = ceil( XI * ( k + 1 ) );
 		
 		while( !closeSolutionRandom( &shakedSolution, vehicle, src, dst, kvns, edge ) );
 //		if ( !closeSolutionRandom( shakedSolution, vehicle, src, dst, kvns, edge ) )
@@ -504,19 +507,19 @@ Solution* Solver::vns( int nIter, Solution baseSolution )
 	cerr << "Soluzioni:" << endl;
 	cerr << "Base: " << baseSolution.toString();
 	cerr << "Shaked: " << shakedSolution.toString();
-	cerr << "Optimal: " << optimalSolution.toString();
+	cerr << "Optimal: " << optimalSolution->toString();
 #endif
 
 		// Soluzione migliore: maggior profitto o stesso profitto con minori risorse
 		// Aggiorno la soluzione con quella più profittevole => mi sposto
-		if ( shakedSolution.getProfit() > optimalSolution.getProfit() ||
-		   ( shakedSolution.getProfit() == optimalSolution.getProfit() &&
-				( shakedSolution.getDemand() < optimalSolution.getDemand() ||
-				( shakedSolution.getDemand() == optimalSolution.getDemand() &&
-					shakedSolution.getCost() < optimalSolution.getCost() ) ) ) )
+		if ( shakedSolution.getProfit() > optimalSolution->getProfit() ||
+		   ( shakedSolution.getProfit() == optimalSolution->getProfit() &&
+				( shakedSolution.getDemand() < optimalSolution->getDemand() ||
+				( shakedSolution.getDemand() == optimalSolution->getDemand() &&
+					shakedSolution.getCost() < optimalSolution->getCost() ) ) ) )
 		{
 #ifdef DEBUG
-			cerr << "Soluzione migliorata: " << optimalSolution.getProfit() << " => " << shakedSolution.getProfit() << endl;
+			cerr << "Soluzione migliorata: " << optimalSolution->getProfit() << " => " << shakedSolution.getProfit() << endl;
 #endif
 			//delete optimalSolution
 			optimalSolution = new Solution( shakedSolution );
@@ -530,8 +533,8 @@ Solution* Solver::vns( int nIter, Solution baseSolution )
 		k = 1 + k % K_MAX;
 	}
 	
-	cerr << "VNS" << optimalSolution.toString();
-	return optimalSolution;
+	cerr << "VNS" << optimalSolution->toString();
+	return *optimalSolution;
 }
 
 bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uint dst, int k, int edgeIndex )
@@ -553,7 +556,7 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 	{
 		solution->addEdge( graph.getEdge( src, dst ), vehicle, edgeIndex );
 
-		if( !isFeasible( *solution, vehicle ) )
+		if( !isFeasible( solution, vehicle ) )
 		{
 			solution->removeEdge( vehicle, edgeIndex );
 			return false;
@@ -566,7 +569,7 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 	vector <Edge*> edges = graph.getAdjList( src );
 	bool* tried = (bool*)calloc( edges.size(), sizeof( bool ) );
 	
-	uint tries = 1;//(uint)edges.size();
+	uint tries = ceil( (float)edges.size() / 10 );//(uint)edges.size();
 	
 	while ( tries-- > 0 )
 	{
@@ -584,7 +587,7 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 		// Controllo subito se il lato inserito mi porta ad una situazione di soluzione non feasible
 		// Se i miei figli non trovano alcun lato buono,
 		//  allora elimino il lato inserito fino a tornare alla soluzione iniziale
-		if( !isFeasible( *solution, vehicle ) ||
+		if( !isFeasible( solution, vehicle ) ||
 		    !closeSolutionRandom( solution, vehicle, victim->getDst( src ), dst, k - 1, edgeIndex + 1 ) )
 		{
 #ifdef DEBUG
@@ -604,22 +607,25 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 	//cerr << endl;
 #endif
 
+	free( tried );
 	return false;
 
 }
 
-Solution* Solver::solve()
+Solution Solver::solve()
 {
 	// Numero di iterazioni
-	currentSolution = vns( 200, &currentSolution );
+	currentSolution = vns( 200, currentSolution );
 	
-	cerr << "Solve" << currentSolution->toString();
+#ifdef DEBUG
+	cerr << "Solve" << currentSolution.toString();
+#endif
 	return currentSolution;
 }
 
-bool Solver::isFeasible( Solution solution, int vehicle ) const
+bool Solver::isFeasible( const Solution* solution, int vehicle ) const
 {
-	return	solution.getDemand( vehicle ) < Q &&
-			solution.getCost( vehicle ) < tMax;
+	return	solution->getDemand( vehicle ) < Q &&
+			solution->getCost( vehicle ) < tMax;
 }
 

@@ -32,7 +32,8 @@ namespace solver
 
 	public:
 		Vehicle( int );
-		Vehicle( const Vehicle& );
+		//Vehicle( const Vehicle& );
+		//~Vehicle();
 		
 		MetaEdge* getEdge( int ) const;
 		void addEdge( MetaEdge*, long = -1 );
@@ -57,7 +58,7 @@ namespace solver
 	private:
 		int M;
 		MetaGraph graph;
-		std::vector<Vehicle> vehicles;
+		std::vector<Vehicle*> vehicles;
 		
 	public:
 		Solution( int, model::Graph );
@@ -108,28 +109,28 @@ namespace solver
 	class Solver
 	{
 	private:
-		const int	K_MAX		= 10;
-		const float	XI			= 2;
-		const float	P_CLOSE		= .10;
-		const float	P_ACCEPT	= .90;
+		const int	K_MAX		= 5;
+		const float	XI			= 1.1;
+		const float	P_CLOSE		= .15;
+		const float	P_ACCEPT	= .95;
 
 		model::Graph graph;
 		uint depot,
 		M,
 		Q,
 		tMax;
-		Solution* currentSolution;
+		Solution currentSolution;
 		
 		Solution createBaseSolution();
 		void createBaseSolution( Solution*, int );
 		Solution vns( int, Solution );
 		bool closeSolutionRandom( Solution*, int, uint, uint, int, int );
 
-		bool isFeasible( Solution, int ) const;
+		bool isFeasible( const Solution*, int ) const;
 	public:
 		Solver( model::Graph, uint, uint, uint, uint );
 		
-		Solution* solve();
+		Solution solve();
 	};
 }
 
