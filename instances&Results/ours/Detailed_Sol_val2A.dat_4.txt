@@ -2,7 +2,7 @@ Solution of Problem val2A.dat - Number of Vehicles: 4
 
 Total Profit: 538
 
-Total Cost: 417
+Total Cost: 419
 
 
 Route 0 Details:
@@ -37,10 +37,10 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(0 13) (4 13) (4 21) (0 21) (0 3) (0 3)  Profitto: 0
+(0 6) (6 21) (0 21) (0 3) (0 3)  Profitto: 0
 
 Profit: 0
-Cost: 104
+Cost: 106
 Load: 0
 
 

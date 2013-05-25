@@ -1,6 +1,6 @@
 Solution of Problem val6A.dat - Number of Vehicles: 4
 
-Total Profit: 685
+Total Profit: 646
 
 Total Cost: 279
 
@@ -50,9 +50,9 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(0 19) (19 21) (18 21) (18 20) (17 20) (17 18) (18 19) (11 19) (10 11) (5 10) (0 5)  Profitto: 147
+(0 19) (19 21) (18 21) (18 20) (17 20) (17 18) (18 19) (19 30) (0 30)  Profitto: 108
 
-Profit: 147
+Profit: 108
 Cost: 70
-Load: 77
+Load: 56
 

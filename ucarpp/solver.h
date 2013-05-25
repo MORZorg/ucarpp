@@ -83,6 +83,8 @@ namespace solver
 		std::string toString() const;
 		std::string toString( int ) const;
 		
+		bool operator> ( const Solution& ) const;
+		
 		struct compareRatioGreedy
 		{
 			MetaGraph* graph;
@@ -124,7 +126,9 @@ namespace solver
 		Solution createBaseSolution();
 		void createBaseSolution( Solution*, int );
 		Solution vns( int, Solution );
+		Solution vnd( int, Solution );
 		bool closeSolutionRandom( Solution*, int, uint, uint, int, int );
+		std::list<model::Edge*> closeSolutionDijkstra( Solution, int, uint, uint, int );
 
 		bool isFeasible( const Solution*, int ) const;
 	public:

@@ -13,7 +13,6 @@
 #include "edge.h"
 #include "graph.h"
 #include <unordered_map>	// If not working: Boost
-//#include "solver.h"
 
 namespace solver
 {
@@ -22,53 +21,53 @@ namespace solver
 	
 	class MetaEdge
 	{
-		private:
-			model::Edge* actualEdge;
-			std::vector<const Vehicle*> takers;
+	private:
+		model::Edge* actualEdge;
+		std::vector<const Vehicle*> takers;
 		
-			bool equals( const MetaEdge& ) const;
+		bool equals( const MetaEdge& ) const;
 		
-		public:
-			MetaEdge( model::Edge* );
-			MetaEdge( const MetaEdge& );
-			
-			uint getSrc() const;
-			uint getDst() const;
-			uint getDst( uint ) const;
-			
-			uint getCost() const;
-			uint getDemand() const;
-			float getProfit() const;
-			float getProfitDemandRatio() const;
-			
-			unsigned long setTaken( const Vehicle*, int );
-			unsigned long unsetTaken( const Vehicle*, int );
-			unsigned long getTaken() const;
-			bool isServer( const Vehicle* ) const;
-			const Vehicle* getServer() const;
-			model::Edge* getEdge() const;
+	public:
+		MetaEdge( model::Edge* );
+		MetaEdge( const MetaEdge& );
 		
-			bool operator ==( MetaEdge& ) const;
-			bool operator !=( MetaEdge& ) const;
+		uint getSrc() const;
+		uint getDst() const;
+		uint getDst( uint ) const;
+		
+		uint getCost() const;
+		uint getDemand() const;
+		float getProfit() const;
+		float getProfitDemandRatio() const;
+		
+		unsigned long setTaken( const Vehicle*, int );
+		unsigned long unsetTaken( const Vehicle*, int );
+		unsigned long getTaken() const;
+		bool isServer( const Vehicle* ) const;
+		const Vehicle* getServer() const;
+		model::Edge* getEdge() const;
+		
+		bool operator ==( MetaEdge& ) const;
+		bool operator !=( MetaEdge& ) const;
 	};
 	
 	class MetaGraph
 	{
-		private:
-			// Vettore dei Lati
-			//std::vector<MetaEdge*> edges;
-			std::unordered_map<model::Edge*, MetaEdge*> edges;
-			// Lista di Adiacenza
-			//std::unordered_map<uint, MetaEdge*>* adjList;
-			
-		public:
-			MetaGraph( model::Graph );
-			MetaGraph( const MetaGraph& );
-			
-//			MetaEdge* getEdge( uint, uint ) const throw( int );
-			MetaEdge* getEdge( const model::Edge* ) const;
-//			std::unordered_map<model::Edge*, MetaEdge*> getEdges() const;
-//			std::unordered_map<uint, MetaEdge*> getAdjList( uint ) const;
+	private:
+		// Vettore dei Lati
+		//std::vector<MetaEdge*> edges;
+		std::unordered_map<model::Edge*, MetaEdge*> edges;
+		// Lista di Adiacenza
+		//std::unordered_map<uint, MetaEdge*>* adjList;
+		
+	public:
+		MetaGraph( model::Graph );
+		MetaGraph( const MetaGraph& );
+		
+		//			MetaEdge* getEdge( uint, uint ) const throw( int );
+		MetaEdge* getEdge( const model::Edge* ) const;
+		//			std::unordered_map<model::Edge*, MetaEdge*> getEdges() const;
+		//			std::unordered_map<uint, MetaEdge*> getAdjList( uint ) const;
 	};
 }
 

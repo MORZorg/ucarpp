@@ -2,7 +2,7 @@ Solution of Problem val8C.dat - Number of Vehicles: 4
 
 Total Profit: 351
 
-Total Cost: 261
+Total Cost: 263
 
 
 Route 0 Details:
@@ -24,10 +24,10 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(0 4) (3 4) (3 6) (6 11) (10 11) (10 19) (15 19) (3 15) (3 6) (4 6) (0 4) (0 4) (0 4)  Profitto: 110
+(0 4) (3 4) (3 6) (6 11) (10 11) (10 19) (15 19) (0 15) (0 4) (0 4) (0 4) (0 4)  Profitto: 110
 
 Profit: 110
-Cost: 64
+Cost: 66
 Load: 58
 
 
