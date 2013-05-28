@@ -1,8 +1,8 @@
 Solution of Problem val5A.dat - Number of Vehicles: 2
 
-Total Profit: 779
+Total Profit: 825
 
-Total Cost: 257
+Total Cost: 260
 
 
 Route 0 Details:
@@ -11,11 +11,11 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(0 6) (6 12) (12 13) (13 19) (18 19) (17 18) (17 28) (24 28) (24 25) (25 26) (20 26) (20 21) (14 21) (14 15) (15 22) (21 22) (0 21) (0 5) (0 5)  Profitto: 390
+(0 6) (6 12) (12 13) (13 19) (18 19) (17 18) (17 28) (24 28) (24 25) (25 26) (20 26) (20 21) (14 21) (14 15) (9 15) (9 10) (3 10) (3 5) (0 5)  Profitto: 436
 
-Profit: 390
-Cost: 127
-Load: 170
+Profit: 436
+Cost: 130
+Load: 186
 
 
 Route 1 Details:

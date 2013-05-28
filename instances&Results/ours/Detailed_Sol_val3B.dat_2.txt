@@ -1,6 +1,6 @@
 Solution of Problem val3B.dat - Number of Vehicles: 2
 
-Total Profit: 118
+Total Profit: 123
 
 Total Cost: 51
 
@@ -24,9 +24,9 @@ Services Sequence:
 :)
 
 Vertex Sequence:
-(0 1) (1 16) (12 16) (11 12) (10 11) (10 14) (14 20) (19 20) (0 19)  Profitto: 41
+(0 5) (5 11) (11 12) (12 13) (11 13) (10 11) (10 14) (14 20) (20 23) (20 23) (19 20) (0 19)  Profitto: 46
 
-Profit: 41
+Profit: 46
 Cost: 26
-Load: 26
+Load: 27
 
