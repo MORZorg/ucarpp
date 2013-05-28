@@ -12,7 +12,7 @@ ucarpp: $(OBJS) $(LIBS)
 	mv a.out $@
 
 run: ucarpp
-	./$< $(INSTPATH)test1A.dat
+	./$< $(INSTPATH)test1A.dat 2
 
 OURS = ../instances\&Results/ours/
 INSTANCES = $(shell ls $(INSTPATH))
@@ -30,3 +30,6 @@ batch: ucarpp
 .PHONY: clean
 clean:
 	rm	-f ucarpp ./*.gch ./*~
+
+first: ucarpp
+	./$< $(INSTPATH)val2A.dat 2 2>/dev/null

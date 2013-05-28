@@ -215,10 +215,10 @@ M( source.M ), graph( source.graph ), compareRatioGreedy( &this->graph )
 bool Solution::operator>( const Solution& other ) const
 {
 	return getProfit() > other.getProfit() ||
-	( getProfit() == other.getProfit() &&
-	 ( getDemand() < other.getDemand() ||
-	  ( getDemand() == other.getDemand() &&
-	   getCost() < other.getCost() ) ) );
+			( getProfit() == other.getProfit() &&
+			  ( getDemand() < other.getDemand() ||
+				( getDemand() == other.getDemand() &&
+				  getCost() < other.getCost() ) ) );
 }
 
 MetaEdge* Solution::getEdge( int vehicle, int index ) const
@@ -422,7 +422,7 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
 	while ( nIter-- > 0 )
 	{
-		shakedSolution = baseSolution;
+		shakedSolution = *new Solution( baseSolution );
 		
 		/*** Shaking ***/
 		// Estraggo un veicolo ed un lato iniziale casuali
@@ -590,7 +590,7 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
 	while ( nIter-- > 0 )
 	{
-		shakedSolution = baseSolution;
+		shakedSolution = *new Solution( baseSolution );
 		
 		/*** Shaking ***/
 		// Estraggo un veicolo ed un lato iniziale casuali
@@ -747,6 +747,7 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 	vector <Edge*> edges = graph.getAdjList( src );
 	bool* tried = (bool*)calloc( edges.size(), sizeof( bool ) );
 	
+	// TODO: decidere se 1 o proporzionale o tutto o cosa.
 	uint tries = ceil( (float)edges.size() / 10 );//(uint)edges.size();
 	
 	while ( tries-- > 0 )
@@ -804,7 +805,7 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 	 */
 	
 	vector< list< list<Edge*> > > sol = vector< list< list<Edge*> > >( graph.size() );
-	vector< list< int* > > val = vector< list< int* > >( graph.size() );
+	vector< list< int* > > val = vector< list< int* > >( graph.size() );	// P, T, D
 	
 	vector<Edge*> edges = graph.getAdjList( src );
 	for ( Edge* edge : edges )
@@ -815,14 +816,23 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 		initSol.push_back( edge );
 		
 		solution.addEdge( edge, vehicle, edgeIndex );
+		if ( !isFeasible( &solution, vehicle ) )
+		{
+			solution.removeEdge( vehicle, edgeIndex );
+			free( initVal );
+			continue;
+		}
+
 		initVal[ 0 ] = solution.getProfit( vehicle );
 		initVal[ 1 ] = solution.getCost( vehicle );
 		initVal[ 2 ] = solution.getDemand( vehicle );
+		cerr << initVal[ 0 ] << endl;
 		
 		solution.removeEdge( vehicle, edgeIndex );
 		initVal[ 0 ] -= solution.getProfit( vehicle );
 		initVal[ 1 ] -= solution.getCost( vehicle );
 		initVal[ 2 ] -= solution.getDemand( vehicle );
+		cerr << initVal[ 0 ] << endl;
 		
 		sol[ edge->getDst( src ) ].push_front( initSol );
 		val[ edge->getDst( src ) ].push_front( initVal );
@@ -834,14 +844,18 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 	{
 		if ( !sol[ i ].empty() )
 		{
+			cerr << i << "] ";
 			for ( auto edge : sol[ i ].front() )
-				cerr << edge->getSrc() << " " << edge->getDst() << endl;
+				cerr << "( " << edge->getSrc() << ", " << edge->getDst() << " ) ";
 			int* valori = val[ i ].front();
-			cerr << " " << valori[ 0 ] << " " << valori[ 1 ] << " " << valori[ 2 ] << endl;
+			cerr <<  " " << valori[ 0 ] << " " << valori[ 1 ] << " " << valori[ 2 ] << endl;
 		}
 		else
-			cerr << "Vuoto: " << i << endl;
+			cerr << i << "] vuoto" << endl;
 	}
+
+	//cerr << "Schiaccia per proseguire" << endl;
+	//getchar();
 #endif
 	
 	bool improved = true;
@@ -901,6 +915,7 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 					
 					for ( int i = 0; i < newSol.size(); i++ )
 						solution.removeEdge( vehicle, edgeIndex );
+
 					newVal[ 0 ] -= solution.getProfit( vehicle );
 					newVal[ 1 ] -= solution.getCost( vehicle );
 					newVal[ 2 ] -= solution.getDemand( vehicle );
@@ -908,8 +923,10 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 					if ( val[ edge->getDst( attuale ) ].empty() ||
 						newVal[ 0 ] > val[ edge->getDst( attuale ) ].front()[ 0 ] ||
 						( newVal[ 0 ] == val[ edge->getDst( attuale ) ].front()[ 0 ] &&
-						  newVal[ 1 ] <= val[ edge->getDst( attuale ) ].front()[ 1 ] &&
-						  newVal[ 2 ] <= val[ edge->getDst( attuale ) ].front()[ 2 ] ) )
+						 ( ( newVal[ 1 ] <= val[ edge->getDst( attuale ) ].front()[ 1 ] &&
+							 newVal[ 2 ] <  val[ edge->getDst( attuale ) ].front()[ 2 ] ) ||
+						   ( newVal[ 1 ] <  val[ edge->getDst( attuale ) ].front()[ 1 ] &&
+						 	 newVal[ 2 ] <= val[ edge->getDst( attuale ) ].front()[ 2 ] ) ) ) )
 					{
 #ifdef DEBUG
 						if ( !val[ edge->getDst( attuale ) ].empty() )
@@ -949,17 +966,22 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 	// Teoricamente non dovrei mai entrare qui.
 	if ( sol[ dst ].empty() )
 	{
+#ifdef DEBUG
 		cerr << "Ho fallito." << endl;
+#endif
 		return list<Edge*>();
 	}
 	
+#ifdef DEBUG
+	cerr << "Chiudo " << val[ dst ].front()[ 0 ] << endl;
+#endif
 	return sol[ dst ].front();
 }
 
 Solution Solver::solve()
 {
 	// Numero di iterazioni
-	currentSolution = vnd( 200, currentSolution );
+	currentSolution = vnd( N_ITER, currentSolution );
 	
 #ifdef DEBUG
 	cerr << "Solve" << currentSolution.toString();

@@ -11,7 +11,7 @@
 #include "main.h"
 
 #ifndef DEBUG
-#define DEBUG
+//#define DEBUG
 #endif
 
 using namespace std;
