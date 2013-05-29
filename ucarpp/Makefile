@@ -8,24 +8,30 @@ ucarpp: $(OBJS) $(LIBS)
 	$(CXX)	-I/usr/include/boost \
 		$(OBJS) \
 		-lboost_regex $(LIBS) \
-		-std=c++0x
+		-std=c++0x -O3
 	mv a.out $@
 
 run: ucarpp
-	./$< $(INSTPATH)test1A.dat 2
+	./$< $(INSTPATH)val10A.dat 2 MDF
 
-OURS = ../instances\&Results/ours/
+OURS = ../instances\&Results/ours
 INSTANCES = $(shell ls $(INSTPATH))
 VEHICLES = 2 3 4
 batch: ucarpp
 	$(foreach test, \
 		$(INSTANCES), \
 		$(foreach i, $(VEHICLES), \
-			echo $(test)_$(i)... && \
-			./$< $(INSTPATH)$(test) $(i) \
-				> $(OURS)Detailed_Sol_$(test)_$(i).txt \
-				2> /dev/null;))
-#2> ./ucarpp.log;))
+			echo $(test)_$(i) ORG... && \
+			./$< $(INSTPATH)$(test) $(i) ORG > $(OURS)_ORG/Detailed_Sol_$(test)_$(i).txt && \
+			echo $(test)_$(i) MDF... && \
+			./$< $(INSTPATH)$(test) $(i) MDF > $(OURS)_MDF/Detailed_Sol_$(test)_$(i).txt;))
+
+batchBg: ucarpp
+	$(foreach test, \
+		$(INSTANCES), \
+		$(foreach i, $(VEHICLES), \
+			./$< $(INSTPATH)$(test) $(i) ORG > $(OURS)_ORG/Detailed_Sol_$(test)_$(i).txt 2> /dev/null & \
+			./$< $(INSTPATH)$(test) $(i) MDF > $(OURS)_MDF/Detailed_Sol_$(test)_$(i).txt 2> /dev/null &))
 
 .PHONY: clean
 clean:

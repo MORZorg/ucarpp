@@ -9,7 +9,7 @@
 #include "solver.h"
 
 #ifndef DEBUG
-#define DEBUG
+//#define DEBUG
 #endif
 
 using namespace std;
@@ -422,7 +422,8 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
 	while ( nIter-- > 0 )
 	{
-		shakedSolution = *new Solution( baseSolution );
+		// Copio la soluzione di base su una soluzione che elaborerò nella vns
+		shakedSolution = Solution( baseSolution );
 		
 		/*** Shaking ***/
 		// Estraggo un veicolo ed un lato iniziale casuali
@@ -521,54 +522,107 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 #endif
 		
 		/*** Ricerca locale ***/
+		// Adottiamo il criterio di best improvement e non first.
+		// Per prima cosa dobbiamo copiare la soluzione corrente in una temporanea che indicherà la soluzione con massimo profitto trovato.
+		Solution maxSolution = Solution( baseSolution );
+
 		uint previous = depot;
+		uint next = depot;
 		for ( int i = 0; i < shakedSolution.size( vehicle ); i++ )
 		{
-			// Rimuovo il lato i
-			Edge* temp = shakedSolution.getEdge( vehicle, i )->getEdge();
+			// Elimino almeno un lato
+			list <Edge*> removedEdges;
+			removedEdges.push_back( shakedSolution.getEdge( vehicle, i )->getEdge() );
 			shakedSolution.removeEdge( vehicle, i );
-			
+			next = removedEdges.front()->getDst( previous );
+
+			// Elimino lati dalla soluzione fintanto che questi non ne aumentano il profitto e fintanto che sono presenti nella soluzione
+			while( i <  shakedSolution.size( vehicle ) )
+			{
+				// Calcolo la differenza di profitto che abbiamo nel togliere un lato alla soluzione
+				int diffProfit = shakedSolution.getProfit( vehicle );
+
+				// Rimuovo il lato i
+				Edge* temp = shakedSolution.getEdge( vehicle, i )->getEdge();
+				shakedSolution.removeEdge( vehicle, i );
+
+				diffProfit -= shakedSolution.getProfit( vehicle );
+
+				// Se non ho differenze di profitto, tolgo quel lato dalla soluzione
+				if( diffProfit == 0 )
+				{
+					// Inserisco il lato tolto nella lista
+					removedEdges.push_back( temp );
+					// Sposto il nodo di partenza
+					next = temp->getDst( next );
+				}
+				else
+				{
+					// Altrimenti lo riaggiungo
+					shakedSolution.addEdge( temp, vehicle, i );
+					break;
+				}
+
+			}
+
+#ifdef DEBUG
+			cerr << "Creato un buco di " << removedEdges.size() << " lati" << endl;
+#endif
+
 			// Chiedo a Dijkstra di calcolarmi la chiusura migliore
+			/*
 			list<Edge*> closure = closeSolutionDijkstra( shakedSolution, vehicle, previous,
 														temp->getDst( previous ), i );
 			previous = temp->getDst( previous );
+			*/
+			list<Edge*> closure = closeSolutionDijkstra( shakedSolution, vehicle, previous, next, i );
+			previous = next;
 			
 			// Se questo porta un miglioramento, effettuo la chiusura, altrimenti riaggiungo il lato i
 			for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
 				shakedSolution.addEdge( *it, vehicle, i );
 			
-			if ( shakedSolution > baseSolution )
-				break;
-			else
-			{
-				for ( int j = 0; j < closure.size(); j++ )
-					shakedSolution.removeEdge( vehicle, i );
-				shakedSolution.addEdge( temp, vehicle, i );
-			}
+			// Controllo se ho trovato una soluzione migliore della massima trovata in precedenza
+			if ( shakedSolution > maxSolution )
+				maxSolution = Solution( shakedSolution );
+
+			// Resetto la shakedSolution per effettuare una nuova ricerca
+			for( int j = 0; j < closure.size(); j++ )
+				shakedSolution.removeEdge( vehicle, i );
+
+			for( auto it = removedEdges.rbegin(); it != removedEdges.rend(); ++it )
+				shakedSolution.addEdge( *it, vehicle, i );
+
+			i += removedEdges.size() - 1;
+			//shakedSolution.addEdge( temp, vehicle, i );
 		}
 		
 		
 		/*** Move or not ***/
 		// Soluzione migliore: maggior profitto o stesso profitto con minori risorse
 		// Aggiorno la soluzione con quella più profittevole => mi sposto
-		if ( shakedSolution > baseSolution )
+		if ( maxSolution > baseSolution )
 		{
 #ifdef DEBUG
-			cerr << "Soluzione migliorata: " << baseSolution.getProfit() << " => " << shakedSolution.getProfit() << endl;
+			cerr << "Soluzione migliorata: " << baseSolution.getProfit() << " => " << maxSolution.getProfit() << endl;
 #endif
-			if ( shakedSolution > *optimalSolution )
+			// La prendo come soluzione ottima se il miglioramento è assoluto
+			if ( maxSolution > *optimalSolution )
 			{
 #ifdef DEBUG
-				cerr << "Nuovo massimo: " << optimalSolution->getProfit() << " => " << shakedSolution.getProfit() << endl;
+				cerr << "Nuovo massimo: " << optimalSolution->getProfit() << " => " << maxSolution.getProfit() << endl;
 #endif
-				optimalSolution = new Solution( shakedSolution );
+				// Cancello l'oggetto per liberare memoria e poi lo ricreo
+				delete optimalSolution;
+				optimalSolution = new Solution( maxSolution );
 			}
 			
-			baseSolution = shakedSolution;
+			// Salvo la nuova soluzione come soluzione di base per i cicli successivi
+			baseSolution = maxSolution;
 			
 			k = 0;
 		}
-		
+
 		k = 1 + k % K_MAX;
 	}
 	
@@ -590,7 +644,7 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
 	while ( nIter-- > 0 )
 	{
-		shakedSolution = *new Solution( baseSolution );
+		shakedSolution = Solution( baseSolution );
 		
 		/*** Shaking ***/
 		// Estraggo un veicolo ed un lato iniziale casuali
@@ -770,13 +824,16 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 		    !closeSolutionRandom( solution, vehicle, victim->getDst( src ), dst, k - 1, edgeIndex + 1 ) )
 		{
 #ifdef DEBUG
-			cerr << "Unfeasible: " << edgeIndex << " => " << solution->toString();
+			cerr << "Unfeasible: k = " << k << " tries = " << tries << " => " << solution->toString();
 #endif
 			solution->removeEdge( vehicle, edgeIndex );
-			continue;
+			continue; // return false ?
 		}
 		else
+		{
+			free( tried );
 			return true;
+		}
 	}
 	
 #ifdef DEBUG
@@ -788,7 +845,6 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 
 	free( tried );
 	return false;
-
 }
 
 list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint src, uint dst, int edgeIndex )
@@ -826,13 +882,11 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 		initVal[ 0 ] = solution.getProfit( vehicle );
 		initVal[ 1 ] = solution.getCost( vehicle );
 		initVal[ 2 ] = solution.getDemand( vehicle );
-		cerr << initVal[ 0 ] << endl;
 		
 		solution.removeEdge( vehicle, edgeIndex );
 		initVal[ 0 ] -= solution.getProfit( vehicle );
 		initVal[ 1 ] -= solution.getCost( vehicle );
 		initVal[ 2 ] -= solution.getDemand( vehicle );
-		cerr << initVal[ 0 ] << endl;
 		
 		sol[ edge->getDst( src ) ].push_front( initSol );
 		val[ edge->getDst( src ) ].push_front( initVal );
@@ -900,7 +954,7 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 					if ( !isFeasible( &solution, vehicle ) )
 					{
 #ifdef DEBUG
-						cerr << "U";
+						//cerr << "U";
 #endif
 						unfeasible = true;
 						for ( int i = 0; i < newSol.size(); i++ )
@@ -981,7 +1035,7 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 Solution Solver::solve()
 {
 	// Numero di iterazioni
-	currentSolution = vnd( N_ITER, currentSolution );
+	currentSolution = vns( N_ITER, currentSolution );
 	
 #ifdef DEBUG
 	cerr << "Solve" << currentSolution.toString();

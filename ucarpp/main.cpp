@@ -14,6 +14,16 @@
 //#define DEBUG
 #endif
 
+/*
+// Variabile di compilatore per poter stampare su file i passi d'esecuzione dell'algoritmo
+#ifndef OUTPUT_FILE
+#define OUTPUT_FILE
+stringstream output_file;
+#endif
+*/
+
+// Variabile globale da utilizzare per scrivere su file
+
 using namespace std;
 using namespace boost;
 
@@ -187,6 +197,13 @@ int main( int argc, const char * argv[] )
 		cerr << endl;
 	}
 #endif
+
+	// Controllo se devo risolvere il problema per le istanze modificate, ovvero con tempo massimo = 40 e capacità = 30.
+	if( argc > 3 && !strcmp( argv[ 3 ], "MDF" ) )
+	{
+		Q = 30;
+		tMax = 40;
+	}
 	
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );

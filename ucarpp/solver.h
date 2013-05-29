@@ -112,7 +112,7 @@ namespace solver
 	{
 	private:
 		const int	N_ITER		= 200;
-		const int	K_MAX		= 15;
+		const int	K_MAX		= 10;
 		const float	XI			= 4;
 		const float	P_CLOSE		= .15;
 		const float	P_ACCEPT	= .95;
