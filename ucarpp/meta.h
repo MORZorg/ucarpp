@@ -63,6 +63,7 @@ namespace solver
 	public:
 		MetaGraph( model::Graph );
 		MetaGraph( const MetaGraph& );
+		~MetaGraph();
 		
 		//			MetaEdge* getEdge( uint, uint ) const throw( int );
 		MetaEdge* getEdge( const model::Edge* ) const;

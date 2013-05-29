@@ -63,6 +63,7 @@ namespace solver
 	public:
 		Solution( int, model::Graph );
 		Solution( const Solution& );
+		~Solution();
 
 		MetaEdge* getEdge( int, int ) const;
 		void addEdge( model::Edge*, int, int = -1 );

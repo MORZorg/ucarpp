@@ -22,9 +22,9 @@ batch: ucarpp
 		$(INSTANCES), \
 		$(foreach i, $(VEHICLES), \
 			echo $(test)_$(i) ORG... && \
-			./$< $(INSTPATH)$(test) $(i) ORG > $(OURS)_ORG/Detailed_Sol_$(test)_$(i).txt && \
+			./$< $(INSTPATH)$(test) $(i) ORG > $(OURS)_ORG/Detailed_Sol_$(test)_$(i).txt 2> /dev/null && \
 			echo $(test)_$(i) MDF... && \
-			./$< $(INSTPATH)$(test) $(i) MDF > $(OURS)_MDF/Detailed_Sol_$(test)_$(i).txt;))
+			./$< $(INSTPATH)$(test) $(i) MDF > $(OURS)_MDF/Detailed_Sol_$(test)_$(i).txt 2> /dev/null;))
 
 batchBg: ucarpp
 	$(foreach test, \

@@ -28,7 +28,6 @@ MetaEdge::MetaEdge( const MetaEdge& source ):
 {
 	// TODO: Copio le statistiche ma non i lati passanti
 	takers = vector<const Vehicle*>();
-//	takers = source.takers;
 }
 
 uint MetaEdge::getSrc() const
@@ -211,6 +210,16 @@ MetaGraph::MetaGraph( const MetaGraph& source )
 	{
 		edges.insert( make_pair( edge.first, new MetaEdge( *edge.second ) ) );
 	}
+}
+
+/**
+ * Distruttore
+ */
+MetaGraph::~MetaGraph()
+{
+//	// Cancello tutti i miei MetaLati
+//	for ( auto edge : edges )
+//		delete edge.second;
 }
 
 // Getter della corrispondenza lato reale - metalato

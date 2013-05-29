@@ -42,6 +42,7 @@ int main( int argc, const char * argv[] )
 		tMax = 0,
 		depot = 0;
 	string filename;
+	
 	if ( argc > 2 )
 	{
 		M = stoi( argv[ 2 ] );

@@ -212,6 +212,13 @@ M( source.M ), graph( source.graph ), compareRatioGreedy( &this->graph )
 	}
 }
 
+Solution::~Solution()
+{
+//	// Cancello tutti i miei veicoli
+//	for ( Vehicle* aVehicle : vehicles )
+//		delete aVehicle;
+}
+
 bool Solution::operator>( const Solution& other ) const
 {
 	return getProfit() > other.getProfit() ||
@@ -527,7 +534,7 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		Solution maxSolution = Solution( baseSolution );
 
 		uint previous = depot;
-		uint next = depot;
+		uint next;
 		for ( int i = 0; i < shakedSolution.size( vehicle ); i++ )
 		{
 			// Elimino almeno un lato
@@ -836,11 +843,37 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 		}
 	}
 	
+	// Tento (con probabilità) un'ultima chiusura secca se tutte le precedenti sono andate male.
+	if ( ( (float)rand() / RAND_MAX ) <= P_CLOSE )
+	{
+#ifdef DEBUG
+		cerr << "Lancio una moneta. " << endl;
+#endif
+		if ( src == dst )
+		{
+#ifdef DEBUG
+			cerr << "Non dovevo fare niente. " << endl;
+#endif
+			free( tried );
+			return true;
+		}
+		
+		solution->addEdge( graph.getEdge( src, dst ), vehicle, edgeIndex );
+		
+		if( isFeasible( solution, vehicle ) )
+		{
+#ifdef DEBUG
+			cerr << "Ce l'ho fatta. " << endl;
+#endif
+			free( tried );
+			return true;
+		}
+		
+		solution->removeEdge( vehicle, edgeIndex );
+	}
+	
 #ifdef DEBUG
 	cerr << "Mi arrendo. " << endl;
-	//for ( int i = 0; i < edges.size(); i++ )
-	//	cerr << tried[ i ] << " ";
-	//cerr << endl;
 #endif
 
 	free( tried );
