@@ -178,7 +178,7 @@ int main( int argc, const char * argv[] )
 	}
 	
 	in.close();
-	
+
 	// Completo la magliatura del grafo
 	grafo.completeCosts();
 #ifdef DEBUG
@@ -211,7 +211,6 @@ int main( int argc, const char * argv[] )
 	solver::Solution solution = solver.solve();
 	
 //	cerr << "main" << solution.toString();
-	cerr << "main" << solution.toString();
 #ifdef FORMAL_OUT
 	// Stampo l'output
 	cout << "Solution of Problem " << filename << " - Number of Vehicles: " << M << endl << endl;

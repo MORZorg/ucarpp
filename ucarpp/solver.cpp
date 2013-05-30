@@ -591,7 +591,10 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 			
 			// Controllo se ho trovato una soluzione migliore della massima trovata in precedenza
 			if ( shakedSolution > maxSolution )
+			{
 				maxSolution = Solution( shakedSolution );
+				break; // SFANCULATI BEST
+			}
 
 			// Resetto la shakedSolution per effettuare una nuova ricerca
 			for( int j = 0; j < closure.size(); j++ )
@@ -778,6 +781,7 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 
 bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uint dst, int k, int edgeIndex )
 {
+	/*
 #ifdef DEBUG
 	cerr << "iter: " << k << "\tindice: " << edgeIndex << endl;
 #endif
@@ -878,6 +882,78 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 
 	free( tried );
 	return false;
+*/
+	
+	// Versione tonta di Bellman-Ford
+	vector< vector< list<Edge*> > > paths = vector< vector< list<Edge*> > >( graph.size() );
+	vector< list<Edge*> > sol = vector< list<Edge*> >();
+
+	vector<Edge*> edges = graph.getAdjList( src );
+	for ( Edge* edge : edges )
+	{
+		// "Peso" il lato nel caso in cui questo venga inserito nella soluzione
+		list<Edge*> initPath;
+		initPath.push_back( edge );
+		
+		solution->addEdge( edge, vehicle, edgeIndex );
+
+		if ( isFeasible( solution, vehicle ) )
+		{
+			paths[ edge->getDst( src ) ].push_back( initPath );
+
+			if ( edge->getDst( src ) == dst )
+				sol.push_back( initPath );
+		}
+
+		solution->removeEdge( vehicle, edgeIndex );
+
+	}
+
+	for ( int i = 0; i < k - 1; i++ )
+	{
+		for ( int attuale = 0; attuale < graph.size(); attuale++ )
+		{
+			while ( paths[ attuale ].size() )
+			{
+				auto actSol = paths[ attuale ].rbegin();
+				edges = graph.getAdjList( attuale );
+				for ( Edge* edge : edges )
+				{
+					list<Edge*> newSol( *actSol );
+					newSol.push_back( edge );
+
+					for ( auto it = newSol.rbegin(); it != newSol.rend(); ++it )
+						solution->addEdge( *it, vehicle, edgeIndex );
+					
+					if ( isFeasible( solution, vehicle ) )
+					{
+						paths[ edge->getDst( attuale )].push_back( newSol );
+
+						if ( edge->getDst( src ) == dst )
+							sol.push_back( newSol );
+					}
+
+					for ( int i = 0; i < newSol.size(); i++ )
+						solution->removeEdge( vehicle, edgeIndex );
+				}
+
+				paths[ attuale ].pop_back();
+			}
+		}
+	}
+
+	// Ritorno un percorso a caso
+	srand( (uint)time( NULL ) );
+	if ( sol.size() )
+	{
+		list<Edge*> closure = sol[ rand() % sol[ dst ].size() ];
+		for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
+			solution->addEdge( *it, vehicle, edgeIndex );
+
+		return true;
+	}
+	else
+		return false;
 }
 
 list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint src, uint dst, int edgeIndex )
