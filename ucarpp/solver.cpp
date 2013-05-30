@@ -517,9 +517,9 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		// Inizio con la chiusura della soluzione, partendo dal nodo sorgente, ovvero dove ha inizio il buco
 		int kvns = ceil( XI * ( k + 1 ) );
 		
-		while( !closeSolutionRandom( &shakedSolution, vehicle, src, dst, kvns, edge ) );
-		//		if ( !closeSolutionRandom( shakedSolution, vehicle, src, dst, kvns, edge ) )
-		//			throw 200;
+//		while( !closeSolutionRandom( &shakedSolution, vehicle, src, dst, kvns, edge ) );
+		if ( !closeSolutionRandom( &shakedSolution, vehicle, src, dst, kvns, edge ) )
+			throw 200;
 		
 #ifdef DEBUG
 		cerr << "Soluzioni:" << endl;
@@ -781,6 +781,7 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 
 bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uint dst, int k, int edgeIndex )
 {
+	srand( (uint)time( NULL ) );
 	/*
 #ifdef DEBUG
 	cerr << "iter: " << k << "\tindice: " << edgeIndex << endl;
@@ -884,10 +885,19 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 	return false;
 */
 	
-	// Versione tonta di Bellman-Ford
+	/**
+	 * Versione tonta di Bellman-Ford
+	 * 	Cerco tutti i percorsi di lunghezza al più k che conducano a dst:
+	 *		Se sorgente e destinazione coincidono, aggiungo la soluzione vuota alle soluzioni.
+	 *		Ogni volta che trovo un percorso feasible, lo aggiungo a quelli da estendere.
+	 *		Se il percorso termina su dst, lo aggiungo al vettore delle soluzioni.
+	 */
 	vector< vector< list<Edge*> > > paths = vector< vector< list<Edge*> > >( graph.size() );
 	vector< list<Edge*> > sol = vector< list<Edge*> >();
+	uint pathsFound = 0;
 
+	// Inizializzo i percorsi:
+	//	Parto dal nodo sorgente e guardo tutte le adiacenze feasible.
 	vector<Edge*> edges = graph.getAdjList( src );
 	for ( Edge* edge : edges )
 	{
@@ -899,6 +909,7 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 
 		if ( isFeasible( solution, vehicle ) )
 		{
+			pathsFound++;
 			paths[ edge->getDst( src ) ].push_back( initPath );
 
 			if ( edge->getDst( src ) == dst )
@@ -906,20 +917,61 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 		}
 
 		solution->removeEdge( vehicle, edgeIndex );
-
 	}
-
+	// Soluzione vuota (~autopercorso gratutio)
+	if ( src == dst )
+		sol.push_back( list<Edge*>() );
+	
+#ifdef DEBUG
+	cerr << "BOZO Inizializzazione: " << endl;
+	for ( int i = 0; i < graph.size(); i++ )
+	{
+		cerr << i << "] ";
+		if ( !paths[ i ].empty() )
+		{
+			for ( auto edge : paths[ i ].front() )
+				cerr << "( " << edge->getSrc() << ", " << edge->getDst() << " ) " << endl;
+		}
+		else
+			cerr << "vuoto" << endl;
+	}
+#endif
+	
+	// Lunghezza massima: k => itero ancora k - 1 volte ( la prima è sopra )
 	for ( int i = 0; i < k - 1; i++ )
 	{
+		// Ad ogni iterazione analizzo tutti i percorsi trovati, suddivisi per nodo finale
 		for ( int attuale = 0; attuale < graph.size(); attuale++ )
 		{
+#ifdef DEBUG
+			cerr << attuale << ", percorsi: " << pathsFound << endl;
+#endif
+			// Per ogni nodo finale, analizzo tutti i percorsi trovati dalla precedente iterazione
 			while ( paths[ attuale ].size() )
 			{
-				auto actSol = paths[ attuale ].rbegin();
+				list<Edge*> actSol = paths[ attuale ].back();
+				
 				edges = graph.getAdjList( attuale );
 				for ( Edge* edge : edges )
 				{
-					list<Edge*> newSol( *actSol );
+//					// Evito di iterare sullo stesso lato
+//					uint previous = src;
+//					bool inSolution = false;
+//					for ( auto it = actSol.begin(); it != actSol.end(); ++it )
+//					{
+//						if ( ( attuale == previous && edge->getDst( attuale ) == (*it)->getDst( previous ) ) ||
+//							 ( attuale == (*it)->getDst( previous ) && edge->getDst( attuale ) == previous ) )
+//						{
+//							inSolution = true;
+//							break;
+//						}
+//						
+//						previous = edge->getDst( previous );
+//					}
+//					if ( inSolution )
+//						continue;
+				 
+					list<Edge*> newSol( actSol );
 					newSol.push_back( edge );
 
 					for ( auto it = newSol.rbegin(); it != newSol.rend(); ++it )
@@ -927,26 +979,59 @@ bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uin
 					
 					if ( isFeasible( solution, vehicle ) )
 					{
-						paths[ edge->getDst( attuale )].push_back( newSol );
+						pathsFound++;
+						paths[ edge->getDst( attuale ) ].push_back( newSol );
 
 						if ( edge->getDst( src ) == dst )
 							sol.push_back( newSol );
+						
+						// Faccio un'estrazione ogni tot percorsi analizzati
+						if ( pathsFound == 2000 )
+						{
+							pathsFound = 0;
+							if ( (float)rand() / RAND_MAX < P_CLOSE )
+							{
+								list<Edge*> closure = sol[ rand() % sol.size() ];
+#ifdef DEBUG
+								cerr << endl << "BOZO Fine prematura: " << endl;
+								for ( auto edge : sol.back() )
+									cerr << "( " << edge->getSrc() << ", " << edge->getDst() << " ) ";
+								cerr << endl;
+#endif
+								for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
+									solution->addEdge( *it, vehicle, edgeIndex );
+								
+								return true;
+							}
+						}
 					}
 
 					for ( int i = 0; i < newSol.size(); i++ )
 						solution->removeEdge( vehicle, edgeIndex );
 				}
 
+				// Rimuovo il percorso analizzato
 				paths[ attuale ].pop_back();
 			}
 		}
+#ifdef DEBUG
+		cerr << "Trovati " << sol.size() << " percorsi." << endl;
+#endif
 	}
+	
+#ifdef DEBUG
+	cerr << endl << "BOZO Fine: " << endl;
+#endif
 
 	// Ritorno un percorso a caso
-	srand( (uint)time( NULL ) );
 	if ( sol.size() )
 	{
-		list<Edge*> closure = sol[ rand() % sol[ dst ].size() ];
+		list<Edge*> closure = sol[ rand() % sol.size() ];
+#ifdef DEBUG
+		for ( auto edge : sol.back() )
+			cerr << "( " << edge->getSrc() << ", " << edge->getDst() << " ) ";
+		cerr << endl;
+#endif
 		for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
 			solution->addEdge( *it, vehicle, edgeIndex );
 
@@ -1016,9 +1101,6 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 		else
 			cerr << i << "] vuoto" << endl;
 	}
-
-	//cerr << "Schiaccia per proseguire" << endl;
-	//getchar();
 #endif
 	
 	bool improved = true;
@@ -1039,20 +1121,23 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 				edges = graph.getAdjList( attuale );
 				for ( Edge* edge : edges )
 				{
-					// Teoricamente dovrei iterare solo sui NODI non ancora in soluzione..
-					// ( Esclusa magari la destinazione )
-					uint previous = src;
-					bool inSolution = false;
-					for ( auto it = (*actSol).begin(); it != (*actSol).end(); ++it )
-					{
-						if ( dst != (*it)->getSrc() && dst != (*it)->getDst() &&
-								( edge->getDst( previous ) == (*it)->getSrc() ||
-								  edge->getDst( previous ) == (*it)->getDst() ) )
-							inSolution = true;
-						previous = edge->getDst( previous );
-					}
-					if ( inSolution )
-						continue;
+//					// Teoricamente dovrei iterare solo sui NODI non ancora in soluzione..
+//					// ( Esclusa magari la destinazione )
+//					uint previous = src;
+//					bool inSolution = false;
+//					for ( auto it = (*actSol).begin(); it != (*actSol).end(); ++it )
+//					{
+//						if ( dst != (*it)->getSrc() && dst != (*it)->getDst() &&
+//							!~	( edge->getDst( attuale ) == (*it)->getSrc() ||
+//							~!	  edge->getDst( attuale ) == (*it)->getDst() ) )
+//						{
+//							inSolution = true;
+//							break;
+//						{
+//						previous = edge->getDst( previous );
+//					}
+//					if ( inSolution )
+//						continue;
 					
 					list<Edge*> newSol( *actSol );
 					newSol.push_back( edge );
@@ -1113,16 +1198,17 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 	cerr << endl << "Fine: " << endl;
 	for ( int i = 0; i < graph.size(); i++ )
 	{
+		cerr << i << "] ";
 		if ( !sol[ i ].empty() )
 		{
 			for ( auto edge : sol[ i ].front() )
-				cerr << edge->getSrc() << " " << edge->getDst() << " - ";
+				cerr << "( " << edge->getSrc() << ", " << edge->getDst() << " ) ";
 			cerr << endl;
 			int* valori = val[ i ].front();
-			cerr << " " << valori[ 0 ] << " " << valori[ 1 ] << " " << valori[ 2 ] << endl;
+			cerr << ": " << valori[ 0 ] << " " << valori[ 1 ] << " " << valori[ 2 ] << endl;
 		}
 		else
-			cerr << "Vuoto: " << i << endl;
+			cerr << "vuoto: " << endl;
 	}
 #endif
 	
