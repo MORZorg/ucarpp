@@ -1,6 +1,6 @@
 INSTPATH = ../instances\&Results/instances/
-OBJS = main.cpp graph.cpp edge.cpp solver.cpp meta.cpp
-LIBS = headings.h main.h graph.h edge.h solver.h meta.h
+OBJS = main.cpp graph.cpp edge.cpp meta.cpp solver.cpp solution.cpp vehicle.cpp vns.cpp
+LIBS = headings.h main.h graph.h edge.h meta.h solver.h solution.h vehicle.h
 
 all: clean ucarpp
 

@@ -72,6 +72,6 @@ namespace solver
 	};
 }
 
-#include "solver.h"
+#include "vehicle.h"
 
 #endif /* defined(__ucarpp__meta__) */
