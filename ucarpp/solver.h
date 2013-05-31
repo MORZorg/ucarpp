@@ -42,6 +42,18 @@ namespace solver
 			void createBaseSolution( Solution*, int );
 			Solution vns( int, Solution );
 			Solution vnd( int, Solution );
+
+			// Metodi usati per modificare progressivamente la soluzione
+			// Metodo che sceglie come mutare la soluzione, decidendo se ampliandola o restringendola. Ritorna la lunghezza della nuova soluzione modificata.
+			uint mutateSolution( Solution*, uint, int );
+			// La soluzione viene chiusa, ovvero due lati adiacenti vengono sostituiti con uno che ne collega gli estremi.
+			bool mutateSolutionClose( Solution*, uint, int = -1 );
+			// La soluzione viene ampliata, inserendo un nuovo lato in quello indicato.
+			bool mutateSolutionOpen( Solution*, uint, int = -1 );
+
+			// Creo un buco nella soluzione di più lati adiacenti. Usato solo nella vnd.
+			uint openSolutionRandom( Solution*, uint, int, uint*, uint* );
+			// Metodo inefficiente perchè potenzialmente esplosivo a causa del numero di chiusure possibili.
 			bool closeSolutionRandom( Solution*, int, uint, uint, int, int );
 			std::list<model::Edge*> closeSolutionDijkstra( Solution, int, uint, uint, int );
 

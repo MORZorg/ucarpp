@@ -1,5 +1,5 @@
 INSTPATH = ../instances\&Results/instances/
-OBJS = main.cpp graph.cpp edge.cpp meta.cpp solver.cpp solution.cpp vehicle.cpp vns.cpp
+OBJS = main.cpp graph.cpp edge.cpp meta.cpp solver.cpp solution.cpp vehicle.cpp
 LIBS = headings.h main.h graph.h edge.h meta.h solver.h solution.h vehicle.h
 
 all: clean ucarpp
@@ -12,7 +12,7 @@ ucarpp: $(OBJS) $(LIBS)
 	mv a.out $@
 
 run: ucarpp
-	./$< $(INSTPATH)test1A.dat 2
+	./$< $(INSTPATH)val1A.dat 2 2> sbra.asd
 
 OURS = ../instances\&Results/ours
 INSTANCES = $(shell ls $(INSTPATH))
