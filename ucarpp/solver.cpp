@@ -348,7 +348,13 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 
 uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 {
+	// Inizializzo la funzione random
 	srand( (uint)time( NULL ) );
+
+	// Barbatrucco: puntatore a funzioni per essere più efficienti nella scrittura del codice.
+	// Definisco un puntatore alle funzioni usate per aprire o chiudere la soluzione corrente.
+	// Questo verrà istanziato a seconda della casualità ad una delle due funzioni.
+	bool (*ninjaTurtle)( Solution*, uint, int );
 
 	// Devo modificare la soluzione passatami per k volte
 	// Ciclo sul numero di volte calcolato
@@ -361,7 +367,37 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 		// Non mi interesso del valore di ritorno delle funzioni usate perchè so già dove il buco è stato creato, essendo io a passarlo come parametro.
 		if( (float) rand() / RAND_MAX > P_CLOSE )
 		{
-			mutateSolutionOpen( solution, vehicle, edge );
+			// Per prima funzione uso l'apertura
+			ninjaTurtle = mutateSolutionOpen;
+
+			// Effettuo un ciclo finchè non viene realmente effettuata una mutazione nella soluzione
+			uint current_edge = edge;
+			bool mutate;
+			bool exterminate = false;
+			do{
+				mutate = ninjaTurtle( solution, vehicle, current_edge );
+				// Passo al successivo lato nel caso in cui non ci sia stata una mutazione
+				current_edge = ( current_edge + 1 ) % solution->size( vehicle );
+
+				// Se ho finito un giro senza aver effettuato mutazioni nella soluzione, allora cambio funzione e ricomincio da capo.
+				// Se anche l'altra funzione non ha alcun effetto, allora termino la funzione.
+				if( current_edge == edge )
+				{
+					if( ninjaTurtle == mutateSolutionOpen )
+						ninjaTurtle = mutateSolutionClose;
+					else
+						exterminate = true;
+						//return false;
+				}
+
+			}while( !exterminate && !mutate );
+
+			/*
+			// Teoricamente servirebbe qualcosa di questo tipo
+			// Saremmo in una soluzione inamovibile, per cui sarebbe insensato cercare di continuare a modificarla.
+			if( exterminate )
+				return false;
+			*/
 		}
 		else
 		{
