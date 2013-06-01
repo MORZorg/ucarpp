@@ -9,25 +9,41 @@ close all;
 % Apro il file
 file_id = fopen( 'val1A.dat.sbra', 'r' );
 tipo = fscanf( file_id, '%s', 1 );
-data = fscanf( file_id, '%d' );
+veicoli = fscanf( file_id, '%d', 1 );
+data = fscanf( file_id, '%d ( %d %d %d )' );
 fclose( file_id );
 
 % Ricavo le informazioni che mi interessano
-profit = data( 1 : 3 : end );
-cost = data( 2 : 3 : end );
-demand = data( 3 : 3 : end );
+step = 1 + veicoli;
+selector =  1 : 3 * step : length( data );
+profit = data( selector );
+cost = data( selector + step );
+demand = data( selector + 2 * step );
+
+vehicleSelector = 1 + ones( veicoli, 1 ) * selector + ( 0 : veicoli - 1 )' * ones( 1, length( selector ) );
+vehicleProfit = data( vehicleSelector );
+vehicleCost = data( vehicleSelector + step );
+vehicleDemand = data( vehicleSelector + 2 * step );
 
 % Grafici
-figure( 1 );
+f = figure( 1 );
+set( f, 'name', sprintf( '%s %d', tipo, veicoli ) );
+
 subplot( 3, 1, 1 );
-plot( [ 1 : length( profit ) ], profit );
+hold all;
+plot( 1 : length( profit ), vehicleProfit );
+plot( 1 : length( profit ), profit );
 title( 'Profitto' );
 
 subplot( 3, 1, 2 );
-plot( [ 1 : length( cost ) ], cost );
+hold all;
+plot( 1 : length( profit ), vehicleCost );
+plot( 1 : length( cost ), cost );
 title( 'Costo' );
 
 subplot( 3, 1, 3 );
-plot( [ 1 : length( demand ) ], demand );
+hold all;
+plot( 1 : length( profit ), vehicleDemand );
+plot( 1 : length( demand ), demand );
 title( 'Domanda' );
 

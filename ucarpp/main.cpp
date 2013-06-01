@@ -203,6 +203,7 @@ int main( int argc, const char * argv[] )
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );
 	// Se richiesto, imposto il nome del file sul quale scrivere i risultati intermedi
+	// TODO? aggiungere il numero di veicoli al nome del file
 #ifdef OUTPUT_FILE
 	cerr << "Aperto? " << solver.setOutputFile( filename ) << endl;
 #endif

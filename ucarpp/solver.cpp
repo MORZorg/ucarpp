@@ -131,8 +131,21 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 	{
 		// Stampo informazioni sulla soluzione iniziale
 		//cout << "VNS" << endl;
-		output_file << "VNS" << endl;
-		output_file << baseSolution.getProfit() << " " << baseSolution.getCost() << " " << baseSolution.getDemand() << endl;
+		output_file << "VNS " << M << endl;
+		output_file << baseSolution.getProfit() << " ( ";
+		for ( int i = 0; i < M; i++ )
+			output_file << baseSolution.getProfit( i ) << " ";
+		output_file << ") ";
+		
+		output_file << baseSolution.getCost() << " ( ";
+		for ( int i = 0; i < M; i++ )
+			output_file << baseSolution.getCost( i ) << " ";
+		output_file << ") ";
+		
+		output_file << baseSolution.getDemand() << " ( ";
+		for ( int i = 0; i < M; i++ )
+			output_file << baseSolution.getDemand( i ) << " ";
+		output_file << ")" << endl;
 	}
 //#endif
 
@@ -267,8 +280,23 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		}
 
 //#ifdef OUTPUT_FILE
-		if( output_file.is_open()  )
-			output_file << baseSolution.getProfit() << " " << baseSolution.getCost() << " " << baseSolution.getDemand() << endl;
+		if( output_file.is_open() )
+		{
+			output_file << baseSolution.getProfit() << " ( ";
+			for ( int i = 0; i < M; i++ )
+				output_file << baseSolution.getProfit( i ) << " ";
+			output_file << ") ";
+			
+			output_file << baseSolution.getCost() << " ( ";
+			for ( int i = 0; i < M; i++ )
+				output_file << baseSolution.getCost( i ) << " ";
+			output_file << ") ";
+			
+			output_file << baseSolution.getDemand() << " ( ";
+			for ( int i = 0; i < M; i++ )
+				output_file << baseSolution.getDemand( i ) << " ";
+			output_file << ")" << endl;
+		}
 #
 //#endif
 
