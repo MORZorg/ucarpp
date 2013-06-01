@@ -9,11 +9,7 @@
 #include "solver.h"
 
 #ifndef DEBUG
-#define DEBUG
-#endif
-
-#ifndef OUTPUT_FILE
-#define OUTPUT_FILE
+//#define DEBUG
 #endif
 
 using namespace std;
@@ -129,14 +125,17 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 	Solution shakedSolution = baseSolution;
 	Solution* optimalSolution = new Solution( baseSolution );
 
-	/*
-#ifdef OUTPUT_FILE
-	// Stampo informazioni sulla soluzione iniziale
-	cout << "VNS" << endl;
-	output_file << "VNS" << endl;
-	output_file << baseSolution.getProfit() << " " << baseSolution.getCost() << " " << baseSolution.getDemand() << endl;
-#endif
-*/
+	
+//#ifdef OUTPUT_FILE
+	if( output_file.is_open() )
+	{
+		// Stampo informazioni sulla soluzione iniziale
+		//cout << "VNS" << endl;
+		output_file << "VNS" << endl;
+		output_file << baseSolution.getProfit() << " " << baseSolution.getCost() << " " << baseSolution.getDemand() << endl;
+	}
+//#endif
+
 	
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
 	while ( nIter-- > 0 )
@@ -267,6 +266,12 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 			k = 0;
 		}
 
+//#ifdef OUTPUT_FILE
+		if( output_file.is_open()  )
+			output_file << baseSolution.getProfit() << " " << baseSolution.getCost() << " " << baseSolution.getDemand() << endl;
+#
+//#endif
+
 		k = 1 + k % K_MAX;
 	}
 	
@@ -374,7 +379,6 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 		else
 		{
 			ninjaTurtle = &solver::Solver::mutateSolutionClose;
-			//mutateSolutionClose( solution, vehicle, edge );
 		}
 
 		// Effettuo un ciclo finchè non viene realmente effettuata una mutazione nella soluzione
@@ -1081,4 +1085,11 @@ bool Solver::isFeasible( const Solution* solution, int vehicle ) const
 {
 	return	solution->getDemand( vehicle ) < Q &&
 			solution->getCost( vehicle ) < tMax;
+}
+
+bool Solver::setOutputFile( string filename )
+{
+	// Apro il file
+	output_file.open( OUTPUT_FILE_DIR + filename + OUTPUT_FILE_EXTENSION, std::ofstream::out );
+	return output_file.is_open();
 }

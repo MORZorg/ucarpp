@@ -11,24 +11,15 @@
 #include "main.h"
 
 #ifndef DEBUG
-#define DEBUG
+//#define DEBUG
+#endif
+
+#ifndef OUTPUT_FILE
+#define OUTPUT_FILE
 #endif
 
 using namespace std;
 using namespace boost;
-
-// Variabile di compilatore per poter stampare su file i passi d'esecuzione dell'algoritmo
-#ifndef OUTPUT_FILE
-
-#define OUTPUT_FILE
-
-#include <fstream>
-
-// Variabile globale da utilizzare per scrivere su file
-ofstream output_file;
-
-#endif
-
 
 int main( int argc, const char * argv[] )
 {
@@ -64,12 +55,6 @@ int main( int argc, const char * argv[] )
 	{
 		filename = sm[ 1 ];
 		cerr << "File: " << sm[ 1 ] << endl;
-
-#ifdef OUTPUT_FILE
-		// Apro il file in scrittura
-		output_file.open( filename + ".stat", ofstream::out );
-#endif
-
 	}
 	else
 	{
@@ -217,6 +202,11 @@ int main( int argc, const char * argv[] )
 	
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );
+	// Se richiesto, imposto il nome del file sul quale scrivere i risultati intermedi
+#ifdef OUTPUT_FILE
+	cerr << "Aperto? " << solver.setOutputFile( filename ) << endl;
+#endif
+
 	solver::Solution solution = solver.solve();
 	
 //	cerr << "main" << solution.toString();
@@ -243,11 +233,5 @@ int main( int argc, const char * argv[] )
 	}
 #endif
 
-#ifdef OUTPUT_FILE
-	// Chiudo il file che mi permetterà di osservare l'evoluzione delle soluzioni.
-	output_file << "Fine." << endl;
-	output_file.close();
-#endif
-	
     return 0;
 }

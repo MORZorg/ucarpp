@@ -14,6 +14,9 @@
 #include <vector>
 #include <sstream>
 
+#include <string>
+#include <fstream>
+
 #include "headings.h"
 #include "edge.h"
 #include "graph.h"
@@ -30,6 +33,8 @@ namespace solver
 			const float	XI			= 4;
 			const float	P_CLOSE		= .25;
 			const float	P_ACCEPT	= .95;
+			const std::string OUTPUT_FILE_DIR = "../progressive_output/";
+			const std::string OUTPUT_FILE_EXTENSION = ".sbra";
 
 			model::Graph graph;
 			uint depot,
@@ -37,6 +42,7 @@ namespace solver
 			Q,
 			tMax;
 			Solution currentSolution;
+			std::ofstream output_file;
 			
 			Solution createBaseSolution();
 			void createBaseSolution( Solution*, int );
@@ -62,6 +68,8 @@ namespace solver
 			Solver( model::Graph, uint, uint, uint, uint );
 			
 			Solution solve();
+
+			bool setOutputFile( std::string );
 	};
 }
 
