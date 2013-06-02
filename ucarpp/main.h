@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
 
 #include <boost/regex.hpp>
 
