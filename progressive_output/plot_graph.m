@@ -7,7 +7,7 @@ clear all;
 close all;
 
 % Apro il file
-nomefile = 'val1A.2.sbra';
+nomefile = 'val1A.3.sbra';
 file_id = fopen( nomefile, 'r' );
 tipo = fscanf( file_id, '%s', 1 );
 veicoli = fscanf( file_id, '%d', 1 );
@@ -50,7 +50,7 @@ plot( 1 : length( cost ), cost );
 plot( 1 : length( profit ), vehicleCost );
 title( 'Costo' );
 
-legend( legenda, 'Location', 'East' ); %, 'Orientation', 'horizontal' );
+legend( legenda, 'Location', [ 0 0.002 0.999 0.05 ] , 'Orientation', 'horizontal' );
 
 subplot( 3, 1, 3 );
 hold all;
@@ -63,3 +63,4 @@ title( 'Domanda' );
 saveas( f, strcat( nomefile, '.jpg' ), 'jpg' );
 
 fprintf( 'Fatto grafico di %s\n', nomefile );
+

@@ -159,10 +159,10 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		/*** Shaking ***/
 		// Estraggo un veicolo ed un lato iniziale casuali
 		// Tengo traccia anche dei nodi sorgente e destinazione di tale lato
-		uint vehicle = rand() % M,
-			 edge,
-			 src,
-			 dst;
+		uint vehicle = rand() % M;
+//			 edge,
+//			 src,
+//			 dst;
 
 		// Non mi interesso del valore di ritorno perchè pressoche inutile. :D
 		mutateSolution( &shakedSolution, vehicle, ceil( XI * ( k + 1 ) ) );
@@ -456,7 +456,7 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 
 	}
 
-	return solution->size();
+	return (uint)solution->size();
 }
 
 bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )
@@ -527,7 +527,7 @@ bool Solver::mutateSolutionOpen( Solution *solution, uint vehicle, int edge )
 	vector<Edge*> adj = graph.getAdjList( src );
 	// Prendo i nodi adiacenti al lato estratto casualmente
 	bool* edgeTested = (bool*)calloc( adj.size(), sizeof( bool ) );
-	int testables = adj.size();
+	int testables = (int)adj.size();
 	// Dalla lista elimino il nodo dst
 	for( int i = 0; i < adj.size(); i++ )
 	{
