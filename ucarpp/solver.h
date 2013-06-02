@@ -64,6 +64,8 @@ namespace solver
 			std::list<model::Edge*> closeSolutionDijkstra( Solution, int, uint, uint, int );
 
 			bool isFeasible( const Solution*, int ) const;
+
+			void printToFile( Solution*, Solution* );
 		public:
 			Solver( model::Graph, uint, uint, uint, uint );
 			

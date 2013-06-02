@@ -125,30 +125,12 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 	Solution shakedSolution = baseSolution;
 	Solution* optimalSolution = new Solution( baseSolution );
 
-	
-//#ifdef OUTPUT_FILE
+	// Se richiesto, stampo i risultati su un file esterno
 	if( output_file.is_open() )
 	{
-		// Stampo informazioni sulla soluzione iniziale
-		//cout << "VNS" << endl;
 		output_file << "VNS " << M << endl;
-		output_file << baseSolution.getProfit() << " ( ";
-		for ( int i = 0; i < M; i++ )
-			output_file << baseSolution.getProfit( i ) << " ";
-		output_file << ") ";
-		
-		output_file << baseSolution.getCost() << " ( ";
-		for ( int i = 0; i < M; i++ )
-			output_file << baseSolution.getCost( i ) << " ";
-		output_file << ") ";
-		
-		output_file << baseSolution.getDemand() << " ( ";
-		for ( int i = 0; i < M; i++ )
-			output_file << baseSolution.getDemand( i ) << " ";
-		output_file << ")" << endl;
+		printToFile( &shakedSolution, &baseSolution );
 	}
-//#endif
-
 	
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
 	while ( nIter-- > 0 )
@@ -160,9 +142,6 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		// Estraggo un veicolo ed un lato iniziale casuali
 		// Tengo traccia anche dei nodi sorgente e destinazione di tale lato
 		uint vehicle = rand() % M;
-//			 edge,
-//			 src,
-//			 dst;
 
 		// Non mi interesso del valore di ritorno perchè pressoche inutile. :D
 		mutateSolution( &shakedSolution, vehicle, ceil( XI * ( k + 1 ) ) );
@@ -223,11 +202,6 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 #endif
 
 			// Chiedo a Dijkstra di calcolarmi la chiusura migliore
-			/*
-			list<Edge*> closure = closeSolutionDijkstra( shakedSolution, vehicle, previous,
-														temp->getDst( previous ), i );
-			previous = temp->getDst( previous );
-			*/
 			list<Edge*> closure = closeSolutionDijkstra( shakedSolution, vehicle, previous, next, i );
 			previous = next;
 			
@@ -279,27 +253,11 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 			k = 0;
 		}
 
-//#ifdef OUTPUT_FILE
+		// Come all'inizio, se richiesto stampo su file i risultati
 		if( output_file.is_open() )
-		{
-			output_file << baseSolution.getProfit() << " ( ";
-			for ( int i = 0; i < M; i++ )
-				output_file << baseSolution.getProfit( i ) << " ";
-			output_file << ") ";
-			
-			output_file << baseSolution.getCost() << " ( ";
-			for ( int i = 0; i < M; i++ )
-				output_file << baseSolution.getCost( i ) << " ";
-			output_file << ") ";
-			
-			output_file << baseSolution.getDemand() << " ( ";
-			for ( int i = 0; i < M; i++ )
-				output_file << baseSolution.getDemand( i ) << " ";
-			output_file << ")" << endl;
-		}
-#
-//#endif
+			printToFile( &shakedSolution, &baseSolution );
 
+		// Incremento il numero di iterazioni svolte
 		k = 1 + k % K_MAX;
 	}
 	
@@ -1120,4 +1078,41 @@ bool Solver::setOutputFile( string filename )
 	// Apro il file
 	output_file.open( OUTPUT_FILE_DIR + filename + OUTPUT_FILE_EXTENSION, std::ofstream::out );
 	return output_file.is_open();
+}
+
+void Solver::printToFile( Solution* shakedSolution, Solution* baseSolution )
+{
+	// Stampo le informazioni sulla shakedSolution
+	output_file << shakedSolution->getProfit() << " ( ";
+	for ( int i = 0; i < M; i++ )
+		output_file << shakedSolution->getProfit( i ) << " ";
+	output_file << ") ";
+	
+	output_file << shakedSolution->getCost() << " ( ";
+	for ( int i = 0; i < M; i++ )
+		output_file << shakedSolution->getCost( i ) << " ";
+	output_file << ") ";
+	
+	output_file << shakedSolution->getDemand() << " ( ";
+	for ( int i = 0; i < M; i++ )
+		output_file << shakedSolution->getDemand( i ) << " ";
+	output_file << ")" << endl;
+
+	// Stampo le informazione sulla baseSolution
+	output_file << baseSolution->getProfit() << " ( ";
+	for ( int i = 0; i < M; i++ )
+		output_file << baseSolution->getProfit( i ) << " ";
+	output_file << ") ";
+	
+	output_file << baseSolution->getCost() << " ( ";
+	for ( int i = 0; i < M; i++ )
+		output_file << baseSolution->getCost( i ) << " ";
+	output_file << ") ";
+	
+	output_file << baseSolution->getDemand() << " ( ";
+	for ( int i = 0; i < M; i++ )
+		output_file << baseSolution->getDemand( i ) << " ";
+	output_file << ")" << endl;
+
+	return;
 }
