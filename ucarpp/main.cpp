@@ -54,7 +54,9 @@ int main( int argc, const char * argv[] )
 	if ( regex_search( line, sm, re ) )
 	{
 		filename = sm[ 1 ];
+#ifdef DEBUG
 		cerr << "File: " << sm[ 1 ] << endl;
+#endif
 	}
 	else
 	{
@@ -69,7 +71,9 @@ int main( int argc, const char * argv[] )
 	{
 		V = stoi( sm[ 1 ] );
 		
+#ifdef DEBUG
 		cerr << "Vertici: " << V << endl;
+#endif
 	}
 	else
 	{
@@ -83,7 +87,9 @@ int main( int argc, const char * argv[] )
 	{
 		L = stoi( sm[ 1 ] );
 		
+#ifdef DEBUG
 		cerr << "Lati: " << L << endl;
+#endif
 	}
 	else
 	{
@@ -97,7 +103,9 @@ int main( int argc, const char * argv[] )
 	{
 		Q = stoi( sm[ 1 ] );
 		
+#ifdef DEBUG
 		cerr << "Capacita`: " << Q << endl;
+#endif
 	}
 	else
 	{
@@ -111,7 +119,9 @@ int main( int argc, const char * argv[] )
 	{
 		tMax = stoi( sm[ 1 ] );
 		
+#ifdef DEBUG
 		cerr << "Tempo disponibile: " << tMax << endl;
+#endif
 	}
 	else
 	{
@@ -153,7 +163,9 @@ int main( int argc, const char * argv[] )
 			
 			grafo.addEdge( src, dst, t, d, p );
 			
+#ifdef DEBUG
 			fprintf( stderr, "(%d, %d): %d, %d, %.2f.\n", src, dst, t, d, p );
+#endif
 		}
 	}
 	
@@ -163,7 +175,9 @@ int main( int argc, const char * argv[] )
 	{
 		depot = stoi( sm[ 1 ] ) - 1;
 
+#ifdef DEBUG
 		cerr << "Deposito: " << depot << endl;
+#endif
 	}
 	else
 	{
@@ -194,17 +208,21 @@ int main( int argc, const char * argv[] )
 #endif
 
 	// Controllo se devo risolvere il problema per le istanze modificate, ovvero con tempo massimo = 40 e capacità = 30.
+	string type;
 	if( argc > 3 && !strcmp( argv[ 3 ], "MDF" ) )
 	{
 		Q = 30;
 		tMax = 40;
+		type = "MDF";
 	}
+	else
+		type = "ORG";
 	
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );
 	// Se richiesto, imposto il nome del file sul quale scrivere i risultati intermedi
 #ifdef OUTPUT_FILE
-	solver.setOutputFile( filename.replace( filename.find( "dat" ), 3, to_string( M ) ) );
+	solver.setOutputFile( filename.replace( filename.find( "dat" ), 3, to_string( M ) ) + "." + type );
 #endif
 
 	solver::Solution solution = solver.solve();

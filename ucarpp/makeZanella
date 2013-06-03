@@ -1,0 +1,42 @@
+ParamParamParaméro( A )
+	inizio <- 1
+	while inizio < length[ A ]
+		do	i <- length[ A ]
+			while i > inizio
+				do	if A[ i ] < A[ i - 1 ]
+						then	A[ i ] <-> A[ i - 1 ]
+					i <- i - 1
+				inizio <- inizio + 1
+
+
+ParamParamParaméroR( A, inizio )
+	if inizio < length[ A ]
+		then	i <- length[ A ]
+				while i > inizio
+					do	if A[ i ] < A[ i - 1 ]
+							then	A[ i ] <-> A[ i - 1 ]
+						i <- i - 1
+				ParamParamParaméroR( A, inizio + 1 )
+
+ShakerSort( A )
+	inizio <- 1
+	fine <- length[ A ]
+	avanti <- true
+	while inizio < fine
+		do	if avanti
+				then	i <- inizio
+						while i < fine
+							do	if A[ i ] > A[ i + 1 ]
+									then	A[ i ] <-> A[ i + 1 ]
+								i <- i + 1
+							fine <- fine - 1
+				else	i <- fine
+						while i > inizio
+							do	if A[ i ] < A[ i - 1 ]
+									then	A[ i ] <-> A[ i - 1 ]
+								i <- i - 1
+							inizio <- inizio + 1
+			avanti <- !avanti
+
+// Cripting to Deutsch :D
+%s/i\|h\|t\|v\|f/sbrag/g

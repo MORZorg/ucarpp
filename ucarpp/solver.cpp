@@ -129,7 +129,8 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 	if( output_file.is_open() )
 	{
 		output_file << "VNS " << M << endl;
-		printToFile( &shakedSolution, &baseSolution );
+		printToFile( &shakedSolution );
+		printToFile( &baseSolution );
 	}
 	
 	// Ciclo fino a quando la stopping rule me lo consente o prima se trovo una soluzione migliore di quella iniziale
@@ -143,8 +144,9 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		// Tengo traccia anche dei nodi sorgente e destinazione di tale lato
 		uint vehicle = rand() % M;
 
-		// Non mi interesso del valore di ritorno perchè pressoche inutile. :D
+		// Non mi interesso del valore di ritorno perché pressoché inutile. :D
 		mutateSolution( &shakedSolution, vehicle, ceil( XI * ( k + 1 ) ) );
+
 
 #ifdef DEBUG
 		cerr << "Soluzioni:" << endl;
@@ -255,7 +257,10 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 
 		// Come all'inizio, se richiesto stampo su file i risultati
 		if( output_file.is_open() )
-			printToFile( &shakedSolution, &baseSolution );
+		{
+			printToFile( &shakedSolution );
+			printToFile( &baseSolution );
+		}
 
 		// Incremento il numero di iterazioni svolte
 		k = 1 + k % K_MAX;
@@ -345,7 +350,6 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 	// Barbatrucco: puntatore a funzioni per essere più efficienti nella scrittura del codice.
 	// Definisco un puntatore alle funzioni usate per aprire o chiudere la soluzione corrente.
 	// Questo verrà istanziato a seconda della casualità ad una delle due funzioni.
-	//bool (*ninjaTurtle)( Solution*, uint, int );
 	bool (solver::Solver::* ninjaTurtle)( Solution*, uint, int );
 
 	// Devo modificare la soluzione passatami per k volte
@@ -357,15 +361,12 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 
 		// Casualmente scelgo se aprire o chiudere un lato
 		// Non mi interesso del valore di ritorno delle funzioni usate perchè so già dove il buco è stato creato, essendo io a passarlo come parametro.
-		if( (float) rand() / RAND_MAX > P_CLOSE )
-		{
-			// Per prima funzione uso l'apertura
+		float x = ( (float)( solution->getDemand( vehicle ) / Q + solution->getCost( vehicle ) / tMax ) / 2 );
+		float p_close = atan( 50 * ( x - .75 ) ) / M_PI + .5;
+		if( solution->size( vehicle ) <= 2 || (float) rand() / RAND_MAX > p_close )
 			ninjaTurtle = &solver::Solver::mutateSolutionOpen;
-		}
 		else
-		{
 			ninjaTurtle = &solver::Solver::mutateSolutionClose;
-		}
 
 		// Effettuo un ciclo finchè non viene realmente effettuata una mutazione nella soluzione
 		uint current_edge = edge;
@@ -382,10 +383,21 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 			{
 				if( ninjaTurtle == &solver::Solver::mutateSolutionOpen )
 				{
-					ninjaTurtle = &solver::Solver::mutateSolutionClose;
+					if( solution->size( vehicle ) > 2 )
+					{
+						ninjaTurtle = &solver::Solver::mutateSolutionClose;
 #ifdef DEBUG
-					cerr << "Cambio a close" << endl;
+						cerr << "Cambio a close" << endl;
 #endif
+					}
+					else
+					{
+						exterminate = 0;
+#ifdef DEBUG
+						cerr << "Non cambio a close" << endl;
+#endif
+					}
+
 				}
 				else
 				{
@@ -396,14 +408,13 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 				}
 
 				exterminate--;
-				//return false;
 			}
 
 		}while( exterminate > 0 && !mutate );
 
 		// Teoricamente servirebbe qualcosa di questo tipo
 		// Saremmo in una soluzione inamovibile, per cui sarebbe insensato cercare di continuare a modificarla.
-		if( exterminate == 0 )
+		if( exterminate <= 0 )
 		{
 #ifdef DEBUG
 			cerr << "Non ho fatto una mazza" << endl;
@@ -1080,38 +1091,22 @@ bool Solver::setOutputFile( string filename )
 	return output_file.is_open();
 }
 
-void Solver::printToFile( Solution* shakedSolution, Solution* baseSolution )
+void Solver::printToFile( Solution* solution )
 {
-	// Stampo le informazioni sulla shakedSolution
-	output_file << shakedSolution->getProfit() << " ( ";
+	// Stampo le informazione sulla solution
+	output_file << solution->getProfit() << " ( ";
 	for ( int i = 0; i < M; i++ )
-		output_file << shakedSolution->getProfit( i ) << " ";
+		output_file << solution->getProfit( i ) << " ";
 	output_file << ") ";
 	
-	output_file << shakedSolution->getCost() << " ( ";
+	output_file << solution->getCost() << " ( ";
 	for ( int i = 0; i < M; i++ )
-		output_file << shakedSolution->getCost( i ) << " ";
+		output_file << solution->getCost( i ) << " ";
 	output_file << ") ";
 	
-	output_file << shakedSolution->getDemand() << " ( ";
+	output_file << solution->getDemand() << " ( ";
 	for ( int i = 0; i < M; i++ )
-		output_file << shakedSolution->getDemand( i ) << " ";
-	output_file << ")" << endl;
-
-	// Stampo le informazione sulla baseSolution
-	output_file << baseSolution->getProfit() << " ( ";
-	for ( int i = 0; i < M; i++ )
-		output_file << baseSolution->getProfit( i ) << " ";
-	output_file << ") ";
-	
-	output_file << baseSolution->getCost() << " ( ";
-	for ( int i = 0; i < M; i++ )
-		output_file << baseSolution->getCost( i ) << " ";
-	output_file << ") ";
-	
-	output_file << baseSolution->getDemand() << " ( ";
-	for ( int i = 0; i < M; i++ )
-		output_file << baseSolution->getDemand( i ) << " ";
+		output_file << solution->getDemand( i ) << " ";
 	output_file << ")" << endl;
 
 	return;

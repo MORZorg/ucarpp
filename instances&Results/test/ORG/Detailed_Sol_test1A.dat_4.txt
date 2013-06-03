@@ -1,0 +1,58 @@
+Solution of Problem test1A.dat - Number of Vehicles: 4
+
+Total Profit: 17
+
+Total Cost: 68
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 5) (5 6) (6 1)  Profitto: 8
+
+Profit: 8
+Cost: 20
+Load: 3
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 4) (4 3) (3 1)  Profitto: 5
+
+Profit: 5
+Cost: 24
+Load: 5
+
+
+Route 2 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 2) (2 4) (4 1)  Profitto: 4
+
+Profit: 4
+Cost: 20
+Load: 3
+
+
+Route 3 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 6) (6 1)  Profitto: 0
+
+Profit: 0
+Cost: 4
+Load: 0
+

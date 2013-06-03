@@ -65,7 +65,7 @@ namespace solver
 
 			bool isFeasible( const Solution*, int ) const;
 
-			void printToFile( Solution*, Solution* );
+			void printToFile( Solution* );
 		public:
 			Solver( model::Graph, uint, uint, uint, uint );
 			

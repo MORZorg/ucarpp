@@ -1,0 +1,7 @@
+test1A.dat 2 veicoli MDF:	 =>	%	()
+test1A.dat 3 veicoli MDF:	20 =>	%	()
+test1A.dat 4 veicoli MDF:	 =>	%	()
+val10A.dat 2 veicoli MDF:	172 =>	-1%	(170)
+val10A.dat 3 veicoli MDF:	238 =>	2%	(244)
+val10A.dat 4 veicoli MDF:	356 =>	-12%	(317)
+val10B.dat 2 veicoli MDF:	159 =>	7%	(171)
