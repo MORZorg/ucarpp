@@ -363,6 +363,8 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 		// Non mi interesso del valore di ritorno delle funzioni usate perchè so già dove il buco è stato creato, essendo io a passarlo come parametro.
 		float x = ( (float)( solution->getDemand( vehicle ) / Q + solution->getCost( vehicle ) / tMax ) / 2 );
 		float p_close = atan( 50 * ( x - .75 ) ) / M_PI + .5;
+		// Provo a mutare la soluzione in chiusura solo se possibile, ovvero se essa ha almeno due lati
+		// oppure casualmente seguendo una funzione sigmoidale basata su una media di costo e domanda.
 		if( solution->size( vehicle ) <= 2 || (float) rand() / RAND_MAX > p_close )
 			ninjaTurtle = &solver::Solver::mutateSolutionOpen;
 		else
@@ -1110,4 +1112,45 @@ void Solver::printToFile( Solution* solution )
 	output_file << ")" << endl;
 
 	return;
+}
+
+int Solver::mrBeanBeanBinPacking( Solution* solution, uint vehicle )
+{
+	// Il metodo cerca di ottimizzare la domanda del veicolo passato come parametro,
+	// cercando di spostare la domanda su altri veicoli su lati comuni.
+
+	Vehicle* optimizationVehicle = solution->getVehicle( vehicle );
+	int swaps = 0;
+
+	// Ciclo sull'intera soluzione del veicolo
+	for( int i = 0; i < solution->size( vehicle ); i++ )
+	{
+		MetaEdge* edge = solution->getEdge( vehicle, i );
+		// Verifico di essere il server per quel lato
+		if( edge->isServer( optimizationVehicle ) )
+		{
+			// Prendo i veicoli che passano dal lato
+			vector<const Vehicle*> takers = solution->getEdge( vehicle, i );
+			// Ciclo sui takers per cercare di attribuire la domanda ad un altro veicolo
+			for( int j = 0; j < takers.size(); j++ )
+			{
+				if( takers[ j ] != solution->getVehicle( vehicle ) )
+				{
+					// Unsetto il veicolo da ottimizzare come taker
+					edge->setServer( takers[ j ] );
+					// Controllo se questo spostamento lascia la soluzione feasible
+					if( isFeasible( solution, solution->getVehicleIndex( takers[ j ] ) ) )
+					{
+						swaps++;
+						break;
+					}
+					else
+						edge->setServer( optimizationVehicle );
+
+				}
+			}
+		}
+	}
+
+	return swaps;
 }

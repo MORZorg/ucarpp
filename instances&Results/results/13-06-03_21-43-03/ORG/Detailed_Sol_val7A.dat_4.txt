@@ -1,0 +1,58 @@
+Solution of Problem val7A.4 - Number of Vehicles: 4
+
+Total Profit: 1078
+
+Total Cost: 343
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 10) (10 16) (16 15) (15 14) (14 8) (8 40) (40 1) (1 2) (2 6) (6 13) (13 17) (17 12) (12 6) (6 1) (1 11) (11 12) (12 13) (13 3) (3 37) (37 36) (36 2) (2 1)  Profitto: 320
+
+Profit: 320
+Cost: 87
+Load: 160
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 33) (33 26) (26 27) (27 28) (28 27) (27 34) (34 26) (26 27) (27 28) (28 35) (35 34) (34 33) (33 1) (1 6) (6 12) (12 17) (17 13) (13 18) (18 17) (17 1)  Profitto: 234
+
+Profit: 234
+Cost: 83
+Load: 111
+
+
+Route 2 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 35) (35 36) (36 29) (29 30) (30 31) (31 38) (38 37) (37 31) (31 32) (32 39) (39 5) (5 4) (4 38) (38 39) (39 5) (5 4) (4 3) (3 2) (2 1) (1 33) (33 34) (34 27) (27 34) (34 33) (33 1)  Profitto: 268
+
+Profit: 268
+Cost: 87
+Load: 137
+
+
+Route 3 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 2) (2 3) (3 7) (7 6) (6 1) (1 8) (8 9) (9 15) (15 16) (16 11) (11 13) (13 19) (19 18) (18 22) (22 21) (21 22) (22 25) (25 24) (24 23) (23 20) (20 17) (17 13) (13 7) (7 6) (6 1)  Profitto: 256
+
+Profit: 256
+Cost: 86
+Load: 131
+

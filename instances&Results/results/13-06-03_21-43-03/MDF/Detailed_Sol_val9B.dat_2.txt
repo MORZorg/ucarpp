@@ -1,0 +1,32 @@
+Solution of Problem val9B.2 - Number of Vehicles: 2
+
+Total Profit: 170
+
+Total Cost: 60
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(9 13) (13 21) (21 12) (12 11) (11 1) (1 9) (9 13) (13 20) (20 25)  Profitto: 95
+
+Profit: 95
+Cost: 27
+Load: 36
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 16) (16 17) (17 19) (19 18) (18 19) (19 17) (17 29) (29 23) (23 24) (24 23) (23 9) (9 1)  Profitto: 75
+
+Profit: 75
+Cost: 33
+Load: 29
+

@@ -43,8 +43,11 @@ namespace solver
 		unsigned long setTaken( const Vehicle*, int );
 		unsigned long unsetTaken( const Vehicle*, int );
 		unsigned long getTaken() const;
+		std::vector<const Vehicle*> getTakers() const;
+
 		bool isServer( const Vehicle* ) const;
 		const Vehicle* getServer() const;
+		bool setServer( const Vehicle* );
 		model::Edge* getEdge() const;
 		
 		bool operator ==( MetaEdge& ) const;

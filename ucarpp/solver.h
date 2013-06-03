@@ -63,6 +63,10 @@ namespace solver
 			bool closeSolutionRandom( Solution*, int, uint, uint, int, int );
 			std::list<model::Edge*> closeSolutionDijkstra( Solution, int, uint, uint, int );
 
+			// Metodo basato sul concetto della Bin Packing, usato per cercare una prima ottimizzazione della soluzione.
+			// Il metodo può essere richiamato anche più volte in ogni ciclo di risoluzione.
+			int mrBeanBeanBinPacking( Solution*, uint );
+
 			bool isFeasible( const Solution*, int ) const;
 
 			void printToFile( Solution* );

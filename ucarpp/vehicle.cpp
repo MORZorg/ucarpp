@@ -177,6 +177,12 @@ bool Vehicle::operator ==( const Vehicle& other ) const
 {
 	return this->equals( other );
 }
+
+bool Vehicle::operator !=( const Vehicle& other ) const
+{
+	return !(this->equals( other ) );
+}
+
 bool Vehicle::equals( const Vehicle& other ) const
 {
 	return getId() == other.getId();

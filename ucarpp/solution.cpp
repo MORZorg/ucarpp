@@ -135,6 +135,11 @@ uint Solution::getDemand( int vehicle ) const
 	return vehicles[ vehicle ]->getDemand();
 }
 
+Vehicle* Solution::getVehicle( uint vehicle ) const
+{
+	return vehicles[ vehicle ];
+}
+
 bool Solution::getDirection( int vehicle, int index ) const
 {
 	return vehicles[ vehicle ]->getDirection( index );

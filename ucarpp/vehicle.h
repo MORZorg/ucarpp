@@ -49,6 +49,7 @@ namespace solver
 			std::string toString() const;
 			
 			bool operator ==( const Vehicle & ) const;
+			bool operator !=( const Vechile & ) const;
 	};
 }
 

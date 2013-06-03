@@ -6,7 +6,7 @@ OURS_PATH="../instances&Results/ours_";
 SOLUTION_PATH="../instances&Results/solutions_";
 GRAPH_PATH="../progressive_output/";
 SOLUTION_FILE="../instances&Results/results.";
-EXE="./ucarpp";
+EXE="./ucarpp_stable";
 
 # Eseguo il programma per risolvere il problema associato al file ricevuto come parametro
 TYPE[0]="ORG";

@@ -1,0 +1,32 @@
+Solution of Problem val6A.2 - Number of Vehicles: 2
+
+Total Profit: 584
+
+Total Cost: 134
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 7) (7 8) (8 9) (9 13) (13 4) (4 3) (3 9) (9 3) (3 2) (2 1) (1 31) (31 29) (29 27) (27 26) (26 23) (23 24) (24 27) (27 26) (26 27) (27 29) (29 31) (31 1)  Profitto: 311
+
+Profit: 311
+Cost: 64
+Load: 133
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 30) (30 29) (29 28) (28 31) (31 5) (5 10) (10 11) (11 17) (17 16) (16 10) (10 14) (14 10) (10 5) (5 6) (6 7) (7 8) (8 12) (12 11) (11 6) (6 31) (31 1)  Profitto: 273
+
+Profit: 273
+Cost: 70
+Load: 151
+

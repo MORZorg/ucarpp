@@ -1,0 +1,45 @@
+Solution of Problem val7C.3 - Number of Vehicles: 3
+
+Total Profit: 383
+
+Total Cost: 105
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 2) (2 6) (6 12) (12 13) (13 19) (19 18) (18 13) (13 7) (7 6) (6 2) (2 1)  Profitto: 120
+
+Profit: 120
+Cost: 33
+Load: 64
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 8) (8 1) (1 33) (33 26) (26 34) (34 35) (35 6) (6 1)  Profitto: 122
+
+Profit: 122
+Cost: 38
+Load: 64
+
+
+Route 2 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 40) (40 8) (8 14) (14 15) (15 9) (9 10) (10 16) (16 11) (11 1)  Profitto: 141
+
+Profit: 141
+Cost: 34
+Load: 80
+

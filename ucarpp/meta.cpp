@@ -165,6 +165,17 @@ const Vehicle* MetaEdge::getServer() const
 {
 	return takers.front();
 }
+
+bool MetaEdge::setServer( const Vehicle* aVehicle )
+{
+	return this->setTaken( aVehicle, 1 );
+}
+
+vector<const Vehicle*> MetaEdge::getTakers() const
+{
+	return takers;
+}
+
 Edge* MetaEdge::getEdge() const
 {
 	return actualEdge;

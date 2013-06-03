@@ -47,6 +47,9 @@ namespace solver
 			uint getDemand() const;
 			uint getDemand( int ) const;
 
+			Vehicle* getVehicle( uint ) const;
+			uint getVehicleIndex( Vehicle* );
+
 			bool getDirection( int, int ) const;
 
 			std::string toString() const;
