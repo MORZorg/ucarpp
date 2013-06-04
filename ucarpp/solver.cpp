@@ -31,12 +31,143 @@ Solution Solver::createBaseSolution()
 #endif
 	Solution baseSolution( M, graph );
 	
+	// Creazione sequenziale
+//	for ( int i = 0; i < M; i++ )
+//	{
+//#ifdef DEBUG
+//		cerr << "\tVeicolo " << i + 1 << endl;
+//#endif
+//		createBaseSolution( &baseSolution, i );
+//	}
+	
+	// Creazione parallela
+	int toBeFilled = M;
+	bool* filled = (bool*)calloc( M, sizeof(bool) );
+	int* last = (int*)calloc( M, sizeof(int) );
+	vector<Edge*> edges;
+	// Primo giro: aggiungo un lato per ogni veicolo.
 	for ( int i = 0; i < M; i++ )
 	{
+		// Ordino i lati uscenti dal nodo corrente
+		edges = graph.getAdjList( depot );
+		sort( edges.begin(), edges.end(), baseSolution.compareRatioGreedy );
+		
+		// Prendo il lato ammissibile migliore, se esiste
+		filled[ i ] = true;
+		for( Edge* edge : edges )
+		{
+			last[ i ] = edge->getDst( depot );
+			
+			// Aggiungo il lato selezionato ed il lato necessario alla chiusura.
+			baseSolution.addEdge( edge, i );
+			Edge* returnEdge = graph.getEdge( last[ i ], depot );
+			baseSolution.addEdge( returnEdge, i );
+			
 #ifdef DEBUG
-		cerr << "\tVeicolo " << i + 1 << endl;
+			cerr << "After added: " << baseSolution.toString( i ) << endl;
 #endif
-		createBaseSolution( &baseSolution, i );
+			
+			/**
+			 * Se la soluzione resta feasible avendo preso
+			 * il lato selezionato ed il lato di ritorno,
+			 * accetto il nuovo lato.
+			 */
+			if ( isFeasible( &baseSolution, i ) )
+			{
+#ifdef DEBUG
+				fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n\n",
+						last[ i ] + 1, edge->getProfitDemandRatio() );
+#endif
+				
+				baseSolution.removeEdge( i );
+				
+				filled[ i ] = false;
+				break;
+			}
+			else
+			{
+				// Annullo la mossa
+				last[ i ] = depot;
+				baseSolution.removeEdge( i );
+				baseSolution.removeEdge( i );
+			}
+		}
+		
+		if ( filled[ i ] )
+		{
+#ifdef DEBUG
+			cerr << "C'è del marcio in Danimarca." << endl;
+#endif
+			toBeFilled--;
+		}
+	}
+	// Teoricamente arrivato a questo punto dovrei ancora avere tutti i veicoli con filled = false.
+	
+	for ( int i = 0; toBeFilled > 0; i++ )
+	{
+		// Riciclo sui veicoli
+		i %= M;
+		
+		// Ho già riempito il veicolo. Passo al successivo
+		if ( filled[ i ] )
+			continue;
+		
+		// Stesse istruzioni di prima, generalizzate...
+		// Ordino i lati uscenti dal nodo corrente
+		edges = graph.getAdjList( depot );
+		sort( edges.begin(), edges.end(), baseSolution.compareRatioGreedy );
+		
+		// Prendo il lato ammissibile migliore, se esiste
+		filled[ i ] = true;
+		for( Edge* edge : edges )
+		{
+			last[ i ] = edge->getDst( last[ i ] );
+			
+			// Aggiungo il lato selezionato ed il lato necessario alla chiusura.
+			bool addedEdge = last[ i ] != depot;
+			baseSolution.addEdge( edge, i );
+			if ( addedEdge )
+			{
+				Edge* returnEdge = graph.getEdge( last[ i ], depot );
+				baseSolution.addEdge( returnEdge, i );
+			}
+			
+#ifdef DEBUG
+			cerr << "After added: " << baseSolution.toString( i ) << endl;
+#endif
+			
+			/**
+			 * Se la soluzione resta feasible avendo preso
+			 * il lato selezionato ed il lato di ritorno,
+			 * accetto il nuovo lato.
+			 */
+			if ( isFeasible( &baseSolution, i ) )
+			{
+#ifdef DEBUG
+				fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n\n",
+						last[ i ] + 1, edge->getProfitDemandRatio() );
+#endif
+				
+				
+				if ( addedEdge )
+					baseSolution.removeEdge( i );
+				
+				filled[ i ] = false;
+				break;
+			}
+			else
+			{
+				// Annullo la mossa
+				last[ i ] = depot;
+				
+				baseSolution.removeEdge( i );
+				if ( addedEdge )
+					baseSolution.removeEdge( i );
+			}
+		}
+		
+		if ( filled[ i ] )
+			toBeFilled--;
 	}
 	
 #ifdef DEBUG
@@ -496,7 +627,8 @@ bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )
 	solution->removeEdge( vehicle, edge );
 
 	// Inserisco il lato che unisce src->final_dst
-	if( src != final_dst )
+	bool autoCiclo = src == final_dst;
+	if( !autoCiclo )
 		solution->addEdge( graph.getEdge( src, final_dst ), vehicle, edge );
 
 	// Devo controllare la feasibility per eventuali problemi di domanda
@@ -509,7 +641,8 @@ bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )
 	}
 	else
 	{
-		solution->removeEdge( vehicle, edge );
+		if ( !autoCiclo )
+			solution->removeEdge( vehicle, edge );
 		solution->addEdge( second, vehicle, edge );
 		solution->addEdge( first, vehicle, edge );
 	}
@@ -1114,7 +1247,7 @@ solver::Solution Solver::solve( string method, int repetition )
 	if( output_file.is_open() )
 	{
 		if( repetition != -1 )
-			output_file << method << " " << repetition << " " << M << endl;
+			output_file << method << repetition << " " << M << endl;
 		else
 			output_file << method << " " << M << endl;
 	}

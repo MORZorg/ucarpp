@@ -214,41 +214,26 @@ int main( int argc, const char * argv[] )
 	if( argc > 3 )
 	{
 		method = string( argv[ 3 ] );
-
-		if( method.find( "VNASD" ) != string::npos )
-		{
-			for( auto x : method )
-				cerr << "'" << x << "' ";
-			cerr << "Prima: " << method << endl;
-			cerr << "'" << method << "'" << endl;
-			cerr << "'" << method.replace( 0, 5, "" ) << "'" << endl;
-			repetition = stoi( method.replace( 0, 5, "" ) );
-			method = "VNASD";
-			cerr << "M: " << method << " r " << repetition << endl;
-		}
-		else
-			method = argv[ 3 ];
-/*
-		method = string( argv[ 3 ], 0, strlen( argv[ 3 ] ) );
-		cerr << method << endl;
+#ifdef DEBUG
+		cerr << "'" << method << "'" << endl;
+#endif
 		// Uso una regex per controllare se è stata richiesta la funzione alternata vnasd che alterna vns e vnd.
-		re = regex( "VNASD(\\d)" );
+		re = regex( "VNASD(\\d+)" );
 		if( regex_search( method, sm, re ) )
 		{
-			method = "VNASD";
-
+#ifdef DEBUG
 			cerr << endl;
 		    for ( auto x : sm )
 				cerr << "'" <<  x << "' ";
 			cerr << endl;
-			cerr << "Valore letto: " << sm[ 1 ] << " da " << argv[ 3 ];
-			cerr << " lunga " << strlen( argv[ 3 ] ) << endl;
+			cerr << "Valore letto: " << sm[ 1 ] << " da " << method;
+			cerr << " lunga " << method.length() << endl;
+#endif
 
 			repetition = stoi( sm[ 1 ] );
+			method = "VNASD";
 		}
-		else
-			method = argv[ 3 ];
-*/
+
 	}
 	else
 		method = "VNS";
@@ -268,7 +253,13 @@ int main( int argc, const char * argv[] )
 	solver::Solver solver( grafo, depot, M, Q, tMax );
 	// Se richiesto, imposto il nome del file sul quale scrivere i risultati intermedi
 #ifdef OUTPUT_FILE
-	solver.setOutputFile( filename.replace( filename.find( "dat" ), 3, to_string( M ) ) + "." + method + "." + ( repetition != -1 ? repetition + "." : "" ) + type );
+	filename = filename.replace( filename.find( "dat" ), 3, to_string( M ) );
+	filename += "." + method;
+	if ( repetition != -1 )
+		filename += to_string( repetition );
+	filename += "." + type;
+	
+	solver.setOutputFile( filename );
 #endif
 
 	solver::Solution solution = solver.solve( method, repetition );

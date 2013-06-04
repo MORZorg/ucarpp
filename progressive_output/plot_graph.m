@@ -9,7 +9,7 @@ function plot_graph( nomefile )
     % Leggo la prima riga: tipo risolutore e numero di veicoli nella soluzione
     tipo = fscanf( file_id, '%s', 1 );
     veicoli = fscanf( file_id, '%d', 1 );
-    % A seconda del numero di veicoli leggerò più o meno dati
+    % A seconda del numero di veicoli legger?? pi?? o meno dati
     read_format = strcat( '%d ( ', repmat( '%d ', 1, veicoli ), ' )' );
     data = fscanf( file_id, read_format );
     % Chiudo il file
