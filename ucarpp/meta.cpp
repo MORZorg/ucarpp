@@ -166,9 +166,23 @@ const Vehicle* MetaEdge::getServer() const
 	return takers.front();
 }
 
-bool MetaEdge::setServer( const Vehicle* aVehicle )
+bool MetaEdge::setServer( const Vehicle* vehicle )
 {
-	return this->setTaken( aVehicle, 1 );
+	// Per impostare un veicolo come servitore, devo spostarlo in testa alla lista dei takers.
+	// Per prima cosa cerco il vehicle richiesto
+	for( int i = 0; i < takers.size(); i++ )
+		if( takers[ i ] == vehicle )
+		{
+			// Inserisco il corrente elemento in testa al vettore
+			takers.insert( takers.begin(), takers[ i ] );
+			// Elimino l'elemento stesso dalla posizione in cui si trovava in precedenza,
+			// tenendo conto che ora l'array ha un elemento in più
+			takers.erase( takers.begin() + i + 1 );
+			// Sono riuscito a scambiare il server
+			return true;
+		}
+
+	return false;
 }
 
 vector<const Vehicle*> MetaEdge::getTakers() const

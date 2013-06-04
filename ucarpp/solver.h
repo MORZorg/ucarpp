@@ -14,8 +14,8 @@
 #include <vector>
 #include <sstream>
 
-#include <string>
 #include <fstream>
+#include <string>
 
 #include "headings.h"
 #include "edge.h"
@@ -48,6 +48,7 @@ namespace solver
 			void createBaseSolution( Solution*, int );
 			Solution vns( int, Solution );
 			Solution vnd( int, Solution );
+			Solution vnasd( int, Solution, int );
 
 			// Metodi usati per modificare progressivamente la soluzione
 			// Metodo che sceglie come mutare la soluzione, decidendo se ampliandola o restringendola. Ritorna la lunghezza della nuova soluzione modificata.
@@ -70,10 +71,11 @@ namespace solver
 			bool isFeasible( const Solution*, int ) const;
 
 			void printToFile( Solution* );
+
 		public:
 			Solver( model::Graph, uint, uint, uint, uint );
 			
-			Solution solve();
+			Solution solve( std::string, int );
 
 			bool setOutputFile( std::string );
 	};

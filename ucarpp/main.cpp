@@ -207,9 +207,55 @@ int main( int argc, const char * argv[] )
 	}
 #endif
 
+	// Leggo il tipo di metodo da utilizzare per risolvere il problema.
+	// Se non indicato uso la VNS.
+	string method;
+	int repetition = -1;
+	if( argc > 3 )
+	{
+		method = string( argv[ 3 ] );
+
+		if( method.find( "VNASD" ) != string::npos )
+		{
+			for( auto x : method )
+				cerr << "'" << x << "' ";
+			cerr << "Prima: " << method << endl;
+			cerr << "'" << method << "'" << endl;
+			cerr << "'" << method.replace( 0, 5, "" ) << "'" << endl;
+			repetition = stoi( method.replace( 0, 5, "" ) );
+			method = "VNASD";
+			cerr << "M: " << method << " r " << repetition << endl;
+		}
+		else
+			method = argv[ 3 ];
+/*
+		method = string( argv[ 3 ], 0, strlen( argv[ 3 ] ) );
+		cerr << method << endl;
+		// Uso una regex per controllare se è stata richiesta la funzione alternata vnasd che alterna vns e vnd.
+		re = regex( "VNASD(\\d)" );
+		if( regex_search( method, sm, re ) )
+		{
+			method = "VNASD";
+
+			cerr << endl;
+		    for ( auto x : sm )
+				cerr << "'" <<  x << "' ";
+			cerr << endl;
+			cerr << "Valore letto: " << sm[ 1 ] << " da " << argv[ 3 ];
+			cerr << " lunga " << strlen( argv[ 3 ] ) << endl;
+
+			repetition = stoi( sm[ 1 ] );
+		}
+		else
+			method = argv[ 3 ];
+*/
+	}
+	else
+		method = "VNS";
+
 	// Controllo se devo risolvere il problema per le istanze modificate, ovvero con tempo massimo = 40 e capacità = 30.
 	string type;
-	if( argc > 3 && !strcmp( argv[ 3 ], "MDF" ) )
+	if( argc > 4 && !strcmp( argv[ 4 ], "MDF" ) )
 	{
 		Q = 30;
 		tMax = 40;
@@ -222,10 +268,10 @@ int main( int argc, const char * argv[] )
 	solver::Solver solver( grafo, depot, M, Q, tMax );
 	// Se richiesto, imposto il nome del file sul quale scrivere i risultati intermedi
 #ifdef OUTPUT_FILE
-	solver.setOutputFile( filename.replace( filename.find( "dat" ), 3, to_string( M ) ) + "." + type );
+	solver.setOutputFile( filename.replace( filename.find( "dat" ), 3, to_string( M ) ) + "." + method + "." + ( repetition != -1 ? repetition + "." : "" ) + type );
 #endif
 
-	solver::Solution solution = solver.solve();
+	solver::Solution solution = solver.solve( method, repetition );
 	
 //	cerr << "main" << solution.toString();
 #ifdef FORMAL_OUT

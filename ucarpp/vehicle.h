@@ -26,7 +26,6 @@ namespace solver
 			int id;
 			std::list<MetaEdge*> path;
 
-			int getId() const;
 			bool equals( const Vehicle& ) const;
 
 		public:
@@ -43,13 +42,14 @@ namespace solver
 			uint getCost() const;
 			uint getDemand() const;
 			uint getProfit() const;
+			int getId() const;
 
 			bool getDirection( int ) const;
 
 			std::string toString() const;
 			
 			bool operator ==( const Vehicle & ) const;
-			bool operator !=( const Vechile & ) const;
+			bool operator !=( const Vehicle & ) const;
 	};
 }
 

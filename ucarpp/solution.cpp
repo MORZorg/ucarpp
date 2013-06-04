@@ -140,6 +140,15 @@ Vehicle* Solution::getVehicle( uint vehicle ) const
 	return vehicles[ vehicle ];
 }
 
+uint Solution::getVehicleIndex( const Vehicle* vehicle ) const
+{
+	for( int i = 0; i < vehicles.size(); i++ )
+		if( vehicles[ i ] == vehicle )
+			return i;
+
+	return -1;
+}
+
 bool Solution::getDirection( int vehicle, int index ) const
 {
 	return vehicles[ vehicle ]->getDirection( index );

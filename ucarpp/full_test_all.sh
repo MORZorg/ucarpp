@@ -11,13 +11,14 @@ INSTANCES=(`ls $INSTANCE_PATH`);
 
 # Compilo il programma
 make
+mv ucarpp ucarpp_stable
 
 # Ciclo sulle istanza da risolvere 
 for i in ${INSTANCES[@]}
 do
 	# Lancio lo script su ogni istanza
 	echo -e " ..:: Risolvo l'istanza $i ::..\r\n";
-	$EXE $i
+	$EXE $i $1
 done;
 
 # Sposto tutte le soluzioni create in una cartella con la data corrente

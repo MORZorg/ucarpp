@@ -24,11 +24,11 @@ do
 		# Eseguo il programma con i parametri correnti
 		echo "Risolvo $1 $i con $j veicoli.";
 		FILENAME="Detailed_Sol_$1_$j.txt";
-		$EXE $INSTANCE_PATH$1 $j $i > $OURS_PATH$i"/"$FILENAME;
+		$EXE $INSTANCE_PATH$1 $j $2 $i > $OURS_PATH$i"/"$FILENAME;
 
 		# Creo il grafico associato alla soluzione
 		echo "Creo i grafici del corrente problema.";
-		matlab -nodisplay -nosplash -r "cd $GRAPH_PATH; plot_graph('${1:0:(-4)}.$j.$i.sbra'); exit" > /dev/null;
+		matlab -nodisplay -nosplash -r "cd $GRAPH_PATH; plot_graph('${1:0:(-4)}.$j.$2.$i.sbra'); exit" > /dev/null;
 
 		# Confronto le soluzioni con quelle di benchmark
 		echo -e "Confronto la soluzione con il benchmark.\r\n";

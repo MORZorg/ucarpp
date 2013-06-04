@@ -11,6 +11,7 @@
 
 #include <list>
 #include <vector>
+#include <set>
 #include <sstream>
 
 #include "headings.h"
@@ -48,7 +49,7 @@ namespace solver
 			uint getDemand( int ) const;
 
 			Vehicle* getVehicle( uint ) const;
-			uint getVehicleIndex( Vehicle* );
+			uint getVehicleIndex( const Vehicle* ) const;
 
 			bool getDirection( int, int ) const;
 
