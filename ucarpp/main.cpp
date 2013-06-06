@@ -234,6 +234,13 @@ int main( int argc, const char * argv[] )
 			method = "VNASD";
 		}
 
+		re = regex( "VNAASD(\\d+)" );
+		if( regex_search( method, sm, re ) )
+		{
+			repetition = stoi( sm[ 1 ] );
+			method = "VNAASD";
+		}
+
 	}
 	else
 		method = "VNS";
@@ -248,7 +255,7 @@ int main( int argc, const char * argv[] )
 	}
 	else
 		type = "ORG";
-	
+
 	// Creo il risolutore
 	solver::Solver solver( grafo, depot, M, Q, tMax );
 	// Se richiesto, imposto il nome del file sul quale scrivere i risultati intermedi
@@ -275,10 +282,10 @@ int main( int argc, const char * argv[] )
 		cout << endl << "Route " << i << " Details:" << endl;
 
 		cout << endl << "Services Sequence:" << endl;
-		cout << ":)" << endl;
+		cout << solution.toServicesSequence( i ) << endl;
 
 		cout << endl << "Vertex Sequence:" << endl;
-		cout << solution.toString( i );
+		cout << solution.toVertexSequence( i ) << endl;
 		
 		cout << endl;
 		cout << "Profit: " << solution.getProfit( i ) << endl;
@@ -286,6 +293,8 @@ int main( int argc, const char * argv[] )
 		cout << "Load: " << solution.getDemand( i ) << endl;
 		cout << endl;
 	}
+
+	cout << solution.toString() << endl;
 #endif
 
     return 0;

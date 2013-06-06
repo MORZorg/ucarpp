@@ -47,6 +47,9 @@ namespace solver
 			bool getDirection( int ) const;
 
 			std::string toString() const;
+
+			std::string toServicesSequence() const;
+			std::string toVertexSequence() const;
 			
 			bool operator ==( const Vehicle & ) const;
 			bool operator !=( const Vehicle & ) const;

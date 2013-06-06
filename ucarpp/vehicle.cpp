@@ -145,22 +145,93 @@ string Vehicle::toString() const
 	auto it = path.begin();
 	if ( it == path.end() )
 		return "";
-#ifndef DEBUG
 	uint previous = (*it)->getSrc();
-#endif
 
 	for ( ; it != path.end(); it++ )
 	{
-#ifndef DEBUG
-		ss << "(" << previous + 1 << " ";
+		if ( (*it)->getProfit() > 0 && (*it)->isServer( this ) )
+		{
+			auto jt = path.begin();
+			while ( **(jt++) != **it );
+			jt--;
+
+			if ( jt == it )
+				ss << "[ " << previous << " " << (*it)->getDst( previous ) << " ] ";
+			else
+				ss << "( " << previous << " " << (*it)->getDst( previous ) << " ) ";
+		}
+		else
+			ss << "( " << previous << " " << (*it)->getDst( previous ) << " ) ";
+
 		previous = (*it)->getDst( previous );
-		ss << previous + 1 << ") ";
-#else
-		ss << "(" << (*it)->getSrc() << " " << (*it)->getDst() << ") ";
-#endif
+/*
+		ss << "(" << previous << " ";
+		previous = (*it)->getDst( previous );
+		ss << previous << ") ";
+*/
 	}
-	ss << " Profitto: " << getProfit() << endl;
+	ss << " Profitto: " << getProfit() << " D: " << getDemand() << " C: " << getCost() << endl;
 	
+	return ss.str();
+}
+
+string Vehicle::toServicesSequence() const
+{
+	stringstream ss;
+	auto it = path.begin();
+	if ( it == path.end() )
+		return "";
+
+	uint previous = (*it)->getSrc();
+
+	for ( ; it != path.end(); it++ )
+	{
+		if ( (*it)->getProfit() > 0 && (*it)->isServer( this ) )
+		{
+			auto jt = path.begin();
+			while ( **(jt++) != **it );
+			jt--;
+
+			if ( jt == it )
+				ss << previous + 1 << "-" << (*it)->getDst( previous ) + 1 << " ";
+		}
+		
+		previous = (*it)->getDst( previous );
+	}
+
+	return ss.str();
+}
+
+string Vehicle::toVertexSequence() const
+{
+	stringstream ss;
+	auto it = path.begin();
+	if ( it == path.end() )
+		return "";
+
+	uint previous = (*it)->getSrc();
+
+	ss << previous + 1 << " ";
+
+	for ( ; it != path.end(); it++ )
+	{
+		previous = (*it)->getDst( previous );
+
+		if ( (*it)->getProfit() > 0 && (*it)->isServer( this ) )
+		{
+			auto jt = path.begin();
+			while ( **(jt++) != **it );
+			jt--;
+
+			if ( jt == it )
+				ss << "(" << (*it)->getDst( previous ) + 1 << " " << previous + 1 << ") ";
+			else
+				ss << previous + 1 << " ";
+		}
+		else
+			ss << previous + 1 << " ";
+	}
+
 	return ss.str();
 }
 

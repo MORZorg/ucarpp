@@ -37,13 +37,14 @@ M( source.M ), graph( source.graph ), compareRatioGreedy( &this->graph )
 {
 	vehicles = vector<Vehicle*>();
 	for ( int i = 0; i < M; i++ )
-//		vehicles.push_back( source.vehicles[ i ] );
 	{
 		vehicles.push_back( new Vehicle( i ) );
 		for ( int j = 0; j < source.vehicles[ i ]->size(); j++ )
 		{
 			Edge* e = source.getEdge( i, j )->getEdge();
 			vehicles[ i ]->addEdge( graph.getEdge( e ) );
+			if( source.getEdge( i, j )->isServer( source.vehicles[ i ] ) )
+				getEdge( i, j )->setServer( vehicles[ i ] );
 		}
 	}
 }
@@ -158,7 +159,7 @@ string Solution::toString() const
 {
 	stringstream ss;
 	for ( int i = 0; i < M; i++ )
-		ss << i + 1 << ":\t" << toString( i ) << endl;
+		ss << i << ":\t" << toString( i ) << endl;
 	
 	return ss.str();
 }
@@ -167,3 +168,15 @@ string Solution::toString( int vehicle ) const
 {
 	return vehicles[ vehicle ]->toString();
 }
+
+string Solution::toServicesSequence( int vehicle ) const
+{
+	return vehicles[ vehicle ]->toServicesSequence();
+}
+
+
+string Solution::toVertexSequence( int vehicle ) const
+{
+	return vehicles[ vehicle ]->toVertexSequence();
+}
+

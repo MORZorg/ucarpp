@@ -27,11 +27,10 @@ Solution Solver::createBaseSolution()
 {
 #ifdef DEBUG
 	cerr << endl << "Stampo la soluzione di base:" << endl;
-	cerr << strcmp( "ciao", "ciao" ) << endl;
 #endif
 	Solution baseSolution( M, graph );
 	
-	// Creazione sequenziale
+//	// Creazione sequenziale
 //	for ( int i = 0; i < M; i++ )
 //	{
 //#ifdef DEBUG
@@ -103,18 +102,15 @@ Solution Solver::createBaseSolution()
 	}
 	// Teoricamente arrivato a questo punto dovrei ancora avere tutti i veicoli con filled = false.
 	
-	for ( int i = 0; toBeFilled > 0; i++ )
+	for ( int i = 0; toBeFilled > 0; i = ( i + 1 ) % M )
 	{
-		// Riciclo sui veicoli
-		i %= M;
-		
 		// Ho già riempito il veicolo. Passo al successivo
 		if ( filled[ i ] )
 			continue;
 		
 		// Stesse istruzioni di prima, generalizzate...
 		// Ordino i lati uscenti dal nodo corrente
-		edges = graph.getAdjList( depot );
+		edges = graph.getAdjList( last[ i ] );
 		sort( edges.begin(), edges.end(), baseSolution.compareRatioGreedy );
 		
 		// Prendo il lato ammissibile migliore, se esiste
@@ -148,7 +144,6 @@ Solution Solver::createBaseSolution()
 						last[ i ] + 1, edge->getProfitDemandRatio() );
 #endif
 				
-				
 				if ( addedEdge )
 					baseSolution.removeEdge( i );
 				
@@ -158,7 +153,7 @@ Solution Solver::createBaseSolution()
 			else
 			{
 				// Annullo la mossa
-				last[ i ] = depot;
+				last[ i ] = edge->getDst( last[ i ] );
 				
 				baseSolution.removeEdge( i );
 				if ( addedEdge )
@@ -167,7 +162,14 @@ Solution Solver::createBaseSolution()
 		}
 		
 		if ( filled[ i ] )
+		{
+			if ( last[ i ] != depot )
+			{
+				Edge* returnEdge = graph.getEdge( last[ i ], depot );
+				baseSolution.addEdge( returnEdge, i );
+			}
 			toBeFilled--;
+		}
 	}
 	
 #ifdef DEBUG
@@ -253,7 +255,25 @@ Solution Solver::vnasd( int nIter, Solution baseSolution, int repetition )
 	float iterations = nIter / ( 2 * repetition );
 
 	for( int i = 0; i < repetition; i++ )
-		baseSolution = vnd( floor( iterations ), vns( ceil( iterations ), baseSolution ) );
+	{
+		baseSolution = vns( ceil( iterations ), baseSolution );
+		baseSolution = vnd( floor( iterations ), baseSolution );
+	}
+
+	return baseSolution;
+}
+
+Solution Solver::vnaasd( int nIter, Solution baseSolution, int repetition )
+{
+	float iterations = nIter / ( 4 * repetition );
+
+	for( int i = 0; i < repetition; i++ )
+	{
+		for( int j = 0; j < 3; j++ )
+			baseSolution = vns( floor( iterations ), baseSolution );
+
+		baseSolution = vnd( ceil( iterations ), baseSolution );
+	}
 
 	return baseSolution;
 }
@@ -279,11 +299,28 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 	{
 		// Copio la soluzione di base su una soluzione che elaborerò nella vns
 		shakedSolution = Solution( baseSolution );
+
+#ifdef DEBUG
+		cerr << "shakedSolution = Solution( baseSolution ): " << endl << "Base: " << baseSolution.toString() << "Shaked: " << shakedSolution.toString() << endl;
+#endif
+
 		
 		/*** Shaking ***/
 		// Estraggo un veicolo ed un lato iniziale casuali
 		// Tengo traccia anche dei nodi sorgente e destinazione di tale lato
 		uint vehicle = rand() % M;
+
+#ifdef DEBUG
+		cerr << "Iterazione " << nIter << " sul veicolo " << vehicle << endl;
+#endif
+
+		// MrBean colpisce ancora
+		// Utile per essere sicuri di fare tutte le ottimizzazioni possibili
+		mrBeanBeanBinPacking( &shakedSolution, vehicle );
+
+#ifdef DEBUG
+		cerr << "infra shake " << shakedSolution.toString();
+#endif
 
 		// Non mi interesso del valore di ritorno perché pressoché inutile. :D
 		mutateSolution( &shakedSolution, vehicle, ceil( XI * ( k + 1 ) ) );
@@ -313,20 +350,44 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 			uint next;
 			for ( int i = 0; i < shakedSolution.size( v ); i++ )
 			{
+#ifdef DEBUG
+			cerr << "Lavoro sul veicolo " << v << " lato " << i;
+			cerr << " ( " << shakedSolution.getEdge( v, i )->getSrc() << " " << shakedSolution.getEdge( v, i )->getDst() << " ) " << endl;
+			cerr << "Parto da: " << shakedSolution.toString();
+#endif
 				// Elimino almeno un lato
 				list <Edge*> removedEdges;
-				removedEdges.push_back( shakedSolution.getEdge( v, i )->getEdge() );
+				bool wasServer;
+
+				Vehicle* tempVehicle = shakedSolution.getVehicle( v );
+				
+				MetaEdge* tempMeta = shakedSolution.getEdge( v, i );
+				wasServer = tempMeta->isServer( tempVehicle );
+				// Pro thinking:
+				// Se MrBean non è riuscito a riassegnare questo lato ad altri veicoli ed io non sono l'unico che lo attraversa,
+				// è inutile cercare di toglierlo dalla soluzione in quanto renderebbe infeasible un altro veicolo, per cui salto.
+				if( !isRemovable( &shakedSolution, v, i ) )
+				{
+#ifdef DEBUG
+					cerr << "Il lato " << i << " non è rimovibile. Passo al lato successivo." << endl;
+#endif
+					previous = tempMeta->getDst( previous );
+					continue;
+				}
+
+				removedEdges.push_back( tempMeta->getEdge() );
+
 				shakedSolution.removeEdge( v, i );
-				next = removedEdges.front()->getDst( previous );
+				next = tempMeta->getDst( previous );
 
 				// Elimino lati dalla soluzione fintanto che questi non ne aumentano il profitto e fintanto che sono presenti nella soluzione
-				while( i <  shakedSolution.size( v ) )
+				while( i < shakedSolution.size( v ) )
 				{
 					// Calcolo la differenza di profitto che abbiamo nel togliere un lato alla soluzione
 					int diffProfit = shakedSolution.getProfit( v );
 
 					// Rimuovo il lato i
-					Edge* temp = shakedSolution.getEdge( v, i )->getEdge();
+					MetaEdge* temp = shakedSolution.getEdge( v, i );
 					shakedSolution.removeEdge( v, i );
 
 					diffProfit -= shakedSolution.getProfit( v );
@@ -334,31 +395,50 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 					// Se non ho differenze di profitto, tolgo quel lato dalla soluzione
 					if( diffProfit == 0 )
 					{
-						// Inserisco il lato tolto nella lista
-						removedEdges.push_back( temp );
 						// Sposto il nodo di partenza
 						next = temp->getDst( next );
+						// Inserisco il lato tolto nella lista
+						removedEdges.push_back( temp->getEdge() );
 					}
 					else
 					{
 						// Altrimenti lo riaggiungo
-						shakedSolution.addEdge( temp, v, i );
+						shakedSolution.addEdge( temp->getEdge(), v, i );
+						temp->setServer( tempVehicle );
 						break;
 					}
 
 				}
 
 #ifdef DEBUG
-				cerr << "Creato un buco di " << removedEdges.size() << " lati" << endl;
+				cerr << "Creato un buco di " << removedEdges.size() << " lati su ( " << previous << " " << next << " ) " << endl;
+				cerr << "Cristo: " << shakedSolution.toString() << endl;
 #endif
 
 				// Chiedo a Dijkstra di calcolarmi la chiusura migliore
 				list<Edge*> closure = closeSolutionDijkstra( shakedSolution, v, previous, next, i );
 				previous = next;
 
+				if ( !closure.size() )
+				{
+					// Quell'incapace del Sig. Bellman-Ford-Zucchelli ha fallito: ripristino.
+					for( auto it = removedEdges.rbegin(); it != removedEdges.rend(); ++it )
+						shakedSolution.addEdge( *it, v, i );
+	
+					if( wasServer )
+						shakedSolution.getEdge( v, i )->setServer( tempVehicle );
+
+					i += removedEdges.size() - 1;
+					continue;
+				}
+
 				// Se questo porta un miglioramento, effettuo la chiusura, altrimenti riaggiungo il lato i
 				for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
 					shakedSolution.addEdge( *it, v, i );
+
+#ifdef DEBUG
+				cerr << "Soluzioni dopo ricerca locale: " << shakedSolution.toString() << endl;
+#endif
 
 				// Controllo se ho trovato una soluzione migliore della massima trovata in precedenza
 				if ( shakedSolution > maxSolution )
@@ -367,7 +447,7 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 					cerr << "Migliorato" << endl;
 #endif
 					maxSolution = Solution( shakedSolution );
-					//break; // SFANCULATI BEST
+					// SFANCULATI break; // SFANCULATI BEST
 				}
 
 				// Resetto la shakedSolution per effettuare una nuova ricerca
@@ -376,6 +456,14 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 
 				for( auto it = removedEdges.rbegin(); it != removedEdges.rend(); ++it )
 					shakedSolution.addEdge( *it, v, i );
+
+				if( wasServer )
+					shakedSolution.getEdge( v, i )->setServer( tempVehicle );
+
+#ifdef DEBUG
+				cerr << "Fine ciclo: ripristinata la shakedSolution iniziale?" << endl;
+				cerr << "Shaked: " << shakedSolution.toString() << endl;
+#endif
 
 				i += removedEdges.size() - 1;
 			}
@@ -413,6 +501,10 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 			printToFile( &shakedSolution );
 			printToFile( &baseSolution );
 		}
+
+		for ( int i = 0; i < M; i++ )
+			if ( !isFeasible( &shakedSolution, i ) )
+				throw 2;
 
 		// Incremento il numero di iterazioni svolte
 		k = 1 + k % K_MAX;
@@ -464,6 +556,14 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 		mrBeanBeanBinPacking( &shakedSolution, vehicle );
 
 		list<Edge*> closure = closeSolutionDijkstra( shakedSolution, vehicle, src, dst, edge );
+		if ( !closure.size() )
+		{
+#ifdef DEBUG
+			cerr << "Pippero." << endl;
+#endif
+			continue;
+		}
+
 		for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
 			shakedSolution.addEdge( *it, vehicle, edge );
 		
@@ -541,10 +641,13 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 
 		// Effettuo un ciclo finchè non viene realmente effettuata una mutazione nella soluzione
 		uint current_edge = edge;
-		bool mutate;
+		bool mutate = false;
 		int exterminate = 2;
 		do{
-			mutate = (*this.*ninjaTurtle)( solution, vehicle, current_edge );
+			// Effettuo una mutazione solo se non rischio di causare infeasibilità ad altri veicoli
+			if( isRemovable( solution, vehicle, current_edge ) )
+				mutate = (*this.*ninjaTurtle)( solution, vehicle, current_edge );
+
 			// Passo al successivo lato nel caso in cui non ci sia stata una mutazione
 			current_edge = ( current_edge + 1 ) % solution->size( vehicle );
 
@@ -601,9 +704,6 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 
 bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )
 {
-#ifdef DEBUG
-	cerr << "Close " << edge << endl;
-#endif
 	// Estraggo un lato casuale dalla soluzione se non differentemente indicato
 	if( edge == -1 )
 		edge = (uint) rand() % ( solution->size( vehicle ) - 1 );
@@ -611,11 +711,19 @@ bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )
 		if( edge == solution->size( vehicle ) - 1 )
 			return false;
 
+	// Se uno dei due lati della chiusura non è rimovibile, non posso agire
+	if ( !isRemovable( solution, vehicle, edge ) || !isRemovable( solution, vehicle, edge + 1 ) )
+		return false;
+
 	uint src = solution->getEdge( vehicle, edge )->getSrc();
 	uint dst = solution->getEdge( vehicle, edge )->getDst();
 
 	if( !solution->getDirection( vehicle, edge ) )
 		dst ^= src ^= dst ^= src;
+
+#ifdef DEBUG
+	cerr << "Close " << edge << ": ( " << src << ", " << dst << " ) " << endl;
+#endif
 
 	// Ricavo la destinazione della destinazione dal lato scelto
 	uint final_dst = solution->getEdge( vehicle, edge + 1 )->getDst( dst );
@@ -635,7 +743,8 @@ bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )
 	if( isFeasible( solution, vehicle ) )
 	{
 #ifdef DEBUG
-		cerr << "Close completato sul lato ( " << src << ", " << dst << " ) " << endl;
+		cerr << "Close completato sul lato ( " << src << ", " << dst << " ) ";
+		cerr << "chiuso con ( " << src << " " << final_dst << " ) escludendo il nodo " << dst << endl;
 #endif
 		return true;
 	}
@@ -643,8 +752,10 @@ bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )
 	{
 		if ( !autoCiclo )
 			solution->removeEdge( vehicle, edge );
+
 		solution->addEdge( second, vehicle, edge );
 		solution->addEdge( first, vehicle, edge );
+
 	}
 
 	return false;
@@ -652,18 +763,23 @@ bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )
 
 bool Solver::mutateSolutionOpen( Solution *solution, uint vehicle, int edge )
 {
-#ifdef DEBUG
-	cerr << "Open " << edge << endl;
-#endif
 	// Estraggo un lato casuale dalla soluzione se non già indicato
 	if( edge == -1 )
 		edge = (uint) rand() % solution->size( vehicle );
+
+	// Se il lato non è rimovibile, non posso agire
+	if ( !isRemovable( solution, vehicle, edge ) )
+		return false;
 
 	uint src = solution->getEdge( vehicle, edge )->getSrc();
 	uint dst = solution->getEdge( vehicle, edge )->getDst();
 
 	if( !solution->getDirection( vehicle, edge ) )
 		dst ^= src ^= dst ^= src;
+
+#ifdef DEBUG
+	cerr << "Open " << edge << ": ( " << src << ", " << dst << " ) " << endl;
+#endif
 
 	// Lista di adiacenza del nodo sorgente
 	vector<Edge*> adj = graph.getAdjList( src );
@@ -692,11 +808,13 @@ bool Solver::mutateSolutionOpen( Solution *solution, uint vehicle, int edge )
 		// Prendo il nodo di chiusura corrispondente a closer
 		closer = adj[ closer ]->getDst( src );
 
+/*
 #ifdef DEBUG
 		cerr << "Test: " << testables;
 		cerr << ". Ho scelto te: " << closer;
 		cerr << " per aprire ( " << src << ", " << dst << " ) " << endl;
 #endif
+*/
 		// Salvo il lato nel caso in cui lo debba reinserire
 		Edge* removed = graph.getEdge( src, dst );
 		
@@ -734,6 +852,11 @@ bool Solver::mutateSolutionOpen( Solution *solution, uint vehicle, int edge )
 uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* src, uint* dst )
 {
 	uint edge = (uint)( rand() % solution->size( vehicle ) );
+
+	// Controllo di poter togliere il lato ricevuto come parametro
+	if( !isRemovable( solution, vehicle, edge ) )
+		return false;
+
 	*src = solution->getEdge( vehicle, edge )->getSrc();
 	*dst = solution->getEdge( vehicle, edge )->getDst();
 
@@ -750,7 +873,13 @@ uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* 
 	solution->removeEdge( vehicle, edge );
 
 	// Rimuovo al più k lati
-	for ( int i = 0; i < ktemp; i++ )
+	//for ( int i = 0; i < ktemp; i++ )
+	bool forward = true,
+		 backward = true;
+	int forwardEdge = edge,
+		backwardEdge = edge - 1;
+	int i = 0;
+	while( ( forward || backward ) && ( i < ktemp ) )
 	{
 		// Decido se rimuovere il lato all'inizio (edge-1) o alla fine (edge) del buco creato
 		// ( edge > 0 ) serve a garantire che il deposito non venga estromesso dalla soluzione ( se edge è il deposito allora è già stato rimosso un lato a lui connesso e non ne possono essere rimossi altri ), il controllo esterno a verificare circa quasi la stessa cosa
@@ -758,27 +887,62 @@ uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* 
 		// holeDirection indica in che direzione evolve il buco inserito nella soluzione
 		//  - false	:	buco evolve in avanti
 		//  - true	:	buco evolve in dietro
-		bool holeDirection;
+		//bool holeDirection;
 		
 		// Controlliamo di non eliminare lati oltre la lunghezza della soluzione corrente
-		if( edge >= solution->size( vehicle ) )
+		//if( edge >= solution->size( vehicle ) )
+		if( forwardEdge >= solution->size( vehicle ) )
 		{
-			edge = (uint)( solution->size( vehicle ) - 1 );
-			holeDirection = true;
+			forward = false;
+			//edge = (uint)( solution->size( vehicle ) -1 );
+			//holeDirection = true;
 		}
+
 		// Controlliamo di non eliminare lati precedenti al deposito iniziale
-		else if ( edge <= 0 )
+		//else if ( edge <= 0 )
+		if( backwardEdge <= 0 )
 		{
-			edge = 0;
-			holeDirection = false;
+			backward = false;
+			//edge = 0;
+			//holeDirection = false;
 		}
 		// Nessun problema sull'arco da rimuovere
-		else
+	//	else
+	//	if( forward )
+	//	{
+	//		holeDirection = rand() & 2;
+	//		edge -= holeDirection;
+	//	}
+
+		// Provo a rimuovere un lato da entrambe le parti
+		if( forward )
 		{
-			holeDirection = rand() & 2;
-			edge -= holeDirection;
+			if( isRemovable( solution, vehicle, forwardEdge ) )
+			{
+				*dst = solution->getEdge( vehicle, forwardEdge )->getDst( *dst );
+				solution->removeEdge( vehicle, forwardEdge );
+				i++;
+			}
+			else
+				forward = false;
+		}
+
+		if( backward )
+		{
+			if( isRemovable( solution, vehicle, backwardEdge ) )
+			{
+				*src = solution->getEdge( vehicle, backwardEdge )->getDst( *src );
+				solution->removeEdge( vehicle, backwardEdge );
+				// Faccio tornare indietro il forward perchè il suo indice sarebbe sfasato di 1, avendo eliminato un lato a lui precedente.
+				backwardEdge--;
+				forwardEdge--;
+				i++;
+			}
+			else
+				backward = false;
 		}
 		
+/*
 		// Controllo se devo aggiornare il nodo di partenza o destinazione, a seconda del lato rimosso
 		if ( holeDirection )
 			*src = solution->getEdge( vehicle, edge )->getDst( *src );
@@ -787,9 +951,10 @@ uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* 
 		
 		// Rimuovo il lato scelto dalla soluzione
 		solution->removeEdge( vehicle, edge );
+*/
 	}
 
-	return edge;
+	return backwardEdge;
 }
 
 bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uint dst, int k, int edgeIndex )
@@ -1067,6 +1232,9 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 	 *  il ciclo a profitto massimo, risolvendo all'ottimo il problema => tempo esponenziale).
 	 */
 	
+#ifdef DEBUG
+	cerr << "Bellman chiamato sul veicolo " << vehicle << " per collegare " << src << " con " << dst << " in " << edgeIndex << endl;
+#endif
 	vector< list< list<Edge*> > > sol = vector< list< list<Edge*> > >( graph.size() );
 	vector< list< int* > > val = vector< list< int* > >( graph.size() );	// P, T, D
 	
@@ -1240,7 +1408,7 @@ list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint 
 	return sol[ dst ].front();
 }
 
-solver::Solution Solver::solve( string method, int repetition )
+Solution Solver::solve( string method, int repetition )
 {
 	// Numero di iterazioni
 	// VNASD
@@ -1263,6 +1431,11 @@ solver::Solution Solver::solve( string method, int repetition )
 		{
 			if( !method.compare( "VNASD" ) )
 				currentSolution = vnasd( N_ITER, currentSolution, repetition );
+			else
+			{
+				if( !method.compare( "VNAASD" ) )
+					currentSolution = vnaasd( N_ITER, currentSolution, repetition );
+			}
 		}
 	}
 
@@ -1274,8 +1447,19 @@ solver::Solution Solver::solve( string method, int repetition )
 
 bool Solver::isFeasible( const Solution* solution, int vehicle ) const
 {
-	return	solution->getDemand( vehicle ) < Q &&
-			solution->getCost( vehicle ) < tMax;
+	return	solution->getDemand( vehicle ) <= Q && solution->getCost( vehicle ) <= tMax;
+}
+
+bool Solver::isRemovable( const Solution* solution, int vehicle, int index ) const
+{
+	Vehicle* tempVehicle = solution->getVehicle( vehicle );
+	MetaEdge* tempMeta = solution->getEdge( vehicle, index );
+
+		// Il lato NON è rimovibile se io lo servo e non sono l'unico a passarci.
+		// Questo è vero assumendo un bin packing fatto precedentemente
+	return !( tempMeta->getDemand() &&
+			  tempMeta->isServer( tempVehicle ) &&
+			  tempMeta->getTaken() > 1 );
 }
 
 bool Solver::setOutputFile( string filename )
@@ -1324,35 +1508,23 @@ int Solver::mrBeanBeanBinPacking( Solution* solution, uint vehicle )
 	{
 		MetaEdge* edge = solution->getEdge( vehicle, i );
 
-		if ( edge->isServer( optimizationVehicle ) )
+		if ( edge->getProfit() > 0 && edge->isServer( optimizationVehicle ) )
 			served.insert( edge );
 	}
-
 
 	int swaps = 0;
 
 	// Ciclo sull'intera soluzione del veicolo
 	for ( auto it = served.begin(); it != served.end(); ++it )
 	{
-#ifdef DEBUG
-		cerr << "Lo sto servendo io: " << vehicle << endl;
-#endif
 		// Prendo i veicoli che passano dal lato
 		vector<const Vehicle*> takers = (*it)->getTakers();
 
-#ifdef DEBUG
-		cerr << "Altri " << takers.size() - 1 << " veicoli passano da questo lato";
-		cerr << " ( " << (*it)->getSrc() << ", ";
-		cerr << (*it)->getDst() << " )" << endl;
-#endif
 		// Ciclo sui takers per cercare di attribuire la domanda ad un altro veicolo
 		for( int j = 0; j < takers.size(); j++ )
 		{
 			if( takers[ j ] != solution->getVehicle( vehicle ) )
 			{
-#ifdef DEBUG
-				cerr << "Provo a mettere " << takers[ j ]->getId() << " come server" << endl;
-#endif
 				// Unsetto il veicolo da ottimizzare come taker
 				(*it)->setServer( takers[ j ] );
 				// Controllo se questo spostamento lascia la soluzione feasible

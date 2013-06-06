@@ -55,6 +55,9 @@ namespace solver
 
 			std::string toString() const;
 			std::string toString( int ) const;
+
+			std::string toServicesSequence( int ) const;
+			std::string toVertexSequence( int ) const;
 			
 			bool operator> ( const Solution& ) const;
 			

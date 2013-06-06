@@ -12,6 +12,7 @@
 #include "headings.h"
 #include "edge.h"
 #include "graph.h"
+#include <set>
 #include <unordered_map>	// If not working: Boost
 
 namespace solver

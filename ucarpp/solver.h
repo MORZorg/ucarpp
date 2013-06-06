@@ -49,6 +49,7 @@ namespace solver
 			Solution vns( int, Solution );
 			Solution vnd( int, Solution );
 			Solution vnasd( int, Solution, int );
+			Solution vnaasd( int, Solution, int );
 
 			// Metodi usati per modificare progressivamente la soluzione
 			// Metodo che sceglie come mutare la soluzione, decidendo se ampliandola o restringendola. Ritorna la lunghezza della nuova soluzione modificata.
@@ -69,6 +70,7 @@ namespace solver
 			int mrBeanBeanBinPacking( Solution*, uint );
 
 			bool isFeasible( const Solution*, int ) const;
+			bool isRemovable( const Solution*, int, int ) const;
 
 			void printToFile( Solution* );
 

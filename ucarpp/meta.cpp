@@ -93,10 +93,17 @@ float MetaEdge::getProfitDemandRatio() const
  */
 unsigned long MetaEdge::setTaken( const Vehicle* taker, int occurrence )
 {
+/*
+#ifdef DEBUG
+	cerr << "setTaken() ( " << getSrc() << " " << getDst() << " ) ";
+	for( auto it = takers.begin(); it < takers.end(); ++it )
+		cerr << "'" << (*it)->getId() << "' ";
+#endif
+*/
 	// Cerco n le occorrenze del veicolo. Inserisco prima della (n+1)-esima.
 	for ( auto it = takers.begin(); it < takers.end(); ++it )
 		if ( **it == *taker )
-			if ( occurrence-- < 0 )
+			if ( --occurrence < 0 )
 			{
 				// In caso si usino i reverse_iterator,
 				// bisogna usare .base() facendo piu' o meno ++i--
@@ -106,7 +113,14 @@ unsigned long MetaEdge::setTaken( const Vehicle* taker, int occurrence )
 
 	// Non ho trovato n+1 occorrenze. Inserisco in coda.
 	takers.push_back( taker );
-	
+/*	
+#ifdef DEBUG
+	cerr << " ==> ";
+	for( auto it = takers.begin(); it < takers.end(); ++it )
+		cerr << "'" << (*it)->getId() << "' ";
+	cerr << endl;
+#endif
+*/
 	return takers.size();
 }
 
@@ -122,6 +136,13 @@ unsigned long MetaEdge::setTaken( const Vehicle* taker, int occurrence )
  */
 unsigned long MetaEdge::unsetTaken( const Vehicle* taker, int occurrence )
 {
+/*
+#ifdef DEBUG
+	cerr << "unsetTaken() ( " << getSrc() << " " << getDst() << " ) ";
+	for( auto it = takers.begin(); it < takers.end(); ++it )
+		cerr << "'" << (*it)->getId() << "' ";
+#endif
+*/
 	// Cerco il veicolo. Se lo trovo lo cancello, altrimenti niente.
 	for ( auto it = takers.begin(); it < takers.end(); ++it )
 		if ( **it == *taker )
@@ -132,18 +153,30 @@ unsigned long MetaEdge::unsetTaken( const Vehicle* taker, int occurrence )
 				takers.erase( it );
 				break;
 			}
-	
+
+/*
+#ifdef DEBUG
+	cerr << " ==> ";
+	for( auto it = takers.begin(); it < takers.end(); ++it )
+		cerr << "'" << (*it)->getId() << "' ";
+	cerr << endl;
+#endif
+*/
 	return takers.size();
 }
 
 /**
- * Getter del numero di volte per cui il lato è stato preso.
+ * Getter del numero di veicoli che attraversano tale lato.
  *
- * @return	il numero di volte per cui il lato è stato preso, 0 se ciò non è mai successo.
+ * @return	il numero di volte per cui il lato è stato attraversato. 
  */
 unsigned long MetaEdge::getTaken() const
 {
-	return takers.size();
+	set<const Vehicle*> vehicles;
+	for ( int i = 0; i < takers.size(); i++ )
+		vehicles.insert( takers[ i ] );
+
+	return vehicles.size();
 }
 
 /**
