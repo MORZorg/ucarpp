@@ -145,7 +145,6 @@ string Vehicle::toString() const
 	auto it = path.begin();
 	if ( it == path.end() )
 		return "";
-	uint previous = (*it)->getSrc();
 
 	for ( ; it != path.end(); it++ )
 	{
@@ -156,14 +155,13 @@ string Vehicle::toString() const
 			jt--;
 
 			if ( jt == it )
-				ss << "[ " << previous << " " << (*it)->getDst( previous ) << " ] ";
+				ss << "[ " << (*it)->getSrc() << " " << (*it)->getDst() << " ] ";
 			else
-				ss << "( " << previous << " " << (*it)->getDst( previous ) << " ) ";
+				ss << "( " << (*it)->getSrc() << " " << (*it)->getDst() << " ) ";
 		}
 		else
-			ss << "( " << previous << " " << (*it)->getDst( previous ) << " ) ";
+			ss << "( " << (*it)->getSrc() << " " << (*it)->getDst() << " ) ";
 
-		previous = (*it)->getDst( previous );
 /*
 		ss << "(" << previous << " ";
 		previous = (*it)->getDst( previous );

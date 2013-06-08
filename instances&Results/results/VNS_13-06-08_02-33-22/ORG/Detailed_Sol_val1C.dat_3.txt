@@ -1,0 +1,52 @@
+Solution of Problem val1C.3.VNS.ORG - Number of Vehicles: 3
+
+Total Profit: 238
+
+Total Cost: 114
+
+
+Route 0 Details:
+
+Services Sequence:
+1-11 11-12 12-6 6-7 4-5 
+
+Vertex Sequence:
+1 (1 11) (11 12) (12 6) (6 7) 4 (4 5) 1 
+
+Profit: 90
+Cost: 40
+Load: 45
+
+
+Route 1 Details:
+
+Services Sequence:
+1-20 20-15 12-16 13-17 20-19 
+
+Vertex Sequence:
+1 (1 20) (20 15) 12 (12 16) 13 (13 17) 20 (20 19) 1 
+
+Profit: 84
+Cost: 36
+Load: 43
+
+
+Route 2 Details:
+
+Services Sequence:
+1-19 1-5 5-2 2-4 2-10 9-1 
+
+Vertex Sequence:
+1 (1 19) 1 (1 5) 1 5 1 5 (5 2) (2 4) 2 (2 10) 9 (9 1) 
+
+Profit: 64
+Cost: 38
+Load: 45
+
+0:	[ 0 10 ] [ 10 11 ] [ 5 11 ] [ 5 6 ] ( 3 6 ) [ 3 4 ] ( 0 4 )  Profitto: 90 D: 45 C: 40
+
+1:	[ 0 19 ] [ 14 19 ] ( 11 14 ) [ 11 15 ] ( 12 15 ) [ 12 16 ] ( 16 19 ) [ 18 19 ] ( 0 18 )  Profitto: 84 D: 43 C: 36
+
+2:	[ 0 18 ] ( 0 18 ) [ 0 4 ] ( 0 4 ) ( 0 4 ) ( 0 4 ) ( 0 4 ) [ 1 4 ] [ 1 3 ] ( 1 3 ) [ 1 9 ] ( 8 9 ) [ 0 8 ]  Profitto: 64 D: 45 C: 38
+
+

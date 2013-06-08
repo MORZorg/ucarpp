@@ -12,7 +12,7 @@ ucarpp: $(OBJS) $(LIBS)
 	mv a.out $@
 
 run: ucarpp
-		./$< $(INSTPATH)val1C.dat 4 VND
+		./$< $(INSTPATH)val1C.dat 4 VNAASD2
 
 OURS = ../instances\&Results/ours
 INSTANCES = $(shell ls $(INSTPATH))

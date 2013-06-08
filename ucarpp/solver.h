@@ -60,7 +60,7 @@ namespace solver
 			bool mutateSolutionOpen( Solution*, uint, int = -1 );
 
 			// Creo un buco nella soluzione di più lati adiacenti. Usato solo nella vnd.
-			uint openSolutionRandom( Solution*, uint, int, uint*, uint* );
+			int openSolutionRandom( Solution*, uint, int, uint*, uint* );
 			// Metodo inefficiente perchè potenzialmente esplosivo a causa del numero di chiusure possibili.
 			bool closeSolutionRandom( Solution*, int, uint, uint, int, int );
 			std::list<model::Edge*> closeSolutionDijkstra( Solution, int, uint, uint, int );

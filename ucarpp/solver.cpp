@@ -258,6 +258,10 @@ Solution Solver::vnasd( int nIter, Solution baseSolution, int repetition )
 	{
 		baseSolution = vns( ceil( iterations ), baseSolution );
 		baseSolution = vnd( floor( iterations ), baseSolution );
+
+		for ( int i = 0; i < M; i++ )
+			if ( !isFeasible( &baseSolution, i ) )
+				throw 2;
 	}
 
 	return baseSolution;
@@ -269,10 +273,13 @@ Solution Solver::vnaasd( int nIter, Solution baseSolution, int repetition )
 
 	for( int i = 0; i < repetition; i++ )
 	{
-		for( int j = 0; j < 3; j++ )
-			baseSolution = vns( floor( iterations ), baseSolution );
+		baseSolution = vns( floor( 3 * iterations ), baseSolution );
 
 		baseSolution = vnd( ceil( iterations ), baseSolution );
+
+		for ( int i = 0; i < M; i++ )
+			if ( !isFeasible( &baseSolution, i ) )
+				throw 2;
 	}
 
 	return baseSolution;
@@ -509,7 +516,7 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		// Incremento il numero di iterazioni svolte
 		k = 1 + k % K_MAX;
 	}
-	
+
 #ifdef DEBUG
 	cerr << "VNS" << optimalSolution->toString();
 #endif
@@ -541,11 +548,24 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 		// Estraggo un veicolo ed un lato iniziale casuali
 		// Tengo traccia anche dei nodi sorgente e destinazione di tale lato
 		uint vehicle = rand() % M,
-			 edge,
 			 src,
 			 dst;
+		int	 edge = -1;
 		
-		edge = openSolutionRandom( &shakedSolution, vehicle, k, &src, &dst );
+		// Verifico che il buco sia stato creato correttamente
+		try
+		{
+			edge = openSolutionRandom( &shakedSolution, vehicle, k, &src, &dst );
+			if ( edge < 0 || edge >= shakedSolution.size() )
+				throw -2;
+		}
+		catch( int e )
+		{
+#ifdef DEBUG
+			cerr << "Open fallita " << e << endl;
+#endif
+			continue;
+		}
 		
 #ifdef DEBUG
 		cerr << shakedSolution.toString();
@@ -601,6 +621,10 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 			printToFile( &shakedSolution );
 			printToFile( &baseSolution );
 		}
+
+		for ( int i = 0; i < M; i++ )
+			if ( !isFeasible( &shakedSolution, i ) )
+				throw 2;
 
 		k = 1 + k % K_MAX;
 	}
@@ -849,13 +873,20 @@ bool Solver::mutateSolutionOpen( Solution *solution, uint vehicle, int edge )
 	return false;
 }
 
-uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* src, uint* dst )
+int Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* src, uint* dst )
 {
-	uint edge = (uint)( rand() % solution->size( vehicle ) );
+	// Prendo un lato escludendo il primo e l'ultimo della soluzione, così da non escludere il deposito dalla soluzione
+	//// Prima verifico che la soluzione abbia almeno 3 lati
+	//if( solution->size( vehicle ) <= 2 )
+	//	return -1;
+	//	//return false:
+
+	int edge = (int)( rand() % ( solution->size( vehicle ) - 1 ) );
 
 	// Controllo di poter togliere il lato ricevuto come parametro
 	if( !isRemovable( solution, vehicle, edge ) )
-		return false;
+		throw -1;
+		//return false;
 
 	*src = solution->getEdge( vehicle, edge )->getSrc();
 	*dst = solution->getEdge( vehicle, edge )->getDst();
@@ -864,23 +895,36 @@ uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* 
 	if ( !solution->getDirection( vehicle, edge ) )
 		*dst ^= *src ^= *dst ^= *src;
 
+#ifdef DEBUG
+	cerr << "In open: v = " << vehicle << " k = " << k << " edge = " << edge << " src = " << *src << " dst = " << *dst << endl;
+	cerr << solution->toString();
+#endif
 	// Rimuovo k+1 lati
 	// Itero sul minimo valore tra k e la lunghezza attuale della soluzione (k+1<s => k<s-1!!!)
 	//  così da non togliere più lati di quanti la soluzione non ne abbia
 	int ktemp = ( k < solution->size( vehicle ) - 1 ?
-				 k : (uint)solution->size( vehicle ) - 1 );
-	// Rimuovo 1 lato
-	solution->removeEdge( vehicle, edge );
+				  k : (int)solution->size( vehicle ) - 1 );
+
+#ifdef DEBUG
+	cerr << "iterazioni da compiere: " << ktemp << endl;
+#endif
+
+	// Rimuovo il primo lato
+	if ( ktemp > 0 )
+		solution->removeEdge( vehicle, edge );
+	else 
+		throw -1;
 
 	// Rimuovo al più k lati
 	//for ( int i = 0; i < ktemp; i++ )
-	bool forward = true,
-		 backward = true;
-	int forwardEdge = edge,
-		backwardEdge = edge - 1;
-	int i = 0;
+	bool forward	= true,
+		 backward	= true;
+	int i = 1;
 	while( ( forward || backward ) && ( i < ktemp ) )
 	{
+#ifdef DEBUG
+		cerr << "Ho " << endl << solution->toString();
+#endif
 		// Decido se rimuovere il lato all'inizio (edge-1) o alla fine (edge) del buco creato
 		// ( edge > 0 ) serve a garantire che il deposito non venga estromesso dalla soluzione ( se edge è il deposito allora è già stato rimosso un lato a lui connesso e non ne possono essere rimossi altri ), il controllo esterno a verificare circa quasi la stessa cosa
 		
@@ -891,7 +935,7 @@ uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* 
 		
 		// Controlliamo di non eliminare lati oltre la lunghezza della soluzione corrente
 		//if( edge >= solution->size( vehicle ) )
-		if( forwardEdge >= solution->size( vehicle ) )
+		if( edge >= solution->size( vehicle ) )
 		{
 			forward = false;
 			//edge = (uint)( solution->size( vehicle ) -1 );
@@ -900,7 +944,7 @@ uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* 
 
 		// Controlliamo di non eliminare lati precedenti al deposito iniziale
 		//else if ( edge <= 0 )
-		if( backwardEdge <= 0 )
+		if( edge < 1 )
 		{
 			backward = false;
 			//edge = 0;
@@ -917,26 +961,35 @@ uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* 
 		// Provo a rimuovere un lato da entrambe le parti
 		if( forward )
 		{
-			if( isRemovable( solution, vehicle, forwardEdge ) )
+			if( isRemovable( solution, vehicle, edge ) )
 			{
-				*dst = solution->getEdge( vehicle, forwardEdge )->getDst( *dst );
-				solution->removeEdge( vehicle, forwardEdge );
+				*dst = solution->getEdge( vehicle, edge )->getDst( *dst );
+				solution->removeEdge( vehicle, edge );
 				i++;
+#ifdef DEBUG
+				cerr << "Forward: fe = " << edge << " new dst = " << *dst << endl;
+#endif
 			}
 			else
 				forward = false;
 		}
 
+		// Controllo se posso fare un'altra mossa
+		if( i >= ktemp )
+			break;
+
 		if( backward )
 		{
-			if( isRemovable( solution, vehicle, backwardEdge ) )
+			if( isRemovable( solution, vehicle, edge - 1 ) )
 			{
-				*src = solution->getEdge( vehicle, backwardEdge )->getDst( *src );
-				solution->removeEdge( vehicle, backwardEdge );
+				*src = solution->getEdge( vehicle, edge - 1 )->getDst( *src );
+				solution->removeEdge( vehicle, edge - 1 );
 				// Faccio tornare indietro il forward perchè il suo indice sarebbe sfasato di 1, avendo eliminato un lato a lui precedente.
-				backwardEdge--;
-				forwardEdge--;
+				edge--;
 				i++;
+#ifdef DEBUG
+				cerr << "Backward: be = " << edge << " new src = " << *src;
+#endif
 			}
 			else
 				backward = false;
@@ -953,8 +1006,11 @@ uint Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* 
 		solution->removeEdge( vehicle, edge );
 */
 	}
+#ifdef DEBUG
+		cerr << "Esco con " << endl << solution->toString();
+#endif
 
-	return backwardEdge;
+	return edge; 
 }
 
 bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uint dst, int k, int edgeIndex )
@@ -1438,6 +1494,11 @@ Solution Solver::solve( string method, int repetition )
 			}
 		}
 	}
+
+	for ( int i = 0; i < M; i++ )
+		if ( !isFeasible( &currentSolution, i ) )
+			throw 3;
+	
 
 #ifdef DEBUG
 	cerr << "Solve" << currentSolution.toString();

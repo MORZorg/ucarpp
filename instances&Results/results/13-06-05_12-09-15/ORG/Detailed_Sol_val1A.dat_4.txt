@@ -1,0 +1,58 @@
+Solution of Problem val1A.4.VNS.ORG - Number of Vehicles: 4
+
+Total Profit: 728
+
+Total Cost: 198
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 11) (11 6) (6 7) (7 8) (8 14) (14 20) (20 21) (21 23) (23 24) (24 21) (21 23) (23 22) (22 19)  Profitto: 269
+
+Profit: 269
+Cost: 61
+Load: 126
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 19) (19 9) (9 3)  Profitto: 54
+
+Profit: 54
+Cost: 11
+Load: 31
+
+
+Route 2 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 3) (3 4) (4 5) (5 6) (6 12) (12 17) (17 13) (13 14) (14 18) (18 17) (17 16) (16 15) (15 20) (20 1) (1 9) (9 3) (3 10) (10 2) (2 4) (4 2) (2 5)  Profitto: 297
+
+Profit: 297
+Cost: 70
+Load: 145
+
+
+Route 3 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 20) (20 19) (19 1) (1 5) (5 11) (11 12) (12 16) (16 17) (17 13) (13 7) (7 13) (13 17) (17 16) (16 15) (15 21) (21 1)  Profitto: 108
+
+Profit: 108
+Cost: 56
+Load: 56
+

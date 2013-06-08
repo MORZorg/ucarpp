@@ -1,0 +1,6 @@
+val1A.dat 2 veicoli ORG:	601 =>	15%	(713)
+val1A.dat 3 veicoli ORG:	728 =>	0%	(728)
+val1A.dat 4 veicoli ORG:	728 =>	0%	(728)
+val1B.dat 2 veicoli ORG:	390 =>	24%	(516)
+val1B.dat 3 veicoli ORG:	511 =>	25%	(682)
+val1B.dat 4 veicoli ORG:	622 =>	14%	(731)

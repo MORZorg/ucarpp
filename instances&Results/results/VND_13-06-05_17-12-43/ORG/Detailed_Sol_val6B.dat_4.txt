@@ -1,0 +1,67 @@
+Solution of Problem val6B.4.VND.ORG - Number of Vehicles: 4
+
+Total Profit: 658
+
+Total Cost: 179
+
+
+Route 0 Details:
+
+Services Sequence:
+1-7 7-8 8-9 9-4 4-13 
+
+Vertex Sequence:
+(1 7) (7 8) (8 9) (9 4) (4 13) 1 
+
+Profit: 157
+Cost: 40
+Load: 50
+
+
+Route 1 Details:
+
+Services Sequence:
+1-31 31-28 28-29 29-27 27-24 24-23 23-25 25-28 28-26 26-23 26-27 
+
+Vertex Sequence:
+(1 31) (31 28) (28 29) (29 27) (27 24) (24 23) (23 25) (25 28) (28 26) (26 23) 26 (26 27) 1 
+
+Profit: 140
+Cost: 41
+Load: 81
+
+
+Route 2 Details:
+
+Services Sequence:
+1-30 30-29 29-31 31-6 6-11 11-17 17-16 16-10 10-5 5-6 6-7 3-2 2-1 
+
+Vertex Sequence:
+(1 30) (30 29) (29 31) (31 6) (6 11) (11 17) (17 16) (16 10) (10 5) (5 6) (6 7) 3 (3 2) (2 1) 
+
+Profit: 216
+Cost: 49
+Load: 121
+
+
+Route 3 Details:
+
+Services Sequence:
+2-8 8-12 12-13 13-9 9-3 3-4 5-31 
+
+Vertex Sequence:
+2 (2 8) (8 12) (12 13) (13 9) (9 3) (3 4) 5 (5 31) 1 
+
+Profit: 145
+Cost: 49
+Load: 65
+
+1:	(0 6) (6 7) (7 8) (3 8) (3 12) (0 12)  Profitto: 157
+
+2:	(0 30) (27 30) (27 28) (26 28) (23 26) (22 23) (22 24) (24 27) (25 27) (22 25) (22 25) (25 26) (0 26)  Profitto: 140
+
+3:	(0 29) (28 29) (28 30) (5 30) (5 10) (10 16) (15 16) (9 15) (4 9) (4 5) (5 6) (2 6) (1 2) (0 1)  Profitto: 216
+
+4:	(0 1) (1 7) (7 11) (11 12) (8 12) (2 8) (2 3) (3 4) (4 30) (0 30)  Profitto: 145
+
+

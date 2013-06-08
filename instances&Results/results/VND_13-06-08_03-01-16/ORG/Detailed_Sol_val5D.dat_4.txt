@@ -1,0 +1,67 @@
+Solution of Problem val5D.4.VND.ORG - Number of Vehicles: 4
+
+Total Profit: 554
+
+Total Cost: 281
+
+
+Route 0 Details:
+
+Services Sequence:
+1-7 7-13 13-14 16-23 23-28 21-20 20-19 19-18 
+
+Vertex Sequence:
+1 (1 7) (7 13) (13 14) 16 (16 23) (23 28) 21 (21 20) (20 19) (19 18) 1 
+
+Profit: 151
+Cost: 72
+Load: 73
+
+
+Route 1 Details:
+
+Services Sequence:
+1-6 6-12 12-13 13-2 2-3 4-5 5-11 11-10 
+
+Vertex Sequence:
+1 (1 6) (6 12) (12 13) (13 2) (2 3) 4 (4 5) (5 11) (11 10) 6 1 
+
+Profit: 144
+Cost: 70
+Load: 75
+
+
+Route 2 Details:
+
+Services Sequence:
+1-2 2-8 8-9 9-3 3-10 3-4 4-11 
+
+Vertex Sequence:
+1 (1 2) (2 8) (8 9) (9 3) (3 10) 3 (3 4) (4 11) 1 
+
+Profit: 128
+Cost: 72
+Load: 69
+
+
+Route 3 Details:
+
+Services Sequence:
+6-18 18-29 29-25 25-26 26-20 15-16 
+
+Vertex Sequence:
+1 6 (6 18) (18 29) (29 25) (25 26) (26 20) 15 (15 16) 1 
+
+Profit: 131
+Cost: 67
+Load: 74
+
+0:	[ 0 6 ] [ 6 12 ] [ 12 13 ] ( 13 15 ) [ 15 22 ] [ 22 27 ] ( 20 27 ) [ 19 20 ] [ 18 19 ] [ 17 18 ] ( 0 17 )  Profitto: 151 D: 73 C: 72
+
+1:	[ 0 5 ] [ 5 11 ] [ 11 12 ] [ 1 12 ] [ 1 2 ] ( 2 3 ) [ 3 4 ] [ 4 10 ] [ 9 10 ] ( 5 9 ) ( 0 5 )  Profitto: 144 D: 75 C: 70
+
+2:	[ 0 1 ] [ 1 7 ] [ 7 8 ] [ 2 8 ] [ 2 9 ] ( 2 9 ) [ 2 3 ] [ 3 10 ] ( 0 10 )  Profitto: 128 D: 69 C: 72
+
+3:	( 0 5 ) [ 5 17 ] [ 17 28 ] [ 24 28 ] [ 24 25 ] [ 19 25 ] ( 14 19 ) [ 14 15 ] ( 0 15 )  Profitto: 131 D: 74 C: 67
+
+

@@ -1,0 +1,32 @@
+Solution of Problem val1B.2.VND.ORG - Number of Vehicles: 2
+
+Total Profit: 460
+
+Total Cost: 94
+
+
+Route 0 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 11) (11 9) (9 6) (6 12) (12 16) (16 15) (15 20) (20 21) (21 23) (23 22) (22 19)  Profitto: 240
+
+Profit: 240
+Cost: 47
+Load: 116
+
+
+Route 1 Details:
+
+Services Sequence:
+:)
+
+Vertex Sequence:
+(1 20) (20 19) (19 7) (7 11) (11 12) (12 17) (17 16) (16 20) (20 19) (19 9) (9 3) (3 1)  Profitto: 220
+
+Profit: 220
+Cost: 47
+Load: 104
+

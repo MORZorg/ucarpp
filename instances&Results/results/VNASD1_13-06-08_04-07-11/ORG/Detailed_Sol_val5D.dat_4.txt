@@ -1,0 +1,67 @@
+Solution of Problem val5D.4.VNASD1.ORG - Number of Vehicles: 4
+
+Total Profit: 543
+
+Total Cost: 264
+
+
+Route 0 Details:
+
+Services Sequence:
+1-7 7-13 26-25 25-29 29-18 18-6 
+
+Vertex Sequence:
+1 (1 7) (7 13) 26 (26 25) (25 29) (29 18) (18 6) 1 
+
+Profit: 140
+Cost: 59
+Load: 73
+
+
+Route 1 Details:
+
+Services Sequence:
+1-6 12-13 13-2 3-10 10-11 11-5 5-4 4-10 
+
+Vertex Sequence:
+1 (1 6) 12 (12 13) (13 2) 3 (3 10) (10 11) (11 5) (5 4) (4 10) 1 
+
+Profit: 120
+Cost: 69
+Load: 72
+
+
+Route 2 Details:
+
+Services Sequence:
+1-2 2-8 8-9 9-3 3-4 4-11 10-16 3-2 
+
+Vertex Sequence:
+1 (1 2) (2 8) (8 9) (9 3) (3 4) (4 11) 10 (10 16) 10 3 (3 2) 1 
+
+Profit: 140
+Cost: 72
+Load: 74
+
+
+Route 3 Details:
+
+Services Sequence:
+6-12 13-14 14-15 15-22 22-28 22-23 23-16 16-15 
+
+Vertex Sequence:
+1 6 (6 12) 13 (13 14) (14 15) (15 22) (22 28) 22 (22 23) (23 16) (16 15) 12 6 1 
+
+Profit: 143
+Cost: 64
+Load: 75
+
+0:	[ 0 6 ] [ 6 12 ] ( 12 25 ) [ 24 25 ] [ 24 28 ] [ 17 28 ] [ 5 17 ] ( 0 5 )  Profitto: 140 D: 73 C: 59
+
+1:	[ 0 5 ] ( 5 11 ) [ 11 12 ] [ 1 12 ] ( 1 2 ) [ 2 9 ] [ 9 10 ] [ 4 10 ] [ 3 4 ] [ 3 9 ] ( 0 9 )  Profitto: 120 D: 72 C: 69
+
+2:	[ 0 1 ] [ 1 7 ] [ 7 8 ] [ 2 8 ] [ 2 3 ] [ 3 10 ] ( 9 10 ) [ 9 15 ] ( 9 15 ) ( 2 9 ) [ 1 2 ] ( 0 1 )  Profitto: 140 D: 74 C: 72
+
+3:	( 0 5 ) [ 5 11 ] ( 11 12 ) [ 12 13 ] [ 13 14 ] [ 14 21 ] [ 21 27 ] ( 21 27 ) [ 21 22 ] [ 15 22 ] [ 14 15 ] ( 11 14 ) ( 5 11 ) ( 0 5 )  Profitto: 143 D: 75 C: 64
+
+

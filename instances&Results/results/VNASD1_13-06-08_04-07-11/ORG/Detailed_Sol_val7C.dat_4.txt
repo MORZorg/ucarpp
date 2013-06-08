@@ -1,0 +1,67 @@
+Solution of Problem val7C.4.VNASD1.ORG - Number of Vehicles: 4
+
+Total Profit: 483
+
+Total Cost: 150
+
+
+Route 0 Details:
+
+Services Sequence:
+6-7 7-13 13-17 13-18 18-17 17-12 12-6 6-1 1-35 
+
+Vertex Sequence:
+1 2 6 (6 7) (7 13) (13 17) 13 (13 18) (18 17) (17 12) (12 6) (6 1) (1 35) 1 
+
+Profit: 105
+Cost: 36
+Load: 61
+
+
+Route 1 Details:
+
+Services Sequence:
+1-11 11-16 16-10 10-1 12-13 6-2 2-1 
+
+Vertex Sequence:
+1 (1 11) (11 16) (16 10) (10 1) 12 (12 13) 6 (6 2) (2 1) 
+
+Profit: 114
+Cost: 38
+Load: 61
+
+
+Route 2 Details:
+
+Services Sequence:
+34-35 35-28 28-27 27-26 26-33 33-1 
+
+Vertex Sequence:
+1 34 (34 35) (35 28) (28 27) (27 26) (26 33) (33 1) 
+
+Profit: 138
+Cost: 39
+Load: 65
+
+
+Route 3 Details:
+
+Services Sequence:
+1-8 8-9 16-15 15-14 14-8 8-40 40-1 
+
+Vertex Sequence:
+1 (1 8) (8 9) 16 (16 15) (15 14) (14 8) (8 40) (40 1) 
+
+Profit: 126
+Cost: 37
+Load: 64
+
+0:	( 0 1 ) ( 1 5 ) [ 5 6 ] [ 6 12 ] [ 12 16 ] ( 12 16 ) [ 12 17 ] [ 16 17 ] [ 11 16 ] [ 5 11 ] [ 0 5 ] [ 0 34 ] ( 0 34 )  Profitto: 105 D: 61 C: 36
+
+1:	[ 0 10 ] [ 10 15 ] [ 9 15 ] [ 0 9 ] ( 0 11 ) [ 11 12 ] ( 5 12 ) [ 1 5 ] [ 0 1 ]  Profitto: 114 D: 61 C: 38
+
+2:	( 0 33 ) [ 33 34 ] [ 27 34 ] [ 26 27 ] [ 25 26 ] [ 25 32 ] [ 0 32 ]  Profitto: 138 D: 65 C: 39
+
+3:	[ 0 7 ] [ 7 8 ] ( 8 15 ) [ 14 15 ] [ 13 14 ] [ 7 13 ] [ 7 39 ] [ 0 39 ]  Profitto: 126 D: 64 C: 37
+
+
