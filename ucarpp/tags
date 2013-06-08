@@ -1,0 +1,193 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+DijkyEdge	edge.cpp	/^DijkyEdge::DijkyEdge( uint src, uint dst ):$/;"	f	class:DijkyEdge
+DijkyEdge	edge.h	/^	class DijkyEdge: public Edge$/;"	c	namespace:model
+Edge	edge.cpp	/^Edge::Edge( uint src, uint dst ):$/;"	f	class:Edge
+Edge	edge.h	/^	class Edge$/;"	c	namespace:model
+FORMAL_OUT	main.h	/^#define FORMAL_OUT$/;"	d
+Graph	graph.cpp	/^Graph::Graph( int V ):$/;"	f	class:Graph
+Graph	graph.h	/^	class Graph$/;"	c	namespace:model
+INSTANCES	Makefile	/^INSTANCES = $(shell ls $(INSTPATH))$/;"	m
+INSTPATH	Makefile	/^INSTPATH = ..\/instances\\&Results\/instances\/$/;"	m
+K_MAX	solver.h	/^			const int	K_MAX		= 10;$/;"	m	class:solver::Solver
+LIBS	Makefile	/^LIBS = headings.h main.h graph.h edge.h meta.h solver.h solution.h vehicle.h$/;"	m
+M	solution.h	/^			int M;$/;"	m	class:solver::Solution
+M	solver.h	/^			M,$/;"	m	class:solver::Solver
+MetaEdge	meta.cpp	/^MetaEdge::MetaEdge( Edge* reference ):$/;"	f	class:MetaEdge
+MetaEdge	meta.cpp	/^MetaEdge::MetaEdge( const MetaEdge& source ):$/;"	f	class:MetaEdge
+MetaEdge	meta.h	/^	class MetaEdge$/;"	c	namespace:solver
+MetaGraph	meta.cpp	/^MetaGraph::MetaGraph( Graph g )$/;"	f	class:MetaGraph
+MetaGraph	meta.cpp	/^MetaGraph::MetaGraph( const MetaGraph& source )$/;"	f	class:MetaGraph
+MetaGraph	meta.h	/^	class MetaGraph$/;"	c	namespace:solver
+N_ITER	solver.h	/^			const int	N_ITER		= 200;$/;"	m	class:solver::Solver
+OBJS	Makefile	/^OBJS = main.cpp graph.cpp edge.cpp meta.cpp solver.cpp solution.cpp vehicle.cpp$/;"	m
+OURS	Makefile	/^OURS = ..\/instances\\&Results\/ours$/;"	m
+OUTPUT_FILE	main.cpp	/^#define OUTPUT_FILE$/;"	d	file:
+OUTPUT_FILE_DIR	solver.h	/^			const std::string OUTPUT_FILE_DIR = "..\/progressive_output\/";$/;"	m	class:solver::Solver
+OUTPUT_FILE_EXTENSION	solver.h	/^			const std::string OUTPUT_FILE_EXTENSION = ".sbra";$/;"	m	class:solver::Solver
+P_ACCEPT	solver.h	/^			const float	P_ACCEPT	= .95;$/;"	m	class:solver::Solver
+P_CLOSE	solver.h	/^			const float	P_CLOSE		= .25;$/;"	m	class:solver::Solver
+ProfitableEdge	edge.cpp	/^ProfitableEdge::ProfitableEdge( uint src, uint dst, uint cost, uint demand, float profit ):$/;"	f	class:ProfitableEdge
+ProfitableEdge	edge.h	/^	class ProfitableEdge: public Edge$/;"	c	namespace:model
+Q	solver.h	/^			Q,$/;"	m	class:solver::Solver
+Solution	solution.cpp	/^Solution::Solution( const Solution& source ):$/;"	f	class:Solution
+Solution	solution.cpp	/^Solution::Solution( int M, Graph graph ):$/;"	f	class:Solution
+Solution	solution.h	/^	class Solution$/;"	c	namespace:solver
+Solver	solver.cpp	/^Solver::Solver( Graph graph, uint depot, uint M, uint Q, uint tMax ):$/;"	f	class:Solver
+Solver	solver.h	/^	class Solver$/;"	c	namespace:solver
+V	graph.h	/^		uint V;$/;"	m	class:model::Graph
+VEHICLES	Makefile	/^VEHICLES = 2 3 4$/;"	m
+Vehicle	vehicle.cpp	/^Vehicle::Vehicle( int _id ): id( _id )$/;"	f	class:Vehicle
+Vehicle	vehicle.h	/^	class Vehicle$/;"	c	namespace:solver
+XI	solver.h	/^			const float	XI			= 4;$/;"	m	class:solver::Solver
+__ucarpp__edge__	edge.h	/^#define __ucarpp__edge__$/;"	d
+__ucarpp__graph__	graph.h	/^#define __ucarpp__graph__$/;"	d
+__ucarpp__main__	main.h	/^#define __ucarpp__main__$/;"	d
+__ucarpp__meta__	meta.h	/^#define __ucarpp__meta__$/;"	d
+__ucarpp__solution__	solution.h	/^#define __ucarpp__solution__$/;"	d
+__ucarpp__solver__	solver.h	/^#define __ucarpp__solver__$/;"	d
+__ucarpp__vehicle__	vehicle.h	/^#define __ucarpp__vehicle__$/;"	d
+actualEdge	meta.h	/^		model::Edge* actualEdge;$/;"	m	class:solver::MetaEdge
+addEdge	graph.cpp	/^void Graph::addEdge( uint src, uint dst, uint cost, uint demand, float profit )$/;"	f	class:Graph
+addEdge	solution.cpp	/^void Solution::addEdge( Edge* edge, int vehicle, int index )$/;"	f	class:Solution
+addEdge	vehicle.cpp	/^void Vehicle::addEdge( MetaEdge* edge, long index )$/;"	f	class:Vehicle
+adjList	graph.h	/^		std::vector< std::vector<Edge*> > adjList;$/;"	m	class:model::Graph
+average	full_test_all.sh	/^function average { total=0; for i in ${VALUES[@]}; do ((total+=$i)); done; echo $((total\/${#VALUES[@]})); }$/;"	f
+bbeated	full_test_all.sh	/^function bbeated { total=0; for i in ${VALUES[@]}; do [ $i -lt 0 ]  && ((total+=1)); done; echo "$total"; }$/;"	f
+cleanVehicle	solver.cpp	/^void Solver::cleanVehicle( Solution* solution, int vehicle )$/;"	f	class:Solver
+closeSolutionDijkstra	solver.cpp	/^list<Edge*> Solver::closeSolutionDijkstra( Solution solution, int vehicle, uint src, uint dst, int edgeIndex )$/;"	f	class:Solver
+closeSolutionRandom	solver.cpp	/^bool Solver::closeSolutionRandom( Solution* solution, int vehicle, uint src, uint dst, int k, int edgeIndex )$/;"	f	class:Solver
+compareGreedy	solution.h	/^				compareGreedy( MetaGraph* graph ): graph( graph ) {}$/;"	f	struct:solver::Solution::compareGreedy
+compareGreedy	solution.h	/^			struct compareGreedy$/;"	s	class:solver::Solution
+compareGreedy	solution.h	/^			} compareGreedy;$/;"	m	class:solver::Solution	typeref:struct:solver::Solution::compareGreedy
+comparePacking	solution.h	/^			struct comparePacking$/;"	s	class:solver::Solution
+comparePacking	solution.h	/^			} comparePacking;$/;"	m	class:solver::Solution	typeref:struct:solver::Solution::comparePacking
+completeCosts	graph.cpp	/^void Graph::completeCosts()$/;"	f	class:Graph
+cost	edge.h	/^		uint cost;$/;"	m	class:model::Edge
+createBaseSolution	solver.cpp	/^Solution Solver::createBaseSolution()$/;"	f	class:Solver
+createBaseSolution	solver.cpp	/^void Solver::createBaseSolution( Solution* baseSolution, int vehicle )$/;"	f	class:Solver
+currentSolution	solver.h	/^			Solution currentSolution;$/;"	m	class:solver::Solver
+demand	edge.h	/^		uint demand;$/;"	m	class:model::ProfitableEdge
+depot	solver.h	/^			uint depot,$/;"	m	class:solver::Solver
+dijkyNodeComparison	graph.cpp	/^		dijkyNodeComparison( Graph* graph, uint source ):$/;"	f	class:model::dijkyNodeComparison
+dijkyNodeComparison	graph.cpp	/^	class dijkyNodeComparison$/;"	c	namespace:model	file:
+dst	edge.h	/^			 dst;$/;"	m	class:model::Edge
+edges	graph.h	/^		std::vector<Edge*> edges;$/;"	m	class:model::Graph
+edges	meta.h	/^		std::unordered_map<model::Edge*, MetaEdge*> edges;$/;"	m	class:solver::MetaGraph
+equals	edge.cpp	/^bool Edge::equals( const Edge& other ) const$/;"	f	class:Edge
+equals	meta.cpp	/^bool MetaEdge::equals( const MetaEdge& other ) const$/;"	f	class:MetaEdge
+equals	vehicle.cpp	/^bool Vehicle::equals( const Vehicle& other ) const$/;"	f	class:Vehicle
+extendBaseSolution	solver.cpp	/^int Solver::extendBaseSolution( Solution* baseSolution, int M, bool* filled, int* last )$/;"	f	class:Solver
+g	graph.cpp	/^		Graph* g;$/;"	m	class:model::dijkyNodeComparison	file:
+getAdjList	graph.cpp	/^vector<Edge*> Graph::getAdjList( uint src ) const$/;"	f	class:Graph
+getCost	edge.cpp	/^uint Edge::getCost() const$/;"	f	class:Edge
+getCost	meta.cpp	/^uint MetaEdge::getCost() const$/;"	f	class:MetaEdge
+getCost	solution.cpp	/^uint Solution::getCost( int vehicle ) const$/;"	f	class:Solution
+getCost	solution.cpp	/^uint Solution::getCost() const$/;"	f	class:Solution
+getCost	vehicle.cpp	/^uint Vehicle::getCost() const$/;"	f	class:Vehicle
+getDemand	edge.cpp	/^uint DijkyEdge::getDemand() const$/;"	f	class:DijkyEdge
+getDemand	edge.cpp	/^uint ProfitableEdge::getDemand() const$/;"	f	class:ProfitableEdge
+getDemand	meta.cpp	/^uint MetaEdge::getDemand() const$/;"	f	class:MetaEdge
+getDemand	solution.cpp	/^uint Solution::getDemand( int vehicle ) const$/;"	f	class:Solution
+getDemand	solution.cpp	/^uint Solution::getDemand() const$/;"	f	class:Solution
+getDemand	vehicle.cpp	/^uint Vehicle::getDemand() const$/;"	f	class:Vehicle
+getDirection	solution.cpp	/^bool Solution::getDirection( int vehicle, int index ) const$/;"	f	class:Solution
+getDirection	vehicle.cpp	/^bool Vehicle::getDirection( int edge ) const$/;"	f	class:Vehicle
+getDst	edge.cpp	/^uint Edge::getDst( uint src ) const$/;"	f	class:Edge
+getDst	edge.cpp	/^uint Edge::getDst() const$/;"	f	class:Edge
+getDst	meta.cpp	/^uint MetaEdge::getDst( uint src ) const$/;"	f	class:MetaEdge
+getDst	meta.cpp	/^uint MetaEdge::getDst() const$/;"	f	class:MetaEdge
+getEdge	graph.cpp	/^Edge* Graph::getEdge( uint src, uint dst ) const throw( int )$/;"	f	class:Graph
+getEdge	meta.cpp	/^Edge* MetaEdge::getEdge() const$/;"	f	class:MetaEdge
+getEdge	meta.cpp	/^MetaEdge* MetaGraph::getEdge( const Edge* edge ) const$/;"	f	class:MetaGraph
+getEdge	solution.cpp	/^MetaEdge* Solution::getEdge( int vehicle, int index ) const$/;"	f	class:Solution
+getEdge	vehicle.cpp	/^MetaEdge* Vehicle::getEdge( int index ) const$/;"	f	class:Vehicle
+getEdges	graph.cpp	/^vector<Edge*> Graph::getEdges() const$/;"	f	class:Graph
+getId	vehicle.cpp	/^int Vehicle::getId() const$/;"	f	class:Vehicle
+getProfit	edge.cpp	/^float DijkyEdge::getProfit() const$/;"	f	class:DijkyEdge
+getProfit	edge.cpp	/^float ProfitableEdge::getProfit() const$/;"	f	class:ProfitableEdge
+getProfit	meta.cpp	/^float MetaEdge::getProfit() const$/;"	f	class:MetaEdge
+getProfit	solution.cpp	/^uint Solution::getProfit( int vehicle ) const$/;"	f	class:Solution
+getProfit	solution.cpp	/^uint Solution::getProfit() const$/;"	f	class:Solution
+getProfit	vehicle.cpp	/^uint Vehicle::getProfit() const$/;"	f	class:Vehicle
+getProfitDemandRatio	edge.cpp	/^float Edge::getProfitDemandRatio() const$/;"	f	class:Edge
+getProfitDemandRatio	meta.cpp	/^float MetaEdge::getProfitDemandRatio() const$/;"	f	class:MetaEdge
+getServer	meta.cpp	/^const Vehicle* MetaEdge::getServer() const$/;"	f	class:MetaEdge
+getSrc	edge.cpp	/^uint Edge::getSrc() const$/;"	f	class:Edge
+getSrc	meta.cpp	/^uint MetaEdge::getSrc() const$/;"	f	class:MetaEdge
+getTaken	meta.cpp	/^unsigned long MetaEdge::getTaken() const$/;"	f	class:MetaEdge
+getTakers	meta.cpp	/^vector<const Vehicle*> MetaEdge::getTakers() const$/;"	f	class:MetaEdge
+getVehicle	solution.cpp	/^Vehicle* Solution::getVehicle( uint vehicle ) const$/;"	f	class:Solution
+getVehicleIndex	solution.cpp	/^uint Solution::getVehicleIndex( const Vehicle* vehicle ) const$/;"	f	class:Solution
+graph	solution.h	/^				MetaGraph* graph;$/;"	m	struct:solver::Solution::compareGreedy
+graph	solution.h	/^			MetaGraph graph;$/;"	m	class:solver::Solution
+graph	solver.h	/^			model::Graph graph;$/;"	m	class:solver::Solver
+id	vehicle.h	/^			int id;$/;"	m	class:solver::Vehicle
+isFeasible	solver.cpp	/^bool Solver::isFeasible( const Solution* solution, int vehicle ) const$/;"	f	class:Solver
+isRemovable	solver.cpp	/^bool Solver::isRemovable( const Solution* solution, int vehicle, int index ) const$/;"	f	class:Solver
+isServer	meta.cpp	/^bool MetaEdge::isServer( const Vehicle* aVehicle ) const$/;"	f	class:MetaEdge
+main	main.cpp	/^int main( int argc, const char * argv[] )$/;"	f
+maximum	full_test_all.sh	/^function maximum { max=0; for i in ${VALUES[@]}; do [ $i -gt $max ] && max=$i; done; echo "$max"; }$/;"	f
+minimum	full_test_all.sh	/^function minimum { min=0; for i in ${VALUES[@]}; do [ $i -lt $min ] && min=$i; done; echo "$min"; }$/;"	f
+model	edge.h	/^namespace model$/;"	n
+model	graph.cpp	/^namespace model$/;"	n	file:
+model	graph.h	/^namespace model$/;"	n
+mrBeanBeanBinPacking	solver.cpp	/^int Solver::mrBeanBeanBinPacking( Solution* solution, int vehicle )$/;"	f	class:Solver
+mutateSolution	solver.cpp	/^uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )$/;"	f	class:Solver
+mutateSolutionClose	solver.cpp	/^bool Solver::mutateSolutionClose( Solution *solution, uint vehicle, int edge )$/;"	f	class:Solver
+mutateSolutionOpen	solver.cpp	/^bool Solver::mutateSolutionOpen( Solution *solution, uint vehicle, int edge )$/;"	f	class:Solver
+openSolutionRandom	solver.cpp	/^int Solver::openSolutionRandom( Solution *solution, uint vehicle, int k, uint* src, uint* dst )$/;"	f	class:Solver
+operator !=	meta.cpp	/^bool MetaEdge::operator !=( MetaEdge& other ) const$/;"	f	class:MetaEdge
+operator !=	vehicle.cpp	/^bool Vehicle::operator !=( const Vehicle& other ) const$/;"	f	class:Vehicle
+operator ()	graph.cpp	/^		bool operator() ( const uint& lhs, const uint& rhs ) const$/;"	f	class:model::dijkyNodeComparison
+operator ()	solution.h	/^				bool operator() ( const MetaEdge* lhs, const MetaEdge* rhs ) const$/;"	f	struct:solver::Solution::comparePacking
+operator ()	solution.h	/^				bool operator() ( const model::Edge* lhs, const model::Edge* rhs ) const$/;"	f	struct:solver::Solution::compareGreedy
+operator ==	edge.cpp	/^bool Edge::operator ==( const Edge& other ) const$/;"	f	class:Edge
+operator ==	meta.cpp	/^bool MetaEdge::operator ==( MetaEdge& other ) const$/;"	f	class:MetaEdge
+operator ==	vehicle.cpp	/^bool Vehicle::operator ==( const Vehicle& other ) const$/;"	f	class:Vehicle
+operator >	solution.cpp	/^bool Solution::operator>( const Solution& other ) const$/;"	f	class:Solution
+output_file	solver.h	/^			std::ofstream output_file;$/;"	m	class:solver::Solver
+path	vehicle.h	/^			std::list<MetaEdge*> path;$/;"	m	class:solver::Vehicle
+printToFile	solver.cpp	/^void Solver::printToFile( Solution* solution )$/;"	f	class:Solver
+profit	edge.h	/^		float profit;$/;"	m	class:model::ProfitableEdge
+removeEdge	solution.cpp	/^void Solution::removeEdge( int vehicle, int index )$/;"	f	class:Solution
+removeEdge	vehicle.cpp	/^void Vehicle::removeEdge( long index )$/;"	f	class:Vehicle
+setCost	edge.cpp	/^void DijkyEdge::setCost( uint cost )$/;"	f	class:DijkyEdge
+setOutputFile	solver.cpp	/^bool Solver::setOutputFile( string filename )$/;"	f	class:Solver
+setServer	meta.cpp	/^bool MetaEdge::setServer( const Vehicle* vehicle )$/;"	f	class:MetaEdge
+setTaken	meta.cpp	/^unsigned long MetaEdge::setTaken( const Vehicle* taker, int occurrence )$/;"	f	class:MetaEdge
+size	graph.cpp	/^uint Graph::size() const$/;"	f	class:Graph
+size	solution.cpp	/^unsigned long Solution::size( int vehicle ) const$/;"	f	class:Solution
+size	solution.cpp	/^unsigned long Solution::size() const$/;"	f	class:Solution
+size	vehicle.cpp	/^unsigned long Vehicle::size() const$/;"	f	class:Vehicle
+solve	solver.cpp	/^Solution Solver::solve( string method, int repetition )$/;"	f	class:Solver
+solver	meta.h	/^namespace solver$/;"	n
+solver	solution.h	/^namespace solver$/;"	n
+solver	solver.h	/^namespace solver$/;"	n
+solver	vehicle.h	/^namespace solver$/;"	n
+src	edge.h	/^		uint src,$/;"	m	class:model::Edge
+src	graph.cpp	/^		uint src;$/;"	m	class:model::dijkyNodeComparison	file:
+tMax	solver.h	/^			tMax;$/;"	m	class:solver::Solver
+takers	meta.h	/^		std::vector<const Vehicle*> takers;$/;"	m	class:solver::MetaEdge
+toServicesSequence	solution.cpp	/^string Solution::toServicesSequence( int vehicle ) const$/;"	f	class:Solution
+toServicesSequence	vehicle.cpp	/^string Vehicle::toServicesSequence() const$/;"	f	class:Vehicle
+toString	solution.cpp	/^string Solution::toString( int vehicle ) const$/;"	f	class:Solution
+toString	solution.cpp	/^string Solution::toString() const$/;"	f	class:Solution
+toString	vehicle.cpp	/^string Vehicle::toString() const$/;"	f	class:Vehicle
+toVertexSequence	solution.cpp	/^string Solution::toVertexSequence( int vehicle ) const$/;"	f	class:Solution
+toVertexSequence	vehicle.cpp	/^string Vehicle::toVertexSequence() const$/;"	f	class:Vehicle
+ucarpp_headings_h	headings.h	/^#define ucarpp_headings_h$/;"	d
+uint	headings.h	/^typedef unsigned int uint;$/;"	t
+unsetTaken	meta.cpp	/^unsigned long MetaEdge::unsetTaken( const Vehicle* taker, int occurrence )$/;"	f	class:MetaEdge
+varianc	full_test_all.sh	/^function varianc { total=0; for i in ${VALUES[@]}; do ((total+=($i-average) * ($i-average))); done; echo $((total\/${#VALUES[@]})); }$/;"	f
+vehicles	solution.h	/^			std::vector<Vehicle*> vehicles;$/;"	m	class:solver::Solution
+vnaasd	solver.cpp	/^Solution Solver::vnaasd( int nIter, Solution baseSolution, int repetition )$/;"	f	class:Solver
+vnasd	solver.cpp	/^Solution Solver::vnasd( int nIter, Solution baseSolution, int repetition )$/;"	f	class:Solver
+vnd	solver.cpp	/^Solution Solver::vnd( int nIter, Solution baseSolution )$/;"	f	class:Solver
+vns	solver.cpp	/^Solution Solver::vns( int nIter, Solution baseSolution )$/;"	f	class:Solver
+~MetaGraph	meta.cpp	/^MetaGraph::~MetaGraph()$/;"	f	class:MetaGraph
+~Solution	solution.cpp	/^Solution::~Solution()$/;"	f	class:Solution

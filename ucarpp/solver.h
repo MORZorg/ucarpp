@@ -46,6 +46,7 @@ namespace solver
 			
 			Solution createBaseSolution();
 			void createBaseSolution( Solution*, int );
+			int extendBaseSolution( Solution*, int, bool*, int* );
 			Solution vns( int, Solution );
 			Solution vnd( int, Solution );
 			Solution vnasd( int, Solution, int );
@@ -67,7 +68,11 @@ namespace solver
 
 			// Metodo basato sul concetto della Bin Packing, usato per cercare una prima ottimizzazione della soluzione.
 			// Il metodo può essere richiamato anche più volte in ogni ciclo di risoluzione.
-			int mrBeanBeanBinPacking( Solution*, uint );
+			int mrBeanBeanBinPacking( Solution*, int );
+			// Metodo che accorcia tutti i percorsi di lati senza profitto in una soluzione
+			void cleanVehicle( Solution*, int );
+			// Ottimizzazione "every" improvement.
+			void optimizeSolution( Solution* );
 
 			bool isFeasible( const Solution*, int ) const;
 			bool isRemovable( const Solution*, int, int ) const;

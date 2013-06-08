@@ -61,16 +61,16 @@ namespace solver
 			
 			bool operator> ( const Solution& ) const;
 			
-			struct compareRatioGreedy
+			struct compareGreedy
 			{
 				MetaGraph* graph;
 				
-				compareRatioGreedy( MetaGraph* graph ): graph( graph ) {}
+				compareGreedy( MetaGraph* graph ): graph( graph ) {}
 				
 				bool operator() ( const model::Edge* lhs, const model::Edge* rhs ) const
 				{
 					MetaEdge* metaLhs = graph->getEdge( lhs ),
-							* metaRhs = graph->getEdge( rhs );
+					* metaRhs = graph->getEdge( rhs );
 					
 					// Ratio se lato non preso, -1 altrimenti
 					float lhsRatio = ( metaLhs->getTaken() == 0 ? metaLhs->getProfitDemandRatio() : -1 ),
@@ -79,9 +79,25 @@ namespace solver
 					if ( lhsRatio == rhsRatio )
 						return metaLhs->getCost() > metaRhs->getCost();
 						
-						return lhsRatio > rhsRatio;
+					return lhsRatio > rhsRatio;
 				}
-			} compareRatioGreedy;
+			} compareGreedy;
+			
+			struct compareStingy
+			{
+				bool operator() ( const model::Edge* lhs, const model::Edge* rhs ) const
+				{
+					return lhs->getCost() < rhs->getCost();
+				}
+			} compareStingy;
+			
+			struct comparePacking
+			{
+				bool operator() ( const MetaEdge* lhs, const MetaEdge* rhs ) const
+				{
+					return lhs->getDemand() > rhs->getDemand();
+				}
+			} comparePacking;
 	};
 }
 

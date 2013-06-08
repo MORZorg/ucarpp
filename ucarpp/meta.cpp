@@ -199,6 +199,10 @@ const Vehicle* MetaEdge::getServer() const
 	return takers.front();
 }
 
+/**
+ * Sposta il veicolo indicato in cima alla lista dei passanti per questo lato.
+ * Così facendo il lato diviene servito dalla prima volta che il veicolo ci passa.
+ */
 bool MetaEdge::setServer( const Vehicle* vehicle )
 {
 	// Per impostare un veicolo come servitore, devo spostarlo in testa alla lista dei takers.

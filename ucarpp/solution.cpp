@@ -21,7 +21,7 @@ using namespace model;
 
 
 Solution::Solution( int M, Graph graph ):
-	M( M ), graph( graph ), compareRatioGreedy( &this->graph )
+M( M ), graph( graph ), compareGreedy( &this->graph )
 {
 ////	vehicles = (Vehicle*)calloc( M, sizeof( Vehicle ) );
 //	vehicles = static_cast<Vehicle*> (::operator new ( sizeof( Vehicle ) * M ) );
@@ -33,7 +33,8 @@ Solution::Solution( int M, Graph graph ):
 }
 
 Solution::Solution( const Solution& source ):
-M( source.M ), graph( source.graph ), compareRatioGreedy( &this->graph )
+M( source.M ), graph( source.graph ),
+compareGreedy( &this->graph )
 {
 	vehicles = vector<Vehicle*>();
 	for ( int i = 0; i < M; i++ )

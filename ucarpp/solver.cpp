@@ -41,141 +41,19 @@ Solution Solver::createBaseSolution()
 	
 	// Creazione parallela
 	int toBeFilled = M;
-	bool* filled = (bool*)calloc( M, sizeof(bool) );
-	int* last = (int*)calloc( M, sizeof(int) );
-	vector<Edge*> edges;
-	// Primo giro: aggiungo un lato per ogni veicolo.
+	bool* filled = (bool*)calloc( M, sizeof( bool ) );
+	int* last = (int*)calloc( M, sizeof( int ) );
 	for ( int i = 0; i < M; i++ )
-	{
-		// Ordino i lati uscenti dal nodo corrente
-		edges = graph.getAdjList( depot );
-		sort( edges.begin(), edges.end(), baseSolution.compareRatioGreedy );
-		
-		// Prendo il lato ammissibile migliore, se esiste
-		filled[ i ] = true;
-		for( Edge* edge : edges )
-		{
-			last[ i ] = edge->getDst( depot );
-			
-			// Aggiungo il lato selezionato ed il lato necessario alla chiusura.
-			baseSolution.addEdge( edge, i );
-			Edge* returnEdge = graph.getEdge( last[ i ], depot );
-			baseSolution.addEdge( returnEdge, i );
-			
-#ifdef DEBUG
-			cerr << "After added: " << baseSolution.toString( i ) << endl;
-#endif
-			
-			/**
-			 * Se la soluzione resta feasible avendo preso
-			 * il lato selezionato ed il lato di ritorno,
-			 * accetto il nuovo lato.
-			 */
-			if ( isFeasible( &baseSolution, i ) )
-			{
-#ifdef DEBUG
-				fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n\n",
-						last[ i ] + 1, edge->getProfitDemandRatio() );
-#endif
-				
-				baseSolution.removeEdge( i );
-				
-				filled[ i ] = false;
-				break;
-			}
-			else
-			{
-				// Annullo la mossa
-				last[ i ] = depot;
-				baseSolution.removeEdge( i );
-				baseSolution.removeEdge( i );
-			}
-		}
-		
-		if ( filled[ i ] )
-		{
-#ifdef DEBUG
-			cerr << "C'è del marcio in Danimarca." << endl;
-#endif
-			toBeFilled--;
-		}
-	}
-	// Teoricamente arrivato a questo punto dovrei ancora avere tutti i veicoli con filled = false.
+		last[ i ] = depot;
 	
-	for ( int i = 0; toBeFilled > 0; i = ( i + 1 ) % M )
-	{
-		// Ho già riempito il veicolo. Passo al successivo
-		if ( filled[ i ] )
-			continue;
-		
-		// Stesse istruzioni di prima, generalizzate...
-		// Ordino i lati uscenti dal nodo corrente
-		edges = graph.getAdjList( last[ i ] );
-		sort( edges.begin(), edges.end(), baseSolution.compareRatioGreedy );
-		
-		// Prendo il lato ammissibile migliore, se esiste
-		filled[ i ] = true;
-		for( Edge* edge : edges )
-		{
-			last[ i ] = edge->getDst( last[ i ] );
-			
-			// Aggiungo il lato selezionato ed il lato necessario alla chiusura.
-			bool addedEdge = last[ i ] != depot;
-			baseSolution.addEdge( edge, i );
-			if ( addedEdge )
-			{
-				Edge* returnEdge = graph.getEdge( last[ i ], depot );
-				baseSolution.addEdge( returnEdge, i );
-			}
-			
-#ifdef DEBUG
-			cerr << "After added: " << baseSolution.toString( i ) << endl;
-#endif
-			
-			/**
-			 * Se la soluzione resta feasible avendo preso
-			 * il lato selezionato ed il lato di ritorno,
-			 * accetto il nuovo lato.
-			 */
-			if ( isFeasible( &baseSolution, i ) )
-			{
-#ifdef DEBUG
-				fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n\n",
-						last[ i ] + 1, edge->getProfitDemandRatio() );
-#endif
-				
-				if ( addedEdge )
-					baseSolution.removeEdge( i );
-				
-				filled[ i ] = false;
-				break;
-			}
-			else
-			{
-				// Annullo la mossa
-				last[ i ] = edge->getDst( last[ i ] );
-				
-				baseSolution.removeEdge( i );
-				if ( addedEdge )
-					baseSolution.removeEdge( i );
-			}
-		}
-		
-		if ( filled[ i ] )
-		{
-			if ( last[ i ] != depot )
-			{
-				Edge* returnEdge = graph.getEdge( last[ i ], depot );
-				baseSolution.addEdge( returnEdge, i );
-			}
-			toBeFilled--;
-		}
-	}
+	while ( ( toBeFilled -= extendBaseSolution( &baseSolution, M, filled, last ) ) > 0 );
 	
 #ifdef DEBUG
 	cerr << "Soluzione iniziale:\n" << baseSolution.toString() << endl;
 #endif
 	
+	free( filled );
+	free( last );
 	return baseSolution;
 }
 
@@ -190,7 +68,7 @@ void Solver::createBaseSolution( Solution* baseSolution, int vehicle )
 	{
 		// Ordino i lati uscenti dal nodo corrente
 		edges = graph.getAdjList( currentNode );
-		sort( edges.begin(), edges.end(), baseSolution->compareRatioGreedy );
+		sort( edges.begin(), edges.end(), baseSolution->compareGreedy );
 		
 		// Prendo il lato ammissibile migliore, se esiste
 		full = true;
@@ -248,6 +126,91 @@ void Solver::createBaseSolution( Solution* baseSolution, int vehicle )
 	
 	if ( currentNode != depot )
 		baseSolution->addEdge( graph.getEdge( currentNode, depot ), vehicle );
+}
+
+/**
+ * Funzione per creare una soluzione di base in parallelo su ogni veicolo.
+ *
+ * @param baseSolution	La soluzione da estendere.
+ * @param M				Il numero di veicoli.
+ * @param filled		Vettore indicante quali veicoli sono già stati riempiti.
+ * @param last			Vettore indicante il nodo finale di ogni veicolo.
+ * @return				Numero di veicoli riempiti durante l'iterazione.
+ */
+int Solver::extendBaseSolution( Solution* baseSolution, int M, bool* filled, int* last )
+{
+	vector<Edge*> edges;
+	int filledCount = 0;
+	for ( int i = 0; i < M; i++ )
+	{
+		// Ho già riempito il veicolo. Passo al successivo
+		if ( filled[ i ] )
+			continue;
+		
+		// Ordino i lati uscenti dal nodo corrente
+		edges = graph.getAdjList( last[ i ] );
+		sort( edges.begin(), edges.end(), baseSolution->compareGreedy );
+		
+		// Prendo il lato ammissibile migliore, se esiste
+		filled[ i ] = true;
+		for( Edge* edge : edges )
+		{
+			last[ i ] = edge->getDst( last[ i ] );
+			
+			// Aggiungo il lato selezionato ed il lato necessario alla chiusura.
+			bool addedEdge = last[ i ] != depot;
+			baseSolution->addEdge( edge, i );
+			if ( addedEdge )
+			{
+				Edge* returnEdge = graph.getEdge( last[ i ], depot );
+				baseSolution->addEdge( returnEdge, i );
+			}
+			
+#ifdef DEBUG
+			cerr << "After added: " << baseSolution->toString( i ) << endl;
+#endif
+			
+			/**
+			 * Se la soluzione resta feasible avendo preso
+			 * il lato selezionato ed il lato di ritorno,
+			 * accetto il nuovo lato.
+			 */
+			if ( isFeasible( baseSolution, i ) )
+			{
+#ifdef DEBUG
+				fprintf( stderr, "\t\tPreso %d (r: % 3.2f)\n\n",
+						last[ i ] + 1, edge->getProfitDemandRatio() );
+#endif
+				
+				if ( addedEdge )
+					baseSolution->removeEdge( i );
+				
+				filled[ i ] = false;
+				break;
+			}
+			else
+			{
+				// Annullo la mossa
+				last[ i ] = edge->getDst( last[ i ] );
+				
+				baseSolution->removeEdge( i );
+				if ( addedEdge )
+					baseSolution->removeEdge( i );
+			}
+		}
+		
+		if ( filled[ i ] )
+		{
+			if ( last[ i ] != depot )
+			{
+				Edge* returnEdge = graph.getEdge( last[ i ], depot );
+				baseSolution->addEdge( returnEdge, i );
+			}
+			filledCount++;
+		}
+	}
+
+	return filledCount;
 }
 
 Solution Solver::vnasd( int nIter, Solution baseSolution, int repetition )
@@ -343,37 +306,40 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		// Adottiamo il criterio di best improvement e non first.
 		// Per prima cosa dobbiamo copiare la soluzione corrente in una temporanea che indicherà la soluzione con massimo profitto trovato.
 		Solution maxSolution = Solution( baseSolution );
+		Solution localSearchSolution( shakedSolution );
 
 		for ( int v = 0; v < M; v++ )
 		{
 			// Cerco di ottimizzare il veicolo appena shakerato
-			mrBeanBeanBinPacking( &shakedSolution, v );
+			localSearchSolution = Solution( shakedSolution );
+			mrBeanBeanBinPacking( &localSearchSolution, v );
+			cleanVehicle( &localSearchSolution, v );
 
 #ifdef DEBUG
-			cerr << "Ricerco localmente su " << v << ": " << shakedSolution.toString( v );
+			cerr << "Ricerco localmente su " << v << ": " << localSearchSolution.toString( v );
 #endif
 
 			uint previous = depot;
 			uint next;
-			for ( int i = 0; i < shakedSolution.size( v ); i++ )
+			for ( int i = 0; i < localSearchSolution.size( v ); i++ )
 			{
 #ifdef DEBUG
 			cerr << "Lavoro sul veicolo " << v << " lato " << i;
-			cerr << " ( " << shakedSolution.getEdge( v, i )->getSrc() << " " << shakedSolution.getEdge( v, i )->getDst() << " ) " << endl;
-			cerr << "Parto da: " << shakedSolution.toString();
+			cerr << " ( " << localSearchSolution.getEdge( v, i )->getSrc() << " " << localSearchSolution.getEdge( v, i )->getDst() << " ) " << endl;
+			cerr << "Parto da: " << localSearchSolution.toString();
 #endif
 				// Elimino almeno un lato
 				list <Edge*> removedEdges;
 				bool wasServer;
 
-				Vehicle* tempVehicle = shakedSolution.getVehicle( v );
+				Vehicle* tempVehicle = localSearchSolution.getVehicle( v );
 				
-				MetaEdge* tempMeta = shakedSolution.getEdge( v, i );
+				MetaEdge* tempMeta = localSearchSolution.getEdge( v, i );
 				wasServer = tempMeta->isServer( tempVehicle );
 				// Pro thinking:
 				// Se MrBean non è riuscito a riassegnare questo lato ad altri veicoli ed io non sono l'unico che lo attraversa,
 				// è inutile cercare di toglierlo dalla soluzione in quanto renderebbe infeasible un altro veicolo, per cui salto.
-				if( !isRemovable( &shakedSolution, v, i ) )
+				if( !isRemovable( &localSearchSolution, v, i ) )
 				{
 #ifdef DEBUG
 					cerr << "Il lato " << i << " non è rimovibile. Passo al lato successivo." << endl;
@@ -384,20 +350,20 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 
 				removedEdges.push_back( tempMeta->getEdge() );
 
-				shakedSolution.removeEdge( v, i );
+				localSearchSolution.removeEdge( v, i );
 				next = tempMeta->getDst( previous );
 
 				// Elimino lati dalla soluzione fintanto che questi non ne aumentano il profitto e fintanto che sono presenti nella soluzione
-				while( i < shakedSolution.size( v ) )
+				while( i < localSearchSolution.size( v ) && isRemovable( &localSearchSolution, v, i ) )
 				{
 					// Calcolo la differenza di profitto che abbiamo nel togliere un lato alla soluzione
-					int diffProfit = shakedSolution.getProfit( v );
+					int diffProfit = localSearchSolution.getProfit( v );
 
 					// Rimuovo il lato i
-					MetaEdge* temp = shakedSolution.getEdge( v, i );
-					shakedSolution.removeEdge( v, i );
+					MetaEdge* temp = localSearchSolution.getEdge( v, i );
+					localSearchSolution.removeEdge( v, i );
 
-					diffProfit -= shakedSolution.getProfit( v );
+					diffProfit -= localSearchSolution.getProfit( v );
 
 					// Se non ho differenze di profitto, tolgo quel lato dalla soluzione
 					if( diffProfit == 0 )
@@ -410,8 +376,8 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 					else
 					{
 						// Altrimenti lo riaggiungo
-						shakedSolution.addEdge( temp->getEdge(), v, i );
-						temp->setServer( tempVehicle );
+						localSearchSolution.addEdge( temp->getEdge(), v, i );
+						//temp->setServer( tempVehicle );
 						break;
 					}
 
@@ -419,21 +385,26 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 
 #ifdef DEBUG
 				cerr << "Creato un buco di " << removedEdges.size() << " lati su ( " << previous << " " << next << " ) " << endl;
-				cerr << "Cristo: " << shakedSolution.toString() << endl;
+				cerr << "Cristo: " << localSearchSolution.toString() << endl;
 #endif
 
 				// Chiedo a Dijkstra di calcolarmi la chiusura migliore
-				list<Edge*> closure = closeSolutionDijkstra( shakedSolution, v, previous, next, i );
+				list<Edge*> closure = closeSolutionDijkstra( localSearchSolution, v, previous, next, i );
 				previous = next;
 
 				if ( !closure.size() )
 				{
 					// Quell'incapace del Sig. Bellman-Ford-Zucchelli ha fallito: ripristino.
 					for( auto it = removedEdges.rbegin(); it != removedEdges.rend(); ++it )
-						shakedSolution.addEdge( *it, v, i );
+						localSearchSolution.addEdge( *it, v, i );
 	
 					if( wasServer )
-						shakedSolution.getEdge( v, i )->setServer( tempVehicle );
+					{
+#ifdef DEBUG
+						cerr << "PIPPIRIPACCHIO1 questa variabile è utile" << endl;
+#endif
+						localSearchSolution.getEdge( v, i )->setServer( tempVehicle );
+					}
 
 					i += removedEdges.size() - 1;
 					continue;
@@ -441,35 +412,40 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 
 				// Se questo porta un miglioramento, effettuo la chiusura, altrimenti riaggiungo il lato i
 				for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
-					shakedSolution.addEdge( *it, v, i );
+					localSearchSolution.addEdge( *it, v, i );
 
 #ifdef DEBUG
-				cerr << "Soluzioni dopo ricerca locale: " << shakedSolution.toString() << endl;
+				cerr << "Soluzioni dopo ricerca locale: " << localSearchSolution.toString() << endl;
 #endif
 
 				// Controllo se ho trovato una soluzione migliore della massima trovata in precedenza
-				if ( shakedSolution > maxSolution )
+				if ( localSearchSolution > maxSolution )
 				{
 #ifdef DEBUG
 					cerr << "Migliorato" << endl;
 #endif
-					maxSolution = Solution( shakedSolution );
+					maxSolution = Solution( localSearchSolution );
 					// SFANCULATI break; // SFANCULATI BEST
 				}
 
 				// Resetto la shakedSolution per effettuare una nuova ricerca
 				for( int j = 0; j < closure.size(); j++ )
-					shakedSolution.removeEdge( v, i );
+					localSearchSolution.removeEdge( v, i );
 
 				for( auto it = removedEdges.rbegin(); it != removedEdges.rend(); ++it )
-					shakedSolution.addEdge( *it, v, i );
+					localSearchSolution.addEdge( *it, v, i );
 
-				if( wasServer )
-					shakedSolution.getEdge( v, i )->setServer( tempVehicle );
+//				if( wasServer )
+//				{
+//#ifdef DEBUG
+//					cerr << "PIPPIRIPACCHIO2 questa variabile è utile" << endl;
+//#endif
+//					localSearchSolution.getEdge( v, i )->setServer( tempVehicle );
+//				}
 
 #ifdef DEBUG
 				cerr << "Fine ciclo: ripristinata la shakedSolution iniziale?" << endl;
-				cerr << "Shaked: " << shakedSolution.toString() << endl;
+				cerr << "Shaked: " << localSearchSolution.toString() << endl;
 #endif
 
 				i += removedEdges.size() - 1;
@@ -516,7 +492,10 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		// Incremento il numero di iterazioni svolte
 		k = 1 + k % K_MAX;
 	}
-
+	
+	// Ottimizzazione finale
+	optimizeSolution( optimalSolution );
+	
 #ifdef DEBUG
 	cerr << "VNS" << optimalSolution->toString();
 #endif
@@ -628,6 +607,9 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 
 		k = 1 + k % K_MAX;
 	}
+	
+	// Ottimizzazione finale
+	optimizeSolution( optimalSolution );
 	
 #ifdef DEBUG
 	cerr << "VND" << optimalSolution->toString();
@@ -1515,9 +1497,15 @@ bool Solver::isRemovable( const Solution* solution, int vehicle, int index ) con
 {
 	Vehicle* tempVehicle = solution->getVehicle( vehicle );
 	MetaEdge* tempMeta = solution->getEdge( vehicle, index );
+	
+	// Se non è la prima volta per cui passo da questo lato, è certamente rimovibile
+	for ( int i = 0; i < index; i++ )
+		if ( *solution->getEdge( vehicle, i ) == *tempMeta )
+			return true;
 
-		// Il lato NON è rimovibile se io lo servo e non sono l'unico a passarci.
-		// Questo è vero assumendo un bin packing fatto precedentemente
+	// Il lato NON è rimovibile se io lo servo e non sono l'unico a passarci.
+	// Ed è la prima volta che ci passo! (vedi sopra)
+	// Questo è vero assumendo un bin packing fatto precedentemente
 	return !( tempMeta->getDemand() &&
 			  tempMeta->isServer( tempVehicle ) &&
 			  tempMeta->getTaken() > 1 );
@@ -1551,7 +1539,7 @@ void Solver::printToFile( Solution* solution )
 	return;
 }
 
-int Solver::mrBeanBeanBinPacking( Solution* solution, uint vehicle )
+int Solver::mrBeanBeanBinPacking( Solution* solution, int vehicle )
 {
 	// Il metodo cerca di ottimizzare la domanda del veicolo passato come parametro,
 	// cercando di spostare la domanda su altri veicoli su lati comuni.
@@ -1573,10 +1561,19 @@ int Solver::mrBeanBeanBinPacking( Solution* solution, uint vehicle )
 			served.insert( edge );
 	}
 
+	// Ordino i lati trovati in ordine decrescente. Questo rende l'algoritmo First Fit Decreasing.
+	vector<MetaEdge*> toServe( served.begin(), served.end() );
+	sort( toServe.begin(), toServe.end(), solution->comparePacking );
+	
+#ifdef DEBUG
+	cerr << "Lati serviti ordinati:" << endl;
+	for ( auto it = toServe.begin(); it != toServe.end(); ++it )
+		cerr << "( " << (*it)->getSrc() << " " << (*it)->getDst() << " ) " << (*it)->getDemand() << endl;
+#endif
+	
 	int swaps = 0;
-
 	// Ciclo sull'intera soluzione del veicolo
-	for ( auto it = served.begin(); it != served.end(); ++it )
+	for ( auto it = toServe.begin(); it != toServe.end(); ++it )
 	{
 		// Prendo i veicoli che passano dal lato
 		vector<const Vehicle*> takers = (*it)->getTakers();
@@ -1614,4 +1611,183 @@ int Solver::mrBeanBeanBinPacking( Solution* solution, uint vehicle )
 #endif
 
 	return swaps;
+}
+
+void Solver::cleanVehicle( Solution* solution, int vehicle )
+{
+#ifdef DEBUG
+	cerr << "Pulizia di " << vehicle << ": " << solution->toString( vehicle );
+#endif
+	Solution save( *solution );
+
+	uint previous;
+	uint next = depot;
+	for ( int i = 0; i < solution->size( vehicle ); i++ )
+	{
+		// Il buco corrente inizia dove era finito il precedente
+		previous = next;
+
+		// Finché posso rimuovere lati avere problemi, lo faccio
+		while ( i < solution->size( vehicle ) && isRemovable( solution, vehicle, i ) )
+		{
+			int diffProfit = solution->getProfit( vehicle );
+
+			// Rimuovo il lato i
+			MetaEdge* temp = solution->getEdge( vehicle, i );
+			solution->removeEdge( vehicle, i );
+
+			diffProfit -= solution->getProfit( vehicle );
+
+			if ( diffProfit == 0 )
+				next = temp->getDst( next );
+			else
+			{
+				solution->addEdge( temp->getEdge(), vehicle, i );
+				break;
+			}
+		}
+
+		// Ho un buco da previous a next: se differiscono, lo chiudo direttamente
+		//  e sposto l'indice in modo che punti oltre il buco chiuso
+		if ( previous != next )
+		{
+			solution->addEdge( graph.getEdge( previous, next ), vehicle, i );
+			
+			// Possibilità che, aggiungendo un lato, questo dia profitto,
+			//  io lo serva e la sua domanda mi renda unfeasible: controllo.
+			if ( !isFeasible( solution, vehicle ) )
+			{
+#ifdef DEBUG
+				cerr << "Pulizia troppo fruttuosa tra " << previous << " e " << next << endl;
+#endif
+				// Reimposto la soluzione
+				*solution = Solution( save );
+				next = previous;
+
+				// Non aumentando i, al ciclo successivo ritento lo stesso buco
+				//  ma con un lato in meno.
+			}
+			else
+				i++;
+		}
+
+		// Aggiorno next se non ho finito il lavoro
+		if ( i < solution->size( vehicle ) )
+			next = solution->getEdge( vehicle, i )->getDst( next );
+	}
+	
+#ifdef DEBUG
+	cerr << "Ripulito: " << solution->toString( vehicle );
+	if ( solution->getCost() > save.getCost() )
+		cerr << "Sono un vero danno." << endl;
+#endif
+}
+
+void Solver::optimizeSolution( Solution* solution )
+{
+	for ( int v = 0; v < M; v++ )
+	{
+		// Cerco di ottimizzare il veicolo appena shakerato
+		mrBeanBeanBinPacking( solution, v );
+		cleanVehicle( solution, v );
+
+#ifdef DEBUG
+		cerr << "Ottimizzo localmente su " << v << ": " << solution->toString( v );
+#endif
+
+		uint previous = depot;
+		uint next;
+		for ( int i = 0; i < solution->size( v ); i++ )
+		{
+#ifdef DEBUG
+			cerr << "Lavoro sul veicolo " << v << " lato " << i;
+			cerr << " ( " << solution->getEdge( v, i )->getSrc() << " " << solution->getEdge( v, i )->getDst() << " ) " << endl;
+			cerr << "Parto da: " << solution->toString();
+#endif
+			// Elimino almeno un lato
+			list <Edge*> removedEdges;
+			bool wasServer;
+
+			Vehicle* tempVehicle = solution->getVehicle( v );
+
+			MetaEdge* tempMeta = solution->getEdge( v, i );
+			wasServer = tempMeta->isServer( tempVehicle );
+			// Pro thinking:
+			// Se MrBean non è riuscito a riassegnare questo lato ad altri veicoli ed io non sono l'unico che lo attraversa,
+			// è inutile cercare di toglierlo dalla soluzione in quanto renderebbe infeasible un altro veicolo, per cui salto.
+			if( !isRemovable( solution, v, i ) )
+			{
+#ifdef DEBUG
+				cerr << "Il lato " << i << " non è rimovibile. Passo al lato successivo." << endl;
+#endif
+				previous = tempMeta->getDst( previous );
+				continue;
+			}
+
+			removedEdges.push_back( tempMeta->getEdge() );
+
+			solution->removeEdge( v, i );
+			next = tempMeta->getDst( previous );
+
+			// Elimino lati dalla soluzione fintanto che questi non ne aumentano il profitto e fintanto che sono presenti nella soluzione
+			while( i < solution->size( v ) && isRemovable( solution, v, i ) )
+			{
+				// Calcolo la differenza di profitto che abbiamo nel togliere un lato alla soluzione
+				int diffProfit = solution->getProfit( v );
+
+				// Rimuovo il lato i
+				MetaEdge* temp = solution->getEdge( v, i );
+				solution->removeEdge( v, i );
+
+				diffProfit -= solution->getProfit( v );
+
+				// Se non ho differenze di profitto, tolgo quel lato dalla soluzione
+				if( diffProfit == 0 )
+				{
+					// Sposto il nodo di partenza
+					next = temp->getDst( next );
+					// Inserisco il lato tolto nella lista
+					removedEdges.push_back( temp->getEdge() );
+				}
+				else
+				{
+					// Altrimenti lo riaggiungo
+					solution->addEdge( temp->getEdge(), v, i );
+					//temp->setServer( tempVehicle );
+					break;
+				}
+
+			}
+
+#ifdef DEBUG
+			cerr << "Creato un buco di " << removedEdges.size() << " lati su ( " << previous << " " << next << " ) " << endl;
+			cerr << "Cristo: " << solution->toString() << endl;
+#endif
+
+			// Chiedo a Dijkstra di calcolarmi la chiusura migliore
+			list<Edge*> closure = closeSolutionDijkstra( *solution, v, previous, next, i );
+			previous = next;
+
+			if ( !closure.size() )
+			{
+				// Quell'incapace del Sig. Bellman-Ford-Zucchelli ha fallito: ripristino.
+				for( auto it = removedEdges.rbegin(); it != removedEdges.rend(); ++it )
+					solution->addEdge( *it, v, i );
+
+				i += removedEdges.size() - 1;
+				continue;
+			}
+
+			// Se questo porta un miglioramento, effettuo la chiusura, altrimenti riaggiungo il lato i
+			for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
+				solution->addEdge( *it, v, i );
+
+#ifdef DEBUG
+			cerr << "Soluzioni dopo ricerca locale: " << solution->toString() << endl;
+#endif
+
+			// Do per scontato che Bellman mi dia, nel caso peggiore, una soluzione identica
+			i += closure.size() - 1;
+		}
+	}
 }
