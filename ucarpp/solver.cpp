@@ -324,9 +324,9 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 			for ( int i = 0; i < localSearchSolution.size( v ); i++ )
 			{
 #ifdef DEBUG
-			cerr << "Lavoro sul veicolo " << v << " lato " << i;
-			cerr << " ( " << localSearchSolution.getEdge( v, i )->getSrc() << " " << localSearchSolution.getEdge( v, i )->getDst() << " ) " << endl;
-			cerr << "Parto da: " << localSearchSolution.toString();
+				cerr << "Lavoro sul veicolo " << v << " lato " << i;
+				cerr << " ( " << localSearchSolution.getEdge( v, i )->getSrc() << " " << localSearchSolution.getEdge( v, i )->getDst() << " ) " << endl;
+				cerr << "Parto da: " << localSearchSolution.toString();
 #endif
 				// Elimino almeno un lato
 				list <Edge*> removedEdges;
