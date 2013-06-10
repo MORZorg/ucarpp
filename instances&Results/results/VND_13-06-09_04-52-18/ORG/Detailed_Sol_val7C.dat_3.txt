@@ -1,0 +1,52 @@
+Solution of Problem val7C.3.VND.ORG - Number of Vehicles: 3
+
+Total Profit: 386
+
+Total Cost: 113
+
+
+Route 0 Details:
+
+Services Sequence:
+1-6 6-7 7-13 13-12 12-11 11-1 1-40 40-8 
+
+Vertex Sequence:
+1 (1 6) (6 7) (7 13) (13 12) (12 11) (11 1) (1 40) (40 8) 1 
+
+Profit: 143
+Cost: 37
+Load: 65
+
+
+Route 1 Details:
+
+Services Sequence:
+1-10 10-16 16-15 15-14 14-8 33-1 
+
+Vertex Sequence:
+1 (1 10) (10 16) (16 15) (15 14) (14 8) 33 (33 1) 
+
+Profit: 112
+Cost: 38
+Load: 54
+
+
+Route 2 Details:
+
+Services Sequence:
+1-8 35-28 28-27 27-34 34-35 35-1 
+
+Vertex Sequence:
+1 (1 8) 35 (35 28) (28 27) (27 34) (34 35) (35 1) 
+
+Profit: 131
+Cost: 38
+Load: 64
+
+0:	[ 0 5 ] [ 5 6 ] [ 6 12 ] [ 11 12 ] [ 10 11 ] [ 0 10 ] [ 0 39 ] [ 7 39 ] ( 0 7 )  Profitto: 143 D: 65 C: 37
+
+1:	[ 0 9 ] [ 9 15 ] [ 14 15 ] [ 13 14 ] [ 7 13 ] ( 7 32 ) [ 0 32 ]  Profitto: 112 D: 54 C: 38
+
+2:	[ 0 7 ] ( 7 34 ) [ 27 34 ] [ 26 27 ] [ 26 33 ] [ 33 34 ] [ 0 34 ]  Profitto: 131 D: 64 C: 38
+
+

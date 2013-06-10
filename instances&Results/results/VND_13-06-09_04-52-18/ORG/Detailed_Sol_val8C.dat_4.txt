@@ -1,0 +1,67 @@
+Solution of Problem val8C.4.VND.ORG - Number of Vehicles: 4
+
+Total Profit: 447
+
+Total Cost: 251
+
+
+Route 0 Details:
+
+Services Sequence:
+1-8 8-13 14-8 8-9 9-2 6-7 
+
+Vertex Sequence:
+1 (1 8) (8 13) 14 (14 8) (8 9) (9 2) 6 (6 7) 1 
+
+Profit: 119
+Cost: 64
+Load: 64
+
+
+Route 1 Details:
+
+Services Sequence:
+1-5 5-4 4-6 4-7 7-12 12-13 11-20 20-16 
+
+Vertex Sequence:
+1 (1 5) (5 4) (4 6) 4 (4 7) (7 12) (12 13) 11 (11 20) (20 16) 1 
+
+Profit: 117
+Cost: 66
+Load: 65
+
+
+Route 2 Details:
+
+Services Sequence:
+1-9 9-10 18-17 17-13 13-14 14-17 
+
+Vertex Sequence:
+1 (1 9) (9 10) 18 (18 17) (17 13) (13 14) (14 17) 1 
+
+Profit: 108
+Cost: 59
+Load: 64
+
+
+Route 3 Details:
+
+Services Sequence:
+1-2 2-3 3-10 10-15 15-19 23-26 26-30 18-19 
+
+Vertex Sequence:
+1 (1 2) (2 3) (3 10) (10 15) (15 19) 23 (23 26) (26 30) 18 (18 19) 1 
+
+Profit: 103
+Cost: 62
+Load: 65
+
+0:	[ 0 7 ] [ 7 12 ] ( 12 13 ) [ 7 13 ] [ 7 8 ] [ 1 8 ] ( 1 5 ) [ 5 6 ] ( 0 6 )  Profitto: 119 D: 64 C: 64
+
+1:	[ 0 4 ] [ 3 4 ] [ 3 5 ] ( 3 5 ) [ 3 6 ] [ 6 11 ] [ 11 12 ] ( 10 12 ) [ 10 19 ] [ 15 19 ] ( 0 15 )  Profitto: 117 D: 65 C: 66
+
+2:	[ 0 8 ] [ 8 9 ] ( 9 17 ) [ 16 17 ] [ 12 16 ] [ 12 13 ] [ 13 16 ] ( 0 16 )  Profitto: 108 D: 64 C: 59
+
+3:	[ 0 1 ] [ 1 2 ] [ 2 9 ] [ 9 14 ] [ 14 18 ] ( 18 22 ) [ 22 25 ] [ 25 29 ] ( 17 29 ) [ 17 18 ] ( 0 18 )  Profitto: 103 D: 65 C: 62
+
+

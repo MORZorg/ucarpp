@@ -1,0 +1,37 @@
+Solution of Problem val3C.2.VNASD1.ORG - Number of Vehicles: 2
+
+Total Profit: 63
+
+Total Cost: 50
+
+
+Route 0 Details:
+
+Services Sequence:
+10-11 15-21 21-24 20-10 10-5 
+
+Vertex Sequence:
+1 10 (10 11) 12 15 (15 21) (21 24) 20 (20 10) (10 5) 1 
+
+Profit: 31
+Cost: 23
+Load: 20
+
+
+Route 1 Details:
+
+Services Sequence:
+11-12 14-13 11-5 20-19 19-9 9-3 3-1 
+
+Vertex Sequence:
+1 11 (11 12) 14 (14 13) 11 (11 5) 20 (20 19) (19 9) (9 3) (3 1) 
+
+Profit: 32
+Cost: 27
+Load: 20
+
+0:	( 0 9 ) [ 9 10 ] ( 10 11 ) ( 11 14 ) [ 14 20 ] [ 20 23 ] ( 19 23 ) [ 9 19 ] [ 4 9 ] ( 0 4 )  Profitto: 31 D: 20 C: 23
+
+1:	( 0 10 ) [ 10 11 ] ( 11 13 ) [ 12 13 ] ( 10 12 ) [ 4 10 ] ( 4 19 ) [ 18 19 ] [ 8 18 ] [ 2 8 ] [ 0 2 ]  Profitto: 32 D: 20 C: 27
+
+

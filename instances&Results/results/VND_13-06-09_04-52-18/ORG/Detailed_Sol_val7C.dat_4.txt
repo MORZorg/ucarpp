@@ -1,0 +1,67 @@
+Solution of Problem val7C.4.VND.ORG - Number of Vehicles: 4
+
+Total Profit: 468
+
+Total Cost: 153
+
+
+Route 0 Details:
+
+Services Sequence:
+1-6 6-7 7-13 13-17 13-12 12-11 11-1 1-35 
+
+Vertex Sequence:
+1 (1 6) (6 7) (7 13) (13 17) 13 (13 12) (12 11) (11 1) (1 35) 1 
+
+Profit: 129
+Cost: 36
+Load: 65
+
+
+Route 1 Details:
+
+Services Sequence:
+1-10 10-16 34-26 26-33 33-1 
+
+Vertex Sequence:
+1 (1 10) (10 16) 34 (34 26) (26 33) (33 1) 
+
+Profit: 106
+Cost: 39
+Load: 59
+
+
+Route 2 Details:
+
+Services Sequence:
+1-2 2-6 1-8 8-14 14-15 15-16 16-11 40-1 
+
+Vertex Sequence:
+1 (1 2) (2 6) 1 (1 8) (8 14) (14 15) (15 16) (16 11) 40 (40 1) 
+
+Profit: 115
+Cost: 39
+Load: 65
+
+
+Route 3 Details:
+
+Services Sequence:
+2-3 3-4 4-5 5-39 39-38 38-31 31-37 37-36 
+
+Vertex Sequence:
+1 2 (2 3) (3 4) (4 5) (5 39) (39 38) (38 31) (31 37) (37 36) 1 
+
+Profit: 118
+Cost: 39
+Load: 65
+
+0:	[ 0 5 ] [ 5 6 ] [ 6 12 ] [ 12 16 ] ( 12 16 ) [ 11 12 ] [ 10 11 ] [ 0 10 ] [ 0 34 ] ( 0 34 )  Profitto: 129 D: 65 C: 36
+
+1:	[ 0 9 ] [ 9 15 ] ( 15 33 ) [ 25 33 ] [ 25 32 ] [ 0 32 ]  Profitto: 106 D: 59 C: 39
+
+2:	[ 0 1 ] [ 1 5 ] ( 0 5 ) [ 0 7 ] [ 7 13 ] [ 13 14 ] [ 14 15 ] [ 10 15 ] ( 10 39 ) [ 0 39 ]  Profitto: 115 D: 65 C: 39
+
+3:	( 0 1 ) [ 1 2 ] [ 2 3 ] [ 3 4 ] [ 4 38 ] [ 37 38 ] [ 30 37 ] [ 30 36 ] [ 35 36 ] ( 0 35 )  Profitto: 118 D: 65 C: 39
+
+

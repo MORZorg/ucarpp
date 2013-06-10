@@ -1,0 +1,37 @@
+Solution of Problem val4B.2.VNAASD2.MDF - Number of Vehicles: 2
+
+Total Profit: 156
+
+Total Cost: 74
+
+
+Route 0 Details:
+
+Services Sequence:
+2-3 17-16 4-10 10-9 
+
+Vertex Sequence:
+1 2 (2 3) 17 (17 16) 4 (4 10) (10 9) 1 
+
+Profit: 81
+Cost: 34
+Load: 30
+
+
+Route 1 Details:
+
+Services Sequence:
+1-2 3-4 11-10 23-24 9-3 
+
+Vertex Sequence:
+1 (1 2) 3 (3 4) 11 (11 10) 23 (23 24) 9 (9 3) 1 
+
+Profit: 75
+Cost: 40
+Load: 29
+
+0:	( 0 1 ) [ 1 2 ] ( 2 16 ) [ 15 16 ] ( 3 15 ) [ 3 9 ] [ 8 9 ] ( 0 8 )  Profitto: 81 D: 30 C: 34
+
+1:	[ 0 1 ] ( 1 2 ) [ 2 3 ] ( 3 10 ) [ 9 10 ] ( 9 22 ) [ 22 23 ] ( 8 23 ) [ 2 8 ] ( 0 2 )  Profitto: 75 D: 29 C: 40
+
+
