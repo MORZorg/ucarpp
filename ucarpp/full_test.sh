@@ -24,7 +24,11 @@ do
 		# Eseguo il programma con i parametri correnti
 		echo "Risolvo $1 $i con $j veicoli.";
 		FILENAME="Detailed_Sol_$1_$j.txt";
+		# Prendo il tempo di esecuzione per risolvere un'istanza
+		START_TIME=$(date +%s%N);
 		$EXE $INSTANCE_PATH$1 $j $2 $i > $OURS_PATH$i"/"$FILENAME;
+		END_TIME=$(date +%s%N);
+		TEMPO=$((($END_TIME-$START_TIME)/1000000000));
 
 		# Creo il grafico associato alla soluzione
 		echo "Creo i grafici del corrente problema.";
@@ -37,7 +41,7 @@ do
 		# Apro il file con le soluzioni di benchmark
 		SOL=(`sed 's///g' $SOLUTION_PATH$i"/"$FILENAME | sed -n 's/Total Profit: \([0-9][0-9]*$\)/\1/p'`);
 		DIFF=`echo \($SOL-$OUR\)*100/$SOL | bc`;
-		echo "$1 $j veicoli $i:	$OUR =>	$DIFF%	($SOL)" >> $SOLUTION_FILE$i;
+		echo "$1 $j veicoli $i:	$OUR =>	$DIFF%	($SOL) in $TEMPO s" >> $SOLUTION_FILE$i;
 
 	done;
 done;

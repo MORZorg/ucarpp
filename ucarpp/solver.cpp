@@ -530,7 +530,12 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 			 src,
 			 dst;
 		int	 edge = -1;
-		
+
+/*
+		// Prima di generare un buco nella soluzione, la muto, così da partire da
+		// una soluzione diversa ad ogni ciclo, e non sempre dalla stessa.
+		mutateSolution( &shakedSolution, vehicle, 
+*/		
 		// Verifico che il buco sia stato creato correttamente
 		try
 		{
@@ -565,6 +570,11 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 
 		for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
 			shakedSolution.addEdge( *it, vehicle, edge );
+
+/*
+		// Ottimizzo la soluzione
+		optimizeSolution( &shakedSolution );
+*/
 		
 #ifdef DEBUG
 		cerr << "Soluzioni:" << endl;

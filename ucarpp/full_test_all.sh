@@ -1,7 +1,7 @@
 #/bin/bash
 
 # Percorsi utili
-INSTANCE_PATH="../instances&Results/instances/";
+INSTANCE_PATH="../instances&Results/instances_try/";
 GRAPH_PATH="../progressive_output/";
 RESULTS_PATH="../instances&Results/";
 OURS_PATH="../instances&Results/ours_";
@@ -53,7 +53,7 @@ TEMPO_MEDIO=$(($TEMPO/$TOT_ISTANZE));
 echo "Tempo impiegato: $TEMPO secondi per $TOT_ISTANZE istanze (media $TEMPO_MEDIO)" >> $RESULTS_PATH"results.TOT";
 for i in $SOLUTION_FILES
 do
-	VALUES=(`sed 's/^M//g' $i | sed -n 's/[a-zA-Z0-9.: 	]*=>	\(-*[0-9][0-9]*\)%	([0-9]*)/\1/p'`);
+	VALUES=(`sed 's/^M//g' $i | sed -n 's/[a-zA-Z0-9.: 	]*=>	\(-*[0-9][0-9]*\)%	([0-9]*).*/\1/p'`);
 	echo $i >> $RESULTS_PATH"results.TOT";
 	echo Media:		$(average) >> $RESULTS_PATH"results.TOT";
 	echo Varianza:	$(varianc) >> $RESULTS_PATH"results.TOT";
