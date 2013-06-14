@@ -3,3 +3,12 @@
 ucarpp.xcodeproj/*
 *.gch
 *.un~
+
+ucarpp/ucarpp
+ucarpp/ucarpp_stable
+
+progressive_output/*.sbra
+progressive_output/*.pdf
+instances&results/ours*
+instances&results/results*
+

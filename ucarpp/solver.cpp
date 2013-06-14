@@ -531,17 +531,16 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 			 dst;
 		int	 edge = -1;
 
-/*
 		// Prima di generare un buco nella soluzione, la muto, così da partire da
 		// una soluzione diversa ad ogni ciclo, e non sempre dalla stessa.
-		mutateSolution( &shakedSolution, vehicle, 
-*/		
+		mutateSolution( &shakedSolution, vehicle, ceil( XI * k ) );
+
 		// Verifico che il buco sia stato creato correttamente
 		try
 		{
 			edge = openSolutionRandom( &shakedSolution, vehicle, k, &src, &dst );
 			if ( edge < 0 || edge >= shakedSolution.size() )
-				throw -2;
+				throw 10;
 		}
 		catch( int e )
 		{
@@ -1800,4 +1799,9 @@ void Solver::optimizeSolution( Solution* solution )
 			i += closure.size() - 1;
 		}
 	}
+
+	for ( int i = 0; i < M; i++ )
+		if ( !isFeasible( solution, i ) )
+			throw 3;
 }
+

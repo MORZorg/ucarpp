@@ -26,7 +26,13 @@ do
 		FILENAME="Detailed_Sol_$1_$j.txt";
 		# Prendo il tempo di esecuzione per risolvere un'istanza
 		START_TIME=$(date +%s%N);
-		$EXE $INSTANCE_PATH$1 $j $2 $i > $OURS_PATH$i"/"$FILENAME;
+		while ! $EXE $INSTANCE_PATH$1 $j $2 $i > $OURS_PATH$i"/"$FILENAME;
+		do
+			echo "Test fallito. Riprovo.";
+
+			# Resetto l'istante iniziale
+			START_TIME=$(date +%s%N);
+		done
 		END_TIME=$(date +%s%N);
 		TEMPO=$((($END_TIME-$START_TIME)/1000000000));
 
