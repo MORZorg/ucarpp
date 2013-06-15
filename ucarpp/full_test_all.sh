@@ -1,7 +1,7 @@
 #/bin/bash
 
 # Percorsi utili
-INSTANCE_PATH="../instances&Results/instances_try/";
+INSTANCE_PATH="../instances&Results/instances/";
 GRAPH_PATH="../progressive_output/";
 RESULTS_PATH="../instances&Results/";
 OURS_PATH="../instances&Results/ours_";

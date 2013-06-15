@@ -1,0 +1,6 @@
+val1A.dat 2 veicoli ORG:	696 =>	2%	(713) in 2 s
+val1A.dat 3 veicoli ORG:	728 =>	0%	(728) in 1 s
+val1A.dat 4 veicoli ORG:	728 =>	0%	(728) in 1 s
+val1B.dat 2 veicoli ORG:	494 =>	4%	(516) in 1 s
+val1B.dat 3 veicoli ORG:	657 =>	3%	(682) in 1 s
+val1B.dat 4 veicoli ORG:	636 =>	12%	(731) in 1 s
