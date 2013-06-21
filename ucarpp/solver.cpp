@@ -213,6 +213,35 @@ int Solver::extendBaseSolution( Solution* baseSolution, int M, bool* filled, int
 	return filledCount;
 }
 
+Solution Solver::justBellman()
+{
+	Solution result( M, graph );
+
+	for ( int v = 0; v < M; v++ )
+	{
+#ifdef DEBUG
+		cerr << "Veicolo " << v << endl;
+#endif
+		list<Edge*> closure = closeSolutionDijkstra( result, v, 0, 0, 0 );
+
+		if ( !closure.size() )
+		{
+			// Non esiste modo di chiudere il veicolo. È inutile fare altro.
+			return result;
+		}
+
+		// Se questo porta un miglioramento, effettuo la chiusura, altrimenti riaggiungo il lato i
+		for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
+			result.addEdge( *it, v, 0 );
+
+#ifdef DEBUG
+		cerr << result.toString( v ) << endl;
+#endif
+	}
+
+	return result;
+}
+
 Solution Solver::vnasd( int nIter, Solution baseSolution, int repetition )
 {
 	float iterations = nIter / ( 2 * repetition );
@@ -1482,6 +1511,11 @@ Solution Solver::solve( string method, int repetition )
 			{
 				if( !method.compare( "VNAASD" ) )
 					currentSolution = vnaasd( N_ITER, currentSolution, repetition );
+				else
+				{
+					if ( !method.compare( "BEL" ) )
+						currentSolution = justBellman();
+				}
 			}
 		}
 	}

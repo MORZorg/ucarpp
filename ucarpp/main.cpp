@@ -294,7 +294,9 @@ int main( int argc, const char * argv[] )
 		cout << endl;
 	}
 
+#ifdef DEBUG
 	cout << solution.toString() << endl;
+#endif
 #endif
 
     return 0;

@@ -34,7 +34,7 @@ namespace solver
 			const float	P_CLOSE		= .25;
 			const float	P_ACCEPT	= .95;
 			const std::string OUTPUT_FILE_DIR = "../progressive_output/";
-			const std::string OUTPUT_FILE_EXTENSION = ".sbra";
+			const std::string OUTPUT_FILE_EXTENSION = ".morz";
 
 			model::Graph graph;
 			uint depot,
@@ -51,6 +51,7 @@ namespace solver
 			Solution vnd( int, Solution );
 			Solution vnasd( int, Solution, int );
 			Solution vnaasd( int, Solution, int );
+			Solution justBellman();
 
 			// Metodi usati per modificare progressivamente la soluzione
 			// Metodo che sceglie come mutare la soluzione, decidendo se ampliandola o restringendola. Ritorna la lunghezza della nuova soluzione modificata.
