@@ -12,8 +12,8 @@ INSTANCES=(`ls $INSTANCE_PATH`);
 # Funzioni statistiche (assumendo mescolanza di valori positivi e negativi)
 function average { total=0; for i in ${VALUES[@]}; do ((total+=$i)); done; echo $((total/${#VALUES[@]})); }
 function varianc { total=0; for i in ${VALUES[@]}; do ((total+=($i-average) * ($i-average))); done; echo $((total/${#VALUES[@]})); }
-function maximum { max=0; for i in ${VALUES[@]}; do [ $i -gt $max ] && max=$i; done; echo "$max"; }
-function minimum { min=0; for i in ${VALUES[@]}; do [ $i -lt $min ] && min=$i; done; echo "$min"; }
+function maximum { max=-100; for i in ${VALUES[@]}; do [ $i -gt $max ] && max=$i; done; echo "$max"; }
+function minimum { min=0100; for i in ${VALUES[@]}; do [ $i -lt $min ] && min=$i; done; echo "$min"; }
 function bbeated { total=0; for i in ${VALUES[@]}; do [ $i -lt 0 ]  && ((total+=1)); done; echo "$total"; }
 
 # Compilo il programma
