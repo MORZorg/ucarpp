@@ -1,0 +1,14 @@
+VNASD2 con x/sqrt(1+x^2)
+Tempo impiegato: 43271 secondi per 210 istanze (media 206)
+../instances&Results/results.MDF
+Media: 4
+Varianza: 25
+Massimo: 11
+Minimo: 0
+Battuti: 0
+../instances&Results/results.ORG
+Media: 5
+Varianza: 42
+Massimo: 15
+Minimo: -1
+Battuti: 2

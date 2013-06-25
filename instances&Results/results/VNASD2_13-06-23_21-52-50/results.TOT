@@ -1,0 +1,14 @@
+VNASD2 con funzione errore
+Tempo impiegato: 42289 secondi per 210 istanze (media 201)
+../instances&Results/results.MDF
+Media: 4
+Varianza: 26
+Massimo: 16
+Minimo: 0
+Battuti: 0
+../instances&Results/results.ORG
+Media: 5
+Varianza: 42
+Massimo: 16
+Minimo: -1
+Battuti: 2

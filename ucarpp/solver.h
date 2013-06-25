@@ -13,6 +13,7 @@
 #include <list>
 #include <vector>
 #include <sstream>
+#include <cmath>
 
 #include <fstream>
 #include <string>

@@ -222,7 +222,7 @@ Solution Solver::justBellman()
 #ifdef DEBUG
 		cerr << "Veicolo " << v << endl;
 #endif
-		list<Edge*> closure = closeSolutionDijkstra( result, v, 0, 0, 0 );
+		list<Edge*> closure = closeSolutionDijkstra( result, v, depot, depot, 0 );
 
 		if ( !closure.size() )
 		{
@@ -230,7 +230,7 @@ Solution Solver::justBellman()
 			return result;
 		}
 
-		// Se questo porta un miglioramento, effettuo la chiusura, altrimenti riaggiungo il lato i
+		// Effettuo la chiusura
 		for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
 			result.addEdge( *it, v, 0 );
 
@@ -310,7 +310,7 @@ Solution Solver::vns( int nIter, Solution baseSolution )
 		uint vehicle = rand() % M;
 
 #ifdef DEBUG
-		cerr << "Iterazione " << nIter << " sul veicolo " << vehicle << endl;
+		cerr << "VNS " << nIter << " sul veicolo " << vehicle << endl;
 #endif
 
 		// MrBean colpisce ancora
@@ -560,9 +560,13 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 			 dst;
 		int	 edge = -1;
 
+#ifdef DEBUG
+		cerr << "VND " << nIter << " su " << vehicle << endl;
+#endif
+
 		// Prima di generare un buco nella soluzione, la muto, così da partire da
 		// una soluzione diversa ad ogni ciclo, e non sempre dalla stessa.
-		mutateSolution( &shakedSolution, vehicle, ceil( XI * k ) );
+		mutateSolution( &shakedSolution, vehicle, ceil( k ) );
 
 		// Verifico che il buco sia stato creato correttamente
 		try
@@ -631,7 +635,7 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 			
 			k = 0;
 		}
-		
+
 		// Come all'inizio, se richiesto stampo su file i risultati
 		if( output_file.is_open() )
 		{
@@ -641,7 +645,12 @@ Solution Solver::vnd( int nIter, Solution baseSolution )
 
 		for ( int i = 0; i < M; i++ )
 			if ( !isFeasible( &shakedSolution, i ) )
+			{
+#ifdef DEBUG
+				cerr << "Esco per unfeasability di " << i << endl;
+#endif
 				throw 2;
+			}
 
 		k = 1 + k % K_MAX;
 	}
@@ -660,6 +669,22 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 	// Inizializzo la funzione random
 	srand( (uint)time( NULL ) );
 
+	// Se il veicolo e` vuoto, lo genero e poi lo muto
+	// ( teoricamente meglio greedy, ma... )
+	if ( !solution->size( vehicle ) )
+	{
+		list<Edge*> closure = closeSolutionDijkstra( *solution, vehicle, depot, depot, 0 );
+		
+		if ( !closure.size() )
+		{
+			// Non esiste modo di chiudere il veicolo. È inutile fare altro.
+			return 0;
+		}
+		
+		for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
+			solution->addEdge( *it, vehicle, 0 );
+	}
+
 	// Barbatrucco: puntatore a funzioni per essere più efficienti nella scrittura del codice.
 	// Definisco un puntatore alle funzioni usate per aprire o chiudere la soluzione corrente.
 	// Questo verrà istanziato a seconda della casualità ad una delle due funzioni.
@@ -670,12 +695,26 @@ uint Solver::mutateSolution( Solution *solution, uint vehicle, int k )
 	for( int i = 0; i < k; i++ )
 	{
 		// Scelgo un lato sul quale operare
-		uint edge = rand() % solution->size( vehicle );
+		int edge = rand() % solution->size( vehicle );
 
 		// Casualmente scelgo se aprire o chiudere un lato
 		// Non mi interesso del valore di ritorno delle funzioni usate perchè so già dove il buco è stato creato, essendo io a passarlo come parametro.
 		float x = ( (float)( solution->getDemand( vehicle ) / Q + solution->getCost( vehicle ) / tMax ) / 2 );
-		float p_close = atan( 50 * ( x - .75 ) ) / M_PI + .5;
+		x -= .75;
+		/* funzioni di pesatura */
+		// Arcotangente
+		//float p_close = atan( 50 * x ) / M_PI + .5;
+
+		// Tangente iperbolica
+		//float p_close = tanh( 15 * x ) + .5;
+
+		// Funzione errore
+		//float p_close = erf( 10 * x ) + .5;
+
+		// Funzione x / sqrt( 1 + x^2 )
+		float p_close = 7.5 * x / sqrt( 225 * x * x  + 1 );
+
+
 		// Provo a mutare la soluzione in chiusura solo se possibile, ovvero se essa ha almeno due lati
 		// oppure casualmente seguendo una funzione sigmoidale basata su una media di costo e domanda.
 		if( solution->size( vehicle ) <= 2 || (float) rand() / RAND_MAX > p_close )
@@ -1738,104 +1777,119 @@ void Solver::optimizeSolution( Solution* solution )
 		cerr << "Ottimizzo localmente su " << v << ": " << solution->toString( v );
 #endif
 
-		uint previous = depot;
-		uint next;
-		for ( int i = 0; i < solution->size( v ); i++ )
+		// Se il veicolo e` vuoto, lo genero in modo greedy (o bellman?)
+		if ( solution->size( v ) )
 		{
-#ifdef DEBUG
-			cerr << "Lavoro sul veicolo " << v << " lato " << i;
-			cerr << " ( " << solution->getEdge( v, i )->getSrc() << " " << solution->getEdge( v, i )->getDst() << " ) " << endl;
-			cerr << "Parto da: " << solution->toString();
-#endif
-			// Elimino almeno un lato
-			list <Edge*> removedEdges;
-			bool wasServer;
-
-			Vehicle* tempVehicle = solution->getVehicle( v );
-
-			MetaEdge* tempMeta = solution->getEdge( v, i );
-			wasServer = tempMeta->isServer( tempVehicle );
-			// Pro thinking:
-			// Se MrBean non è riuscito a riassegnare questo lato ad altri veicoli ed io non sono l'unico che lo attraversa,
-			// è inutile cercare di toglierlo dalla soluzione in quanto renderebbe infeasible un altro veicolo, per cui salto.
-			if( !isRemovable( solution, v, i ) )
+			uint previous = depot;
+			uint next;
+			for ( int i = 0; i < solution->size( v ); i++ )
 			{
 #ifdef DEBUG
-				cerr << "Il lato " << i << " non è rimovibile. Passo al lato successivo." << endl;
+				cerr << "Lavoro sul veicolo " << v << " lato " << i;
+				cerr << " ( " << solution->getEdge( v, i )->getSrc() << " " << solution->getEdge( v, i )->getDst() << " ) " << endl;
+				cerr << "Parto da: " << solution->toString();
 #endif
-				previous = tempMeta->getDst( previous );
-				continue;
-			}
+				// Elimino almeno un lato
+				list <Edge*> removedEdges;
+				bool wasServer;
 
-			removedEdges.push_back( tempMeta->getEdge() );
+				Vehicle* tempVehicle = solution->getVehicle( v );
 
-			solution->removeEdge( v, i );
-			next = tempMeta->getDst( previous );
+				MetaEdge* tempMeta = solution->getEdge( v, i );
+				wasServer = tempMeta->isServer( tempVehicle );
+				// Pro thinking:
+				// Se MrBean non è riuscito a riassegnare questo lato ad altri veicoli ed io non sono l'unico che lo attraversa,
+				// è inutile cercare di toglierlo dalla soluzione in quanto renderebbe infeasible un altro veicolo, per cui salto.
+				if( !isRemovable( solution, v, i ) )
+				{
+#ifdef DEBUG
+					cerr << "Il lato " << i << " non è rimovibile. Passo al lato successivo." << endl;
+#endif
+					previous = tempMeta->getDst( previous );
+					continue;
+				}
 
-			// Elimino lati dalla soluzione fintanto che questi non ne aumentano il profitto e fintanto che sono presenti nella soluzione
-			while( i < solution->size( v ) && isRemovable( solution, v, i ) )
-			{
-				// Calcolo la differenza di profitto che abbiamo nel togliere un lato alla soluzione
-				int diffProfit = solution->getProfit( v );
+				removedEdges.push_back( tempMeta->getEdge() );
 
-				// Rimuovo il lato i
-				MetaEdge* temp = solution->getEdge( v, i );
 				solution->removeEdge( v, i );
+				next = tempMeta->getDst( previous );
 
-				diffProfit -= solution->getProfit( v );
-
-				// Se non ho differenze di profitto, tolgo quel lato dalla soluzione
-				if( diffProfit == 0 )
+				// Elimino lati dalla soluzione fintanto che questi non ne aumentano il profitto e fintanto che sono presenti nella soluzione
+				while( i < solution->size( v ) && isRemovable( solution, v, i ) )
 				{
-					// Sposto il nodo di partenza
-					next = temp->getDst( next );
-					// Inserisco il lato tolto nella lista
-					removedEdges.push_back( temp->getEdge() );
-				}
-				else
-				{
-					// Altrimenti lo riaggiungo
-					solution->addEdge( temp->getEdge(), v, i );
-					//temp->setServer( tempVehicle );
-					break;
-				}
+					// Calcolo la differenza di profitto che abbiamo nel togliere un lato alla soluzione
+					int diffProfit = solution->getProfit( v );
 
-			}
+					// Rimuovo il lato i
+					MetaEdge* temp = solution->getEdge( v, i );
+					solution->removeEdge( v, i );
+
+					diffProfit -= solution->getProfit( v );
+
+					// Se non ho differenze di profitto, tolgo quel lato dalla soluzione
+					if( diffProfit == 0 )
+					{
+						// Sposto il nodo di partenza
+						next = temp->getDst( next );
+						// Inserisco il lato tolto nella lista
+						removedEdges.push_back( temp->getEdge() );
+					}
+					else
+					{
+						// Altrimenti lo riaggiungo
+						solution->addEdge( temp->getEdge(), v, i );
+						//temp->setServer( tempVehicle );
+						break;
+					}
+
+				}
 
 #ifdef DEBUG
-			cerr << "Creato un buco di " << removedEdges.size() << " lati su ( " << previous << " " << next << " ) " << endl;
-			cerr << "Cristo: " << solution->toString() << endl;
+				cerr << "Creato un buco di " << removedEdges.size() << " lati su ( " << previous << " " << next << " ) " << endl;
+				cerr << "Cristo: " << solution->toString() << endl;
 #endif
 
-			// Chiedo a Dijkstra di calcolarmi la chiusura migliore
-			list<Edge*> closure = closeSolutionDijkstra( *solution, v, previous, next, i );
-			previous = next;
+				// Chiedo a Dijkstra di calcolarmi la chiusura migliore
+				list<Edge*> closure = closeSolutionDijkstra( *solution, v, previous, next, i );
+				previous = next;
 
-			if ( !closure.size() )
-			{
-				// Quell'incapace del Sig. Bellman-Ford-Zucchelli ha fallito: ripristino.
-				for( auto it = removedEdges.rbegin(); it != removedEdges.rend(); ++it )
+				if ( !closure.size() )
+				{
+					// Quell'incapace del Sig. Bellman-Ford-Zucchelli ha fallito: ripristino.
+					for( auto it = removedEdges.rbegin(); it != removedEdges.rend(); ++it )
+						solution->addEdge( *it, v, i );
+
+					i += removedEdges.size() - 1;
+					continue;
+				}
+
+				// Se questo porta un miglioramento, effettuo la chiusura, altrimenti riaggiungo il lato i
+				for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
 					solution->addEdge( *it, v, i );
 
-				i += removedEdges.size() - 1;
-				continue;
-			}
-
-			// Se questo porta un miglioramento, effettuo la chiusura, altrimenti riaggiungo il lato i
-			for ( auto it = closure.rbegin(); it != closure.rend(); ++it )
-				solution->addEdge( *it, v, i );
-
 #ifdef DEBUG
-			cerr << "Soluzioni dopo ricerca locale: " << solution->toString() << endl;
+				cerr << "Soluzioni dopo ricerca locale: " << solution->toString() << endl;
 #endif
 
-			// Do per scontato che Bellman mi dia, nel caso peggiore, una soluzione identica
-			i += closure.size() - 1;
+				// Do per scontato che Bellman mi dia, nel caso peggiore, una soluzione identica
+				i += closure.size() - 1;
+			}
+		}
+		else
+		{
+			// Risolvo in modo greedy e poi rimuovo le parti inutili
+			createBaseSolution( solution, v );
+			cleanVehicle( solution, v );
 		}
 	}
 
 	for ( int i = 0; i < M; i++ )
 		if ( !isFeasible( solution, i ) )
+		{
+#ifdef DEBUG
+			cerr << "Veicolo " << i << " unfeasible: " << solution->toString( i );
+#endif
 			throw 3;
+		}
 }
 

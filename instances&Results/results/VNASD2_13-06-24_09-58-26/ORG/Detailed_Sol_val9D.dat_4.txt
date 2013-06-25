@@ -1,0 +1,58 @@
+Solution of Problem val9D.4.VNASD2.ORG - Number of Vehicles: 4
+
+Total Profit: 533
+
+Total Cost: 173
+
+
+Route 0 Details:
+
+Services Sequence:
+1-9 9-8 8-13 13-22 20-25 25-33 21-13 13-9 23-14 14-9 
+
+Vertex Sequence:
+1 (1 9) (9 8) (8 13) (13 22) 20 (20 25) (25 33) 21 (21 13) (13 9) 23 (23 14) (14 9) 1 
+
+Profit: 145
+Cost: 43
+Load: 70
+
+
+Route 1 Details:
+
+Services Sequence:
+1-16 16-17 17-31 31-32 32-19 11-18 29-23 
+
+Vertex Sequence:
+1 (1 16) (16 17) (17 31) (31 32) (32 19) 11 (11 18) 29 (29 23) 1 
+
+Profit: 133
+Cost: 43
+Load: 69
+
+
+Route 2 Details:
+
+Services Sequence:
+1-10 10-11 11-12 12-7 7-4 4-3 3-2 2-5 5-10 17-30 
+
+Vertex Sequence:
+1 (1 10) (10 11) (11 12) (12 7) (7 4) (4 3) (3 2) (2 5) (5 10) 11 17 (17 30) 1 
+
+Profit: 132
+Cost: 43
+Load: 68
+
+
+Route 3 Details:
+
+Services Sequence:
+1-15 15-24 24-30 30-39 39-47 47-40 17-24 24-23 23-28 28-27 
+
+Vertex Sequence:
+1 (1 15) (15 24) (24 30) (30 39) (39 47) (47 40) 17 (17 24) (24 23) (23 28) (28 27) 1 
+
+Profit: 123
+Cost: 44
+Load: 70
+

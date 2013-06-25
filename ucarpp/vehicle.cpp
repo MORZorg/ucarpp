@@ -144,7 +144,7 @@ string Vehicle::toString() const
 	stringstream ss;
 	auto it = path.begin();
 	if ( it == path.end() )
-		return "";
+		return "Profitto: 0 D: 0 C: 0\n";
 
 	for ( ; it != path.end(); it++ )
 	{

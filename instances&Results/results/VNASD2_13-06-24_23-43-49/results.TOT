@@ -1,0 +1,14 @@
+VNASD2 con arcotangente
+Tempo impiegato: 42824 secondi per 210 istanze (media 203)
+../instances&Results/results.MDF
+Media: 3
+Varianza: 22
+Massimo: 10
+Minimo: 0
+Battuti: 0
+../instances&Results/results.ORG
+Media: 5
+Varianza: 43
+Massimo: 18
+Minimo: -1
+Battuti: 1
